@@ -233,6 +233,27 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#book-simulation-status",
     },
     {
+      id: "passage-encoder",
+      question:
+        "Few of the questions asked in a reader's own words are found by matching words. You switch to a passage encoder: a transformer that reads each passage whole and was trained on millions of questions paired with their answers. What happens to the number of those questions that are found?",
+      readout: {
+        selector: "#book-stats",
+        match: /^Asked in a reader's words/,
+        label: "reader's-words answers found",
+      },
+      change: {
+        selector: "#book-method",
+        value: "encoder",
+        describe:
+          "The lab will fetch the encoder's vectors for these passages and search with them.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. The encoder never looks for a word, so “infant” for “baby” or “timepiece” for “watch” costs it nothing. Now look at the tile for questions asked in the book's words: it has not improved, and at some settings it falls. A question that quotes the book is best served by finding the quote. That is why many production systems run both searches and merge the rankings, which is the last option in the list.`,
+      settle: "#book-simulation-status",
+    },
+    {
       id: "overlap",
       question:
         "At 60 words with no overlap, some answers are cut in two by a passage boundary. You set the overlap to a half, so every passage starts in the middle of the one before. What happens to the number of answers found?",

@@ -569,3 +569,41 @@ test("learned word vectors find “tall ≈ height”, and averaging them loses 
   await expect(page.locator("#book-description")).toContainText("Averaging blurs");
   expect(errors).toEqual([]);
 });
+
+test("a passage encoder finds what word matching cannot, and declines a typed question", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/open-book-lab.html");
+  const status = page.locator("#book-simulation-status");
+  const figure = async (label: string) =>
+    Number(
+      await page.locator("#book-stats .stat", { hasText: label }).locator("strong").innerText(),
+    );
+  await expect(status).toContainText("Current · shared words");
+  const plainOwn = await figure("reader's words");
+
+  await page.locator("#book-question").selectOption("watch-own");
+  await expect(page.locator("#book-outcome")).toContainText("not in the top 10");
+  await page.locator("#book-method").selectOption("encoder");
+  await expect(status).toContainText("Current · a passage encoder · 263 passages", {
+    timeout: 20_000,
+  });
+  expect(await figure("reader's words")).toBeGreaterThan(plainOwn + 1);
+  await expect(page.locator("#book-outcome")).toContainText("passage ranked 4");
+
+  await page.locator("#book-size").fill("5");
+  await expect(status).toContainText("a passage encoder · 105 passages of 150 words", {
+    timeout: 20_000,
+  });
+  await expect(page.locator("#book-passages li.has-answer mark")).toContainText("took a watch");
+
+  await page.locator("#book-method").selectOption("both");
+  await expect(status).toContainText("shared words and the encoder, merged");
+  await expect(page.locator("#book-passages .why").first()).toContainText("combined rank");
+
+  await page.locator("#book-own").fill("Who is late?");
+  await page.locator("#book-own").press("Enter");
+  await expect(page.locator("#book-outcome")).toContainText("cannot read a question you type");
+  expect(errors).toEqual([]);
+});

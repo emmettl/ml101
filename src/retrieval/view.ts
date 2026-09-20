@@ -81,6 +81,7 @@ export function renderPassages(
   index: Index,
   matches: readonly Match[],
   span: Span | undefined,
+  scoreName = "similarity",
 ): void {
   const open = new Set(
     [...host.querySelectorAll<HTMLDetailsElement>("details[open]")].map(
@@ -116,7 +117,7 @@ export function renderPassages(
           return entry.via ? `${entry.via} ≈ ${surface}` : surface;
         })
         .join(", ");
-      why.textContent = `similarity ${match.score.toFixed(2)} · ${reasons ? `matched on ${reasons}` : "no one word accounts for it"}`;
+      why.textContent = `${scoreName} ${match.score.toFixed(2)} · ${reasons ? `matched on ${reasons}` : "read whole, so no matched words to show"}`;
       summary.append(rank, track, why);
       if (answer) {
         const badge = document.createElement("span");

@@ -25,6 +25,7 @@ import {
   type Lexicon,
   type WordVectors,
 } from "../retrieval/dense";
+import { decodeRows, passageFile, retrieveByEncoder } from "../retrieval/encoder";
 import source from "../retrieval/engine.ts?raw";
 import { QUESTIONS } from "../retrieval/questions";
 import { holds, list, promptFor, renderPassages } from "../retrieval/view";
@@ -41,7 +42,18 @@ const BOOK = QUESTIONS.filter((question) => question.wording === "book").length;
 const OWN = QUESTIONS.length - BOOK;
 
 const VECTOR_SIZE = 50;
-type Method = "words" | "neighbours" | "average";
+type Method = "words" | "neighbours" | "average" | "encoder" | "both";
+const METHOD_NAMES: Record<Method, string> = {
+  words: "shared words",
+  neighbours: "shared words plus near-meanings",
+  average: "one learned vector per passage",
+  encoder: "a passage encoder",
+  both: "shared words and the encoder, merged",
+};
+const passageUrls = import.meta.glob<string>("../data/passages/*.bin", {
+  query: "?url",
+  import: "default",
+});
 
 interface Params extends Record<string, number | string> {
   question: string;
@@ -73,8 +85,13 @@ const controls: ControlSpec<Params>[] = [
       { value: "words", label: "Shared words" },
       { value: "neighbours", label: "Shared words, plus near-meanings for words the book lacks" },
       { value: "average", label: "One learned vector per passage (the average of its words)" },
+      {
+        value: "encoder",
+        label: "A passage encoder: a transformer trained to match questions to answers",
+      },
+      { value: "both", label: "Both: shared words and the encoder, rankings merged" },
     ],
-    help: "The second and third use word vectors learned from six billion words of other text (0.6 MB, fetched when first chosen).",
+    help: "Everything but the first is fetched when first chosen. The encoder's vectors were computed ahead of time, so it can answer the 24 set questions but not one you type.",
   },
   {
     type: "range",
@@ -120,6 +137,10 @@ let lexicon: Lexicon | undefined;
 let dense: DenseIndex | undefined;
 let loading: Promise<void> | undefined;
 let loadFailed = false;
+/** The encoder's vector for each set question, by its wording, and for each passage setting. */
+let askedRows: Map<string, Float32Array> | undefined;
+const passageRows = new Map<string, Float32Array[]>();
+let request = 0;
 /** A question typed by the learner. It has no answer key. */
 let custom = "";
 let frame = 0;
@@ -128,17 +149,51 @@ const isBook = (at: number): boolean => QUESTIONS[at].wording === "book";
 const isOwn = (at: number): boolean => !isBook(at);
 const plural = (count: number, noun: string): string => `${count} ${noun}${count === 1 ? "" : "s"}`;
 
-/** The method in force: a learned method falls back to words until its vectors have arrived. */
+const usesWordVectors = (): boolean =>
+  params.method === "neighbours" || params.method === "average";
+const usesEncoder = (): boolean => params.method === "encoder" || params.method === "both";
+const encoded = (): Float32Array[] | undefined =>
+  passageRows.get(passageFile(params.size, params.overlap));
+
+/** The method in force: anything learned falls back to words until its data has arrived. */
 function method(): Method {
-  return vectors && (params.method === "neighbours" || params.method === "average")
-    ? params.method
-    : "words";
+  if (usesWordVectors() && vectors) return params.method as Method;
+  if (usesEncoder() && askedRows && encoded()?.length === index.chunks.length)
+    return params.method as Method;
+  return "words";
+}
+
+/** Reciprocal rank fusion: a passage scores by its place in each list, not by either score. */
+function merged(lists: readonly Match[][], keep: number): Match[] {
+  const fused = new Map<number, Match>();
+  for (const matches of lists)
+    matches.forEach((match, place) => {
+      const entry = fused.get(match.chunk) ?? {
+        chunk: match.chunk,
+        score: 0,
+        shared: match.shared,
+      };
+      entry.score += 1 / (60 + place + 1);
+      fused.set(match.chunk, entry);
+    });
+  const best = lists.length / 61;
+  return [...fused.values()]
+    .map((match) => ({ ...match, score: match.score / best }))
+    .sort((a, b) => b.score - a.score || a.chunk - b.chunk)
+    .slice(0, keep);
 }
 
 function search(asked: string, keep: number): Match[] {
-  if (method() === "neighbours" && lexicon)
+  const chosen = method();
+  if (chosen === "neighbours" && lexicon)
     return retrieveWithNeighbours(index, lexicon, asked, keep);
-  if (method() === "average" && dense) return retrieveByMeaning(dense, asked, keep);
+  if (chosen === "average" && dense) return retrieveByMeaning(dense, asked, keep);
+  const vector = askedRows?.get(asked);
+  const passages = encoded();
+  if ((chosen === "encoder" || chosen === "both") && vector && passages) {
+    if (chosen === "encoder") return retrieveByEncoder(passages, vector, keep);
+    return merged([retrieve(index, asked, 30), retrieveByEncoder(passages, vector, 30)], keep);
+  }
   return retrieve(index, asked, keep);
 }
 
@@ -149,6 +204,33 @@ function rebuild(): void {
     vectors && method() === "average" ? buildDenseIndex(text, words, chunks, vectors) : undefined;
   wordExam = sitExam(index, text, QUESTIONS, DEEPEST);
   exam = method() === "words" ? wordExam : sitExam(index, text, QUESTIONS, DEEPEST, search);
+}
+
+async function fetchRows(name: string): Promise<Float32Array[]> {
+  const url = await passageUrls[`../data/passages/${name}`]();
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`Could not fetch ${name} (${response.status})`);
+  return decodeRows(new Int8Array(await response.arrayBuffer()));
+}
+
+/** Fetch the encoder's vectors for the set questions, and for the passage setting in force. */
+async function loadEncoder(): Promise<void> {
+  const name = passageFile(params.size, params.overlap);
+  const [asked, passages] = await Promise.all([
+    askedRows ? undefined : fetchRows("questions.bin"),
+    passageRows.has(name) ? undefined : fetchRows(name),
+  ]);
+  if (asked) askedRows = new Map(QUESTIONS.map((question, at) => [question.ask, asked[at]]));
+  if (passages) passageRows.set(name, passages);
+}
+
+/** Whatever the chosen method still needs from the network, or nothing. */
+function missing(): { what: string; fetch: () => Promise<void> } | undefined {
+  if (usesWordVectors() && !vectors)
+    return { what: "the word vectors (0.6 MB)", fetch: loadVectors };
+  if (usesEncoder() && !(askedRows && encoded()))
+    return { what: "the encoder's vectors for these passages", fetch: loadEncoder };
+  return undefined;
 }
 
 /** Fetch the word vectors the first time a learned method is chosen. */
@@ -176,7 +258,15 @@ function drawSearch(): void {
   const span = custom ? undefined : locate(text, question);
   const matches = search(asked, params.keep);
   byId("book-asked").textContent = asked;
-  renderPassages(byId("book-passages"), text, words, index, matches, span);
+  renderPassages(
+    byId("book-passages"),
+    text,
+    words,
+    index,
+    matches,
+    span,
+    method() === "both" && !custom ? "combined rank" : "similarity",
+  );
   byId("book-prompt").textContent = promptFor(text, index, matches, asked);
 
   const handed = matches.reduce(
@@ -190,7 +280,7 @@ function drawSearch(): void {
   const blind = unknown.length === 0 ? "" : ` ${aboutUnknown(unknown, asked)}`;
   const outcome = byId("book-outcome");
   if (custom) {
-    outcome.textContent = `This is your own question, so there is no answer key to check against. Read the ${plural(matches.length, "passage")} and judge: would a careful reader be able to answer from these alone?${blind}`;
+    outcome.textContent = `${usesEncoder() ? "The encoder is not on this page, so it cannot read a question you type: this search used shared words. " : ""}This is your own question, so there is no answer key to check against. Read the ${plural(matches.length, "passage")} and judge: would a careful reader be able to answer from these alone?${blind}`;
     return;
   }
   if (!span) return;
@@ -227,6 +317,8 @@ function aboutUnknown(unknown: readonly string[], asked: string): string {
         : "")
     );
   }
+  if (method() === "encoder" || method() === "both")
+    return `The book never uses ${list(unknown)}. The encoder does not mind: it never looks for a word. It read the question whole and placed it among the passages by meaning.`;
   if (method() === "average")
     return `The book never uses ${list(unknown)}, which does not matter to this method: no word has to match, only the averages have to point the same way. Whether an average of ${params.size} words still points anywhere useful is what the score below measures.`;
   return `The book never uses ${list(unknown)}, so ${those} matched nothing and the search ran on what was left. Switch the matching to use near-meanings and see what a learned embedding makes of ${unknown.length === 1 ? "it" : "them"}.`;
@@ -309,7 +401,11 @@ function drawScores(): void {
       ? ""
       : method() === "neighbours"
         ? `Matching shared words alone finds ${plain} at these settings. The embedding knows that “bunny” sits beside “rabbit”; that knowledge rescues some questions and sends others after near-misses such as “sooner” for “disappear”. `
-        : `Matching shared words alone finds ${plain} at these settings. Averaging blurs: by the time ${params.size} word vectors have been averaged, the one word that mattered has been outvoted. The embeddings that do beat word matching are transformers (lesson 06) that read a passage in context and are trained for this very job. They are far too large to run on this page. `;
+        : method() === "encoder"
+          ? `Matching shared words alone finds ${plain} at these settings. The encoder is a transformer that read each passage whole and was trained on 215 million question-and-answer pairs to place a question beside its answer. It never looks for a word, which is why it copes with a reader's wording, and also why it can lose to word matching on a question that quotes the book${params.size >= 250 ? "; and one vector is a small place to keep a passage this long" : ""}. `
+          : method() === "both"
+            ? `Shared words alone find ${plain} at these settings. Here each passage is scored by its place in both rankings, so either search can vouch for it. This is how many production systems now search: word matching for exact terms, an encoder for meaning. `
+            : `Matching shared words alone finds ${plain} at these settings. Averaging blurs: by the time ${params.size} word vectors have been averaged, the one word that mattered has been outvoted. The embeddings that do beat word matching are transformers (lesson 06) that read a passage in context and are trained for this very job. They are far too large to run on this page. `;
   byId("book-description").textContent =
     (loadFailed && params.method !== "words"
       ? "The word vectors could not be fetched, so this is plain word matching. "
@@ -325,7 +421,7 @@ function drawScores(): void {
         ? "The gap between the two kinds of question is the gap between matching words and matching meaning."
         : "");
   byId("book-simulation-status").textContent =
-    `Current · ${method() === "words" ? "shared words" : method() === "neighbours" ? "shared words plus near-meanings" : "one learned vector per passage"} · ${index.chunks.length.toLocaleString("en-GB")} passages of ${params.size} words · ${params.overlap === 0 ? "no overlap" : `${params.overlap * 100}% overlap`} · ${plural(params.keep, "passage")} handed over · ${QUESTIONS.length} questions with known answers`;
+    `Current · ${METHOD_NAMES[method()]} · ${index.chunks.length.toLocaleString("en-GB")} passages of ${params.size} words · ${params.overlap === 0 ? "no overlap" : `${params.overlap * 100}% overlap`} · ${plural(params.keep, "passage")} handed over · ${QUESTIONS.length} questions with known answers`;
 }
 
 function drawAll(): void {
@@ -340,25 +436,41 @@ function schedule(): void {
   frame = requestAnimationFrame(drawAll);
 }
 
-const panel = renderControls(byId("book-controls"), "book", controls, params, (key) => {
-  if (key === "method" && params.method !== "words" && !vectors) {
-    byId("book-simulation-status").textContent = "Fetching the word vectors (0.6 MB)…";
-    loadVectors()
-      .catch(() => {
-        loadFailed = true;
-      })
-      .finally(() => {
-        rebuild();
-        schedule();
-      });
+/** Rebuild for the current settings, first fetching whatever the chosen method still lacks. */
+function refresh(): void {
+  request += 1;
+  const mine = request;
+  const needed = missing();
+  if (!needed) {
+    rebuild();
+    schedule();
     return;
   }
-  if (key === "size" || key === "overlap" || key === "method") rebuild();
+  byId("book-simulation-status").textContent = `Fetching ${needed.what}…`;
+  needed
+    .fetch()
+    .then(
+      () => {
+        loadFailed = false;
+      },
+      () => {
+        loadFailed = true;
+      },
+    )
+    .finally(() => {
+      if (mine !== request) return;
+      rebuild();
+      schedule();
+    });
+}
+
+const panel = renderControls(byId("book-controls"), "book", controls, params, (key) => {
   if (key === "question") {
     custom = "";
     ownInput.value = "";
   }
-  schedule();
+  if (key === "size" || key === "overlap" || key === "method") refresh();
+  else schedule();
 });
 
 byId<HTMLFormElement>("book-ask").addEventListener("submit", (event) => {
@@ -372,8 +484,7 @@ byId("book-reset").addEventListener("click", () => {
   custom = "";
   ownInput.value = "";
   panel.sync();
-  rebuild();
-  schedule();
+  refresh();
 });
 
 mountCodePeek(byId("code-peek"), {
@@ -384,7 +495,7 @@ mountCodePeek(byId("code-peek"), {
   python: `from sentence_transformers import SentenceTransformer
 import numpy as np
 
-embedder = SentenceTransformer("all-MiniLM-L6-v2")     # a learned embedding (lesson 05)
+embedder = SentenceTransformer("multi-qa-MiniLM-L6-cos-v1")  # the passage encoder this lab uses
 
 # Once, ahead of time: cut the documents up and embed every passage.
 passages = [" ".join(words[i:i + 150]) for i in range(0, len(words), 110)]   # 150 words, overlapping

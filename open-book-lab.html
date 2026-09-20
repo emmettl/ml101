@@ -34,10 +34,13 @@
         weighting words (a word counts for more if it is rare in the book). Two
         further settings bring in a learned embedding of words: GloVe, 50
         numbers per word, trained on six billion words of Wikipedia and news.
-        Production systems go one step further and embed whole passages with a
-        transformer trained for the purpose, which is too large to run here; the
-        lab lets you measure why they had to. Every other step, and every
-        failure you can produce here, is the same in production.
+        The last two use what production systems use, a passage encoder: a
+        transformer with 23 million knobs, trained to place a question beside
+        the passage that answers it. It is too large to run here, so its vectors
+        were computed ahead of time for every passage setting and for the 24 set
+        questions; the search over them happens live. It cannot read a question
+        you type. Every other step, and every failure you can produce here, is
+        the same in production.
       </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="book-name">60-word passages, 3 passages handed over</strong>
@@ -235,8 +238,13 @@
             >“Global Vectors for Word Representation”</a
           >
           (2014), released into the public domain; the lab ships the 12,000 or
-          so words it can need, at one byte per number. The passage encoders
-          that did overtake word matching began with Karpukhin et al.,
+          so words it can need, at one byte per number. The encoder is
+          <a
+            href="https://huggingface.co/sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
+            >multi-qa-MiniLM-L6-cos-v1</a
+          >
+          from the sentence-transformers project (Apache 2.0). Encoders of this
+          kind began to overtake word matching with Karpukhin et al.,
           <a href="https://arxiv.org/abs/2004.04906"
             >“Dense Passage Retrieval”</a
           >
