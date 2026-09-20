@@ -1,0 +1,380 @@
+/*
+ * The single source of colour for the course. Every other stylesheet, and every
+ * chart drawn from TypeScript, reads these names; nothing else holds a hex value
+ * for a themed surface. "Chrome" surfaces (hero, readout tiles) stay dark in both
+ * themes; everything else follows the theme.
+ */
+:root {
+  color-scheme: light;
+
+  --ink: #0b1e2d;
+  --deep: #123b54;
+  --steel: #2c5670;
+  --muted: #5f7484;
+  --line: #d3dbe2;
+  --grid: #e7ecef;
+  --paper: #fff;
+  --canvas: #f7f9fa;
+  --surface: #fff;
+  --tint: #f2f5f7;
+  --tint-2: #e6ecf0;
+  --amber: #e4a340;
+  --amber-dark: #a96f18;
+  --amber-wash: #fff8eb;
+  --jade: #2f8071;
+  --jade-wash: #edf8f5;
+  --brick: #b5443a;
+  --brick-wash: #fff2f0;
+  --select-bg: #0b1e2d;
+  --select-fg: #fff;
+  --on-amber: #0b1e2d;
+  --amber-hover: #efb358;
+  --chrome: #0b1e2d;
+  --chrome-deep: #081722;
+  --chrome-glow: #103044;
+  --chrome-text: #fff;
+  --chrome-muted: #b8c7d1;
+  --chrome-faint: #9eb0bc;
+  --chrome-line: rgb(255 255 255 / 13%);
+  --chrome-fill: rgb(255 255 255 / 5%);
+  --shadow: rgb(11 30 45 / 7%);
+
+  /* Two classes and two data roles, separable without colour vision. */
+  --class-a: #0072b2;
+  --class-b: #d55e00;
+  --series-train: #2c5670;
+  --series-held: #d55e00;
+
+  /* Heatmap ramps, low to high. */
+  --heat-low: #fde9b8;
+  --heat-mid: #d98a2b;
+  --heat-high: #123b54;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ink: #e6edf2;
+    --deep: #c3d6e2;
+    --steel: #8fb2c7;
+    --muted: #93a7b5;
+    --line: #2a4152;
+    --grid: #1f3342;
+    --paper: #0d1a24;
+    --canvas: #0a151d;
+    --surface: #12232f;
+    --tint: #172b39;
+    --tint-2: #1d3546;
+    --amber: #e4a340;
+    --amber-dark: #e9b45f;
+    --amber-wash: #2a2312;
+    --jade: #6fc2b0;
+    --jade-wash: #12302b;
+    --brick: #ec8f85;
+    --brick-wash: #351a17;
+    --select-bg: #e4a340;
+    --select-fg: #0b1e2d;
+    --chrome: #071620;
+    --chrome-deep: #040e15;
+    --chrome-glow: #0c2433;
+    --shadow: rgb(0 0 0 / 30%);
+    --class-a: #56b4e9;
+    --class-b: #f0934a;
+    --series-train: #8fb2c7;
+    --series-held: #f0934a;
+    --heat-low: #0d1a24;
+    --heat-mid: #2c6e8f;
+    --heat-high: #f3d38a;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ink: #e6edf2;
+  --deep: #c3d6e2;
+  --steel: #8fb2c7;
+  --muted: #93a7b5;
+  --line: #2a4152;
+  --grid: #1f3342;
+  --paper: #0d1a24;
+  --canvas: #0a151d;
+  --surface: #12232f;
+  --tint: #172b39;
+  --tint-2: #1d3546;
+  --amber: #e4a340;
+  --amber-dark: #e9b45f;
+  --amber-wash: #2a2312;
+  --jade: #6fc2b0;
+  --jade-wash: #12302b;
+  --brick: #ec8f85;
+  --brick-wash: #351a17;
+  --select-bg: #e4a340;
+  --select-fg: #0b1e2d;
+  --chrome: #071620;
+  --chrome-deep: #040e15;
+  --chrome-glow: #0c2433;
+  --shadow: rgb(0 0 0 / 30%);
+  --class-a: #56b4e9;
+  --class-b: #f0934a;
+  --series-train: #8fb2c7;
+  --series-held: #f0934a;
+  --heat-low: #0d1a24;
+  --heat-mid: #2c6e8f;
+  --heat-high: #f3d38a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font:
+    16px/1.6 "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: Cambria, Georgia, serif;
+  line-height: 1.08;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--amber);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.eyebrow.dark {
+  color: var(--amber-dark);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  color: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus-visible {
+  border-color: currentcolor;
+}
+
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentcolor;
+  stroke-linecap: round;
+  stroke-width: 1.8;
+}
+
+.visually-hidden {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Charts are coloured by class so a theme change needs no redraw. */
+.plot text {
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+.plot-grid {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+.plot-frame {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.plot-axis {
+  fill: var(--muted);
+  font-size: 11px;
+}
+
+.plot-title {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.plot-line {
+  fill: none;
+  stroke: var(--jade);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3;
+}
+
+.plot-line.thin {
+  stroke-width: 1.8;
+}
+
+.plot-line.truth {
+  stroke: var(--muted);
+  stroke-dasharray: 3 5;
+  stroke-width: 1.6;
+}
+
+.plot-line.best {
+  stroke: var(--muted);
+  stroke-dasharray: 6 5;
+  stroke-width: 1.8;
+}
+
+.plot-line.train {
+  stroke: var(--series-train);
+}
+
+.plot-line.held {
+  stroke: var(--series-held);
+  stroke-dasharray: 7 4;
+}
+
+.plot-line.path {
+  stroke: var(--amber);
+  stroke-width: 2;
+}
+
+.plot-line.warn {
+  stroke: var(--brick);
+}
+
+.plot-guide {
+  stroke: var(--brick);
+  stroke-dasharray: 6 5;
+  stroke-width: 1.5;
+}
+
+.plot-guide.calm {
+  stroke: var(--muted);
+}
+
+.plot-label {
+  fill: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.plot-label.warn {
+  fill: var(--brick);
+}
+
+.plot-label.strong {
+  fill: var(--ink);
+}
+
+.plot-point {
+  fill: var(--series-train);
+  stroke: var(--surface);
+  stroke-width: 1.5;
+}
+
+.plot-point.held {
+  fill: none;
+  stroke: var(--series-held);
+  stroke-width: 1.6;
+}
+
+.plot-point.outlier {
+  fill: var(--brick);
+}
+
+.plot-point.here {
+  fill: var(--amber);
+  stroke: var(--chrome);
+  stroke-width: 2;
+}
+
+.plot-point.goal {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.plot-square {
+  fill: var(--brick);
+  fill-opacity: 0.13;
+  stroke: var(--brick);
+  stroke-opacity: 0.45;
+  stroke-width: 1;
+}
+
+.plot-residual {
+  stroke: var(--brick);
+  stroke-width: 1.6;
+}
+
+.plot-band {
+  fill: var(--amber);
+  fill-opacity: 0.12;
+}
+
+.plot-handle {
+  cursor: grab;
+  fill: transparent;
+  touch-action: none;
+}
+
+.plot-handle:focus-visible {
+  outline: none;
+  stroke: var(--amber);
+  stroke-width: 3;
+}
+
+.plot-handle.dragging {
+  cursor: grabbing;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "resolveJsonModule": true,
+    "noUncheckedIndexedAccess": false,
+    "noEmit": true,
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "vitest/globals", "node"],
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts", "e2e/**/*.ts", "vite.config.ts", "playwright.config.ts"]
+}
