@@ -118,7 +118,8 @@ function plotLayer(svg: SVGSVGElement): SVGGElement {
     existing.replaceChildren();
     return existing;
   }
-  const layer = svgElement("g", { "data-plot-layer": "" });
+  // Ticks and gridlines read aloud are noise; the chart's label and its readout carry the meaning.
+  const layer = svgElement("g", { "data-plot-layer": "", "aria-hidden": "true" });
   svg.prepend(layer);
   return layer;
 }

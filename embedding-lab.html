@@ -13,27 +13,27 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-05-text.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 06 · Representation</p>
-      <h1>Token &amp; Embedding Lab</h1>
-      <p class="lede">
-        Two machines that sit in front of every language model. The first cuts
-        text into pieces from a fixed list. The second gives each piece a
-        position, learned from nothing but which words appear together. Watch
-        both being built, then ask the second one a question in arithmetic.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> a byte-pair tokeniser learned from seven chapters of
-      <em>Alice's Adventures in Wonderland</em> (up to 400 merges; real ones use
-      tens of thousands), and skip-gram embeddings with negative sampling
-      trained on an invented mini-language of 900 short sentences about 40
-      words. The mini-language is built so that rank, gender and age are
-      genuinely present; real text is far messier, and real embeddings also
-      absorb its prejudices. Subword embeddings, positional information and
-      contextual embeddings are omitted.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 06 · Representation</p>
+        <h1>Token &amp; Embedding Lab</h1>
+        <p class="lede">
+          Two machines that sit in front of every language model. The first cuts
+          text into pieces from a fixed list. The second gives each piece a
+          position, learned from nothing but which words appear together. Watch
+          both being built, then ask the second one a question in arithmetic.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> a byte-pair tokeniser learned from seven chapters of
+        <em>Alice's Adventures in Wonderland</em> (up to 400 merges; real ones
+        use tens of thousands), and skip-gram embeddings with negative sampling
+        trained on an invented mini-language of 900 short sentences about 40
+        words. The mini-language is built so that rank, gender and age are
+        genuinely present; real text is far messier, and real embeddings also
+        absorb its prejudices. Subword embeddings, positional information and
+        contextual embeddings are omitted.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="embed-name">8 dimensions</strong>
         <p id="embed-description"></p>

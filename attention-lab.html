@@ -13,26 +13,26 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-06-attention.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 07 · Transformers</p>
-      <h1>Attention Lab</h1>
-      <p class="lede">
-        The lower chart is the room: every word placed by the badge it wears.
-        The amber arrow is the question “it” is asking. Drag the arrowhead.
-        Words the arrow points towards get a high score, the scores become
-        shares, and the upper chart shows where the attention went. That is the
-        entire mechanism.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> one attention head, one asking word, twelve words, and
-      queries and keys of two numbers each, set by hand so that one axis means
-      “living thing” and the other “place”. A trained transformer learns its
-      queries, keys and values, uses hundreds of numbers for each, runs dozens
-      of heads in dozens of layers, and adds information about word order. None
-      of that changes the arithmetic shown here.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 07 · Transformers</p>
+        <h1>Attention Lab</h1>
+        <p class="lede">
+          The lower chart is the room: every word placed by the badge it wears.
+          The amber arrow is the question “it” is asking. Drag the arrowhead.
+          Words the arrow points towards get a high score, the scores become
+          shares, and the upper chart shows where the attention went. That is
+          the entire mechanism.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> one attention head, one asking word, twelve words, and
+        queries and keys of two numbers each, set by hand so that one axis means
+        “living thing” and the other “place”. A trained transformer learns its
+        queries, keys and values, uses hundreds of numbers for each, runs dozens
+        of heads in dozens of layers, and adds information about word order.
+        None of that changes the arithmetic shown here.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="attn-name">“it” → animal</strong>
         <p id="attn-description"></p>

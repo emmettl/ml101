@@ -4,6 +4,7 @@ import {
   crossEntropy,
   makeDataset,
   parameterCount,
+  probability,
   sampleBatch,
   splitDataset,
   train,
@@ -226,7 +227,11 @@ function drawLive(): void {
     history.map((entry) => [entry.step, entry.held] as const),
     "held thin",
   );
-  byId("play-outcome").textContent = liveOutcome();
+  byId("play-outcome").textContent =
+    liveOutcome() +
+    (picked
+      ? ` Selected example: a ${picked.label ? "triangle" : "circle"} at (${picked.x.toFixed(2)}, ${picked.y.toFixed(2)}), which the network puts at ${(probability(network, picked.x, picked.y) * 100).toFixed(0)}% triangle.`
+      : "");
 }
 
 function reading(unseen: number, seen: number): string {
@@ -339,6 +344,12 @@ modeButton.addEventListener("click", () => {
   modeButton.textContent =
     mode === "blame" ? "Show the knobs themselves" : "Show blame for the selected example";
   if (mode === "blame" && !picked) picked = training[0];
+  drawLive();
+});
+byId("play-pick").addEventListener("click", () => {
+  // The keyboard route to what a click on the map does: step through the training examples.
+  const at = picked ? training.indexOf(picked) : -1;
+  picked = training[(at + 7) % training.length];
   drawLive();
 });
 mapChart.addEventListener("click", (event) => {

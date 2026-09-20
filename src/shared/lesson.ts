@@ -4,6 +4,7 @@
  * been answered correctly; nothing needs to be clicked to "mark as done".
  */
 
+import { calmLiveRegions } from "./announce";
 import {
   COURSE_LESSONS,
   lessonForHref,
@@ -97,9 +98,10 @@ function initQuizzes(): void {
       button.classList.add(correct ? "correct" : "incorrect");
       button.setAttribute("aria-pressed", "true");
       if (feedback) {
-        const message =
-          button.dataset.feedback ??
-          (correct ? "Correct." : "Not quite. Try the chart, then choose again.");
+        const written =
+          button.dataset.feedback ?? (correct ? "Correct." : "Try the chart, then choose again.");
+        // A wrong choice is shown in red; say so in words too.
+        const message = correct || /^not quite/i.test(written) ? written : `Not quite. ${written}`;
         feedback.textContent = remembered ? `${message} (Your earlier answer.)` : message;
       }
       const lessonId = document.body.dataset.lesson;
@@ -129,9 +131,34 @@ function rememberCurrentLesson(): void {
   });
 }
 
+/**
+ * A lesson slider's label reads "Learning rate · 0.020". Name the slider by the words alone and
+ * speak the shown value, which is in real units, not the slider's raw position (the learning
+ * rate slider runs on a log scale from −3 to −0.45).
+ */
+function nameSliders(): void {
+  document.querySelectorAll<HTMLInputElement>('.control input[type="range"]').forEach((input) => {
+    const label = document.querySelector<HTMLLabelElement>(`label[for="${input.id}"]`);
+    const shown = label?.querySelector("span");
+    if (!label || !shown) return;
+    const name = [...label.childNodes]
+      .filter((node) => node.nodeType === Node.TEXT_NODE)
+      .map((node) => node.textContent ?? "")
+      .join(" ")
+      .replace(/[·\s]+$/u, "")
+      .trim();
+    if (name) input.setAttribute("aria-label", name);
+    const speak = () => input.setAttribute("aria-valuetext", shown.textContent?.trim() ?? "");
+    input.addEventListener("input", () => window.setTimeout(speak, 0));
+    speak();
+  });
+}
+
 /** Call once from a lesson's entry module, after its widget is wired. */
 export function initLessonPage(): void {
   initTheme();
+  nameSliders();
+  calmLiveRegions();
   initQuizzes();
   rememberCurrentLesson();
 }

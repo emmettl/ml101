@@ -263,6 +263,15 @@ export function mountPredictions(
         const id = item.dataset.choice;
         item.classList.toggle("correct", id === correct);
         item.classList.toggle("incorrect", id === chosen && chosen !== correct);
+        const note =
+          id === correct && id === chosen
+            ? "what happened, and your prediction"
+            : id === correct
+              ? "what happened"
+              : id === chosen
+                ? "your prediction"
+                : "";
+        if (note) item.append(element("span", "visually-hidden", ` (${note})`));
       });
       const verdict = chosen === correct ? "Right." : "Not this time.";
       const label = prompt.readout.label.charAt(0).toUpperCase() + prompt.readout.label.slice(1);

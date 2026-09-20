@@ -13,27 +13,27 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-07-next-token.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 08 · Language models</p>
-      <h1>Next-Token Lab</h1>
-      <p class="lede">
-        The bars are the model's entire output: odds for the next character,
-        given the last few. Everything else is a loop around them. Write one
-        character at a time and watch the odds change with every pick, then find
-        the context length at which the model stops composing and starts
-        reciting.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> a character-level model over the first seven chapters of
-      <em>Alice's Adventures in Wonderland</em> (public domain; about 81,000
-      characters, lower-cased, 33 symbols). It counts what followed each context
-      in the book and backs off to a shorter context when a run was never seen.
-      There are no learned knobs, no embeddings and no attention, so it cannot
-      generalise to contexts it has not met. Real models predict word pieces,
-      not characters, from billions of pages.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 08 · Language models</p>
+        <h1>Next-Token Lab</h1>
+        <p class="lede">
+          The bars are the model's entire output: odds for the next character,
+          given the last few. Everything else is a loop around them. Write one
+          character at a time and watch the odds change with every pick, then
+          find the context length at which the model stops composing and starts
+          reciting.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> a character-level model over the first seven chapters of
+        <em>Alice's Adventures in Wonderland</em> (public domain; about 81,000
+        characters, lower-cased, 33 symbols). It counts what followed each
+        context in the book and backs off to a shorter context when a run was
+        never seen. There are no learned knobs, no embeddings and no attention,
+        so it cannot generalise to contexts it has not met. Real models predict
+        word pieces, not characters, from billions of pages.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="lm-name">5 characters of context</strong>
         <p id="lm-description"></p>

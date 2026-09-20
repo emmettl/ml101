@@ -14,25 +14,26 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-03-decisions.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 04 · Classification</p>
-      <h1>Neuron Lab</h1>
-      <p class="lede">
-        A neuron does not say yes or no. It says how sure it is. Somebody still
-        has to decide how sure is sure enough, and that choice moves errors from
-        one kind to the other without removing any. The lower chart lines every
-        example up by the neuron's confidence so you can see exactly which ones
-        change sides.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> a single sigmoid neuron with two inputs and three knobs,
-      trained by mini-batch gradient descent on cross-entropy, scored on the 160
-      examples it trained on. Triangles are the class being looked for. Held-out
-      scoring, class imbalance, calibration and the cost of each kind of error
-      are left out; the last of those is what decides the cut-off in practice.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 04 · Classification</p>
+        <h1>Neuron Lab</h1>
+        <p class="lede">
+          A neuron does not say yes or no. It says how sure it is. Somebody
+          still has to decide how sure is sure enough, and that choice moves
+          errors from one kind to the other without removing any. The lower
+          chart lines every example up by the neuron's confidence so you can see
+          exactly which ones change sides.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> a single sigmoid neuron with two inputs and three knobs,
+        trained by mini-batch gradient descent on cross-entropy, scored on the
+        160 examples it trained on. Triangles are the class being looked for.
+        Held-out scoring, class imbalance, calibration and the cost of each kind
+        of error are left out; the last of those is what decides the cut-off in
+        practice.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="neuron-name">Overlapping clusters</strong>
         <p id="neuron-description"></p>

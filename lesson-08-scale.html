@@ -11,328 +11,338 @@
   </head>
   <body data-lesson="scale">
     <!-- include: lesson-topbar -->
-    <header class="lesson-hero">
-      <div class="lesson-hero-grid">
-        <div>
-          <p class="eyebrow">Lesson 08 · Scale</p>
-          <h1>From toy to ChatGPT</h1>
-          <p class="lede">
-            You have now met every idea inside a modern language model: knobs, a
-            loss, descent, layers, tokens, embeddings, attention and next-token
-            prediction. What is left is a matter of size, and of what is done to
-            the model after it has read the internet.
-          </p>
-        </div>
-        <aside class="lesson-meta">
-          <span>Estimated reading time</span><strong>12 minutes</strong
-          ><span>Builds on</span><strong>Everything so far</strong
-          ><a href="scale-ladder.html">Open the Scale Ladder →</a>
-        </aside>
-      </div>
-    </header>
-    <!-- include: lesson-sequence -->
-    <main id="content" class="lesson-layout">
-      <article class="lesson-copy">
-        <section id="idea">
-          <p class="section-label">The one idea</p>
-          <h2>
-            The same machine, a billion times larger, then taught how to behave
-          </h2>
-          <p>
-            Nothing in a large language model is a different kind of thing from
-            what you have already trained in this course. It is a stack of
-            attention layers and small networks, reading token embeddings, with
-            all its knobs set by gradient descent to lower its surprise at the
-            next token. The line in lesson 00 had 2 knobs. The largest openly
-            documented model has 405 billion. The update rule is the one from
-            lesson 01.
-          </p>
-          <p>
-            Size is not the whole story, though. A model that has only learned
-            to continue text is not an assistant. Ask it a question and it may
-            well reply with three more questions, because on the internet
-            questions often come in lists. Turning a text-continuer into
-            something that answers takes two further, much smaller, rounds of
-            training.
-          </p>
-          <div class="callout">
-            A chatbot is a next-token predictor, trained on a vast amount of
-            text and then nudged, with far fewer examples, towards continuing
-            text the way a helpful assistant would.
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 08 · Scale</p>
+            <h1>From toy to ChatGPT</h1>
+            <p class="lede">
+              You have now met every idea inside a modern language model: knobs,
+              a loss, descent, layers, tokens, embeddings, attention and
+              next-token prediction. What is left is a matter of size, and of
+              what is done to the model after it has read the internet.
+            </p>
           </div>
-          <ol class="pipeline" aria-label="The three stages of training">
-            <li>
-              <strong>Pretraining</strong>
-              <p>
-                Predict the next token across trillions of tokens of books, code
-                and web pages. Almost all the cost and almost all the knowledge
-                come from here.
-              </p>
-              <em>Result: fluent, knowledgeable, no manners.</em>
-            </li>
-            <li>
-              <strong>Fine-tuning</strong>
-              <p>
-                Continue training on tens of thousands of example conversations
-                written by people, showing what a good answer looks like. Same
-                loss, new examples.
-              </p>
-              <em>Result: it answers instead of rambling.</em>
-            </li>
-            <li>
-              <strong>Learning from preferences</strong>
-              <p>
-                People compare pairs of answers. A second model learns to
-                predict which they prefer, and the chatbot's knobs are nudged
-                towards answers it scores highly.
-              </p>
-              <em>Result: more helpful, more careful, more agreeable.</em>
-            </li>
-          </ol>
-        </section>
-        <section id="ladder">
-          <p class="section-label">How big is big?</p>
-          <h2>Twelve steps of ten</h2>
-          <p>
-            The chart puts this course's models and some well-known real ones on
-            a single scale. It has to be a scale of multiplication: each
-            gridline is a thousand times the one before. On an ordinary scale,
-            if the biggest bar were the width of your screen, every model in
-            this course would be a few atoms wide at most. Step up the ladder
-            one rung at a time.
-          </p>
-          <div class="interactive" aria-labelledby="interactive-title">
-            <div class="interactive-head">
-              <div>
-                <h3 id="interactive-title">The ladder</h3>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>12 minutes</strong
+            ><span>Builds on</span><strong>Everything so far</strong
+            ><a href="scale-ladder.html">Open the Scale Ladder →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>
+              The same machine, a billion times larger, then taught how to
+              behave
+            </h2>
+            <p>
+              Nothing in a large language model is a different kind of thing
+              from what you have already trained in this course. It is a stack
+              of attention layers and small networks, reading token embeddings,
+              with all its knobs set by gradient descent to lower its surprise
+              at the next token. The line in lesson 00 had 2 knobs. The largest
+              openly documented model has 405 billion. The update rule is the
+              one from lesson 01.
+            </p>
+            <p>
+              Size is not the whole story, though. A model that has only learned
+              to continue text is not an assistant. Ask it a question and it may
+              well reply with three more questions, because on the internet
+              questions often come in lists. Turning a text-continuer into
+              something that answers takes two further, much smaller, rounds of
+              training.
+            </p>
+            <div class="callout">
+              A chatbot is a next-token predictor, trained on a vast amount of
+              text and then nudged, with far fewer examples, towards continuing
+              text the way a helpful assistant would.
+            </div>
+            <ol class="pipeline" aria-label="The three stages of training">
+              <li>
+                <strong>Pretraining</strong>
                 <p>
-                  Green bars are models you trained in this course. Amber is the
-                  one selected.
+                  Predict the next token across trillions of tokens of books,
+                  code and web pages. Almost all the cost and almost all the
+                  knowledge come from here.
+                </p>
+                <em>Result: fluent, knowledgeable, no manners.</em>
+              </li>
+              <li>
+                <strong>Fine-tuning</strong>
+                <p>
+                  Continue training on tens of thousands of example
+                  conversations written by people, showing what a good answer
+                  looks like. Same loss, new examples.
+                </p>
+                <em>Result: it answers instead of rambling.</em>
+              </li>
+              <li>
+                <strong>Learning from preferences</strong>
+                <p>
+                  People compare pairs of answers. A second model learns to
+                  predict which they prefer, and the chatbot's knobs are nudged
+                  towards answers it scores highly.
+                </p>
+                <em>Result: more helpful, more careful, more agreeable.</em>
+              </li>
+            </ol>
+          </section>
+          <section id="ladder">
+            <p class="section-label">How big is big?</p>
+            <h2>Twelve steps of ten</h2>
+            <p>
+              The chart puts this course's models and some well-known real ones
+              on a single scale. It has to be a scale of multiplication: each
+              gridline is a thousand times the one before. On an ordinary scale,
+              if the biggest bar were the width of your screen, every model in
+              this course would be a few atoms wide at most. Step up the ladder
+              one rung at a time.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">The ladder</h3>
+                  <p>
+                    Green bars are models you trained in this course. Amber is
+                    the one selected.
+                  </p>
+                </div>
+                <span class="engine-badge">Live scale arithmetic</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="scale-rung"
+                    >Rung · <span id="scale-rung-value">–</span></label
+                  ><input
+                    id="scale-rung"
+                    type="range"
+                    min="0"
+                    max="11"
+                    step="1"
+                    value="0"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <svg
+                  id="lesson-chart"
+                  class="lesson-chart"
+                  role="img"
+                  aria-label="Number of adjustable parameters in twelve models, on a logarithmic scale"
+                ></svg>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Knobs</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Just to store them</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Text it was trained on</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>A person reading that</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="scale-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              The labs behind the most capable current chatbots no longer
+              publish these numbers, which is why the ladder stops where it
+              does. There is no reason to think the recipe has changed.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">
+              The arithmetic, and what it does not buy
+            </p>
+            <h2>Bigger is better at the loss. The loss is not truth.</h2>
+            <p>
+              Training costs roughly six arithmetic operations per knob for
+              every token read, and the rule of thumb is to feed a model about
+              twenty tokens per knob. So a model ten times larger wants ten
+              times the text, and costs a hundred times as much to train. The
+              return on that spend has been remarkably reliable: the loss falls
+              smoothly and predictably as models grow, and abilities nobody
+              programmed, such as translation, arithmetic and writing code, show
+              up along the way.
+            </p>
+            <p>
+              Now recall what the loss measures: surprise at the next token of
+              human-written text. Every stage above rewards producing what a
+              plausible, approved-of reply would look like. None of them checks
+              whether it is true.
+            </p>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Hallucination</strong>
+                <p>
+                  Asked for a reference that does not exist, the most plausible
+                  continuation is a well-formatted reference. The model is doing
+                  its job. See
+                  <a class="term" href="glossary.html#hallucination"
+                    >hallucination</a
+                  >.
                 </p>
               </div>
-              <span class="engine-badge">Live scale arithmetic</span>
-            </div>
-            <div class="interactive-controls">
-              <div class="control">
-                <label for="scale-rung"
-                  >Rung · <span id="scale-rung-value">–</span></label
-                ><input
-                  id="scale-rung"
-                  type="range"
-                  min="0"
-                  max="11"
-                  step="1"
-                  value="0"
-                />
+              <div class="concept">
+                <strong>Frozen in time</strong>
+                <p>
+                  The knobs stop moving when training ends. It knows nothing
+                  later, and learns nothing from talking to you, unless text is
+                  placed in its context window.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>A mirror of its text</strong>
+                <p>
+                  Lesson 05's warning at full size: whatever regularities,
+                  skills and prejudices are in the training text are in the
+                  model.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Not only language</strong>
+                <p>
+                  Image generators use the same knobs, loss and descent. Their
+                  task is removing noise from a picture a little at a time,
+                  instead of predicting a next token.
+                </p>
               </div>
             </div>
-            <div class="chart-wrap">
-              <svg
-                id="lesson-chart"
-                class="lesson-chart"
-                role="img"
-                aria-label="Number of adjustable parameters in twelve models, on a logarithmic scale"
-              ></svg>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Size and stages</h2>
+            <div class="quiz">
+              <h3>
+                A lab wants a model ten times larger and follows the usual rule
+                of feeding it proportionally more text. Roughly how does the
+                training bill change?
+              </h3>
+              <p>
+                Operations ≈ 6 × knobs × tokens, and tokens grow with knobs.
+              </p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="That would be true if it read the same amount of text. But a larger model needs more text to make use of its extra knobs, so both factors grow."
+                >
+                  About ten times</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. Ten times the knobs and ten times the tokens multiply to a hundred times the arithmetic. This is why each generation of frontier model costs so dramatically more than the last."
+                >
+                  About a hundred times</button
+                ><button
+                  type="button"
+                  data-feedback="Cost scales with both the size of the model and how much it reads. Neither is free."
+                >
+                  Hardly at all, because the recipe is the same
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
             </div>
-            <dl class="interactive-readout">
+            <div class="quiz">
+              <h3>
+                A chatbot gives you a confident, well-written, entirely invented
+                legal citation. Which description of what happened is most
+                accurate?
+              </h3>
+              <p>Go back to what the loss rewards.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="There is no database inside the model and no lookup step. Everything it writes is generated one token at a time."
+                >
+                  It looked the case up and retrieved the wrong record</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. It was trained to produce text that looks like what would come next, and after “see the case of” what comes next looks like a citation. Plausible and true are separate properties, and only plausibility was ever in the loss. Verify anything that matters."
+                >
+                  It produced the most plausible continuation, and plausible is
+                  not the same as true</button
+                ><button
+                  type="button"
+                  data-feedback="Nothing suggests intent. The same mechanism that writes a correct citation writes an invented one; the model cannot tell which it is doing."
+                >
+                  It decided to deceive you
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember, from the whole course</h2>
+            <div class="takeaway-grid">
               <div>
-                <dt>Knobs</dt>
-                <dd id="stat-1">–</dd>
+                <strong>It is knobs all the way up</strong>
+                <p>
+                  Two of them or 405 billion, set by stepping downhill on a
+                  loss.
+                </p>
               </div>
               <div>
-                <dt>Just to store them</dt>
-                <dd id="stat-2">–</dd>
+                <strong>Examples are the only teacher</strong>
+                <p>
+                  What a model can do, and what it gets wrong, both trace back
+                  to its data.
+                </p>
               </div>
               <div>
-                <dt>Text it was trained on</dt>
-                <dd id="stat-3">–</dd>
+                <strong>Only unseen data tells you if it learned</strong>
+                <p>
+                  From a 13-knob curve to a chatbot reciting a book, memorising
+                  looks like success.
+                </p>
               </div>
               <div>
-                <dt>A person reading that</dt>
-                <dd id="stat-4">–</dd>
+                <strong>Fluent is not the same as right</strong>
+                <p>
+                  The loss rewards plausible text. Checking it remains your job.
+                </p>
               </div>
-            </dl>
-            <p
-              class="interactive-prose"
-              id="scale-prose"
-              aria-live="polite"
-            ></p>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">Three stages of training</a></li>
+              <li><a href="#ladder">How big is big?</a></li>
+              <li><a href="#arithmetic">What scale does not buy</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Size a model of your own and see what it would cost to train,
+              store and feed.
+            </p>
+            <a href="scale-ladder.html">Open the Scale Ladder →</a>
           </div>
-          <p>
-            The labs behind the most capable current chatbots no longer publish
-            these numbers, which is why the ladder stops where it does. There is
-            no reason to think the recipe has changed.
-          </p>
-        </section>
-        <section id="arithmetic">
-          <p class="section-label">The arithmetic, and what it does not buy</p>
-          <h2>Bigger is better at the loss. The loss is not truth.</h2>
-          <p>
-            Training costs roughly six arithmetic operations per knob for every
-            token read, and the rule of thumb is to feed a model about twenty
-            tokens per knob. So a model ten times larger wants ten times the
-            text, and costs a hundred times as much to train. The return on that
-            spend has been remarkably reliable: the loss falls smoothly and
-            predictably as models grow, and abilities nobody programmed, such as
-            translation, arithmetic and writing code, show up along the way.
-          </p>
-          <p>
-            Now recall what the loss measures: surprise at the next token of
-            human-written text. Every stage above rewards producing what a
-            plausible, approved-of reply would look like. None of them checks
-            whether it is true.
-          </p>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>Hallucination</strong>
-              <p>
-                Asked for a reference that does not exist, the most plausible
-                continuation is a well-formatted reference. The model is doing
-                its job. See
-                <a class="term" href="glossary.html#hallucination"
-                  >hallucination</a
-                >.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Frozen in time</strong>
-              <p>
-                The knobs stop moving when training ends. It knows nothing
-                later, and learns nothing from talking to you, unless text is
-                placed in its context window.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>A mirror of its text</strong>
-              <p>
-                Lesson 05's warning at full size: whatever regularities, skills
-                and prejudices are in the training text are in the model.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Not only language</strong>
-              <p>
-                Image generators use the same knobs, loss and descent. Their
-                task is removing noise from a picture a little at a time,
-                instead of predicting a next token.
-              </p>
-            </div>
-          </div>
-        </section>
-        <section id="check">
-          <p class="section-label">Check your understanding</p>
-          <h2>Size and stages</h2>
-          <div class="quiz">
-            <h3>
-              A lab wants a model ten times larger and follows the usual rule of
-              feeding it proportionally more text. Roughly how does the training
-              bill change?
-            </h3>
-            <p>Operations ≈ 6 × knobs × tokens, and tokens grow with knobs.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="That would be true if it read the same amount of text. But a larger model needs more text to make use of its extra knobs, so both factors grow."
-              >
-                About ten times</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. Ten times the knobs and ten times the tokens multiply to a hundred times the arithmetic. This is why each generation of frontier model costs so dramatically more than the last."
-              >
-                About a hundred times</button
-              ><button
-                type="button"
-                data-feedback="Cost scales with both the size of the model and how much it reads. Neither is free."
-              >
-                Hardly at all, because the recipe is the same
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-          <div class="quiz">
-            <h3>
-              A chatbot gives you a confident, well-written, entirely invented
-              legal citation. Which description of what happened is most
-              accurate?
-            </h3>
-            <p>Go back to what the loss rewards.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="There is no database inside the model and no lookup step. Everything it writes is generated one token at a time."
-              >
-                It looked the case up and retrieved the wrong record</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. It was trained to produce text that looks like what would come next, and after “see the case of” what comes next looks like a citation. Plausible and true are separate properties, and only plausibility was ever in the loss. Verify anything that matters."
-              >
-                It produced the most plausible continuation, and plausible is
-                not the same as true</button
-              ><button
-                type="button"
-                data-feedback="Nothing suggests intent. The same mechanism that writes a correct citation writes an invented one; the model cannot tell which it is doing."
-              >
-                It decided to deceive you
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-        </section>
-        <section id="takeaways">
-          <p class="section-label">Takeaways</p>
-          <h2>What to remember, from the whole course</h2>
-          <div class="takeaway-grid">
-            <div>
-              <strong>It is knobs all the way up</strong>
-              <p>
-                Two of them or 405 billion, set by stepping downhill on a loss.
-              </p>
-            </div>
-            <div>
-              <strong>Examples are the only teacher</strong>
-              <p>
-                What a model can do, and what it gets wrong, both trace back to
-                its data.
-              </p>
-            </div>
-            <div>
-              <strong>Only unseen data tells you if it learned</strong>
-              <p>
-                From a 13-knob curve to a chatbot reciting a book, memorising
-                looks like success.
-              </p>
-            </div>
-            <div>
-              <strong>Fluent is not the same as right</strong>
-              <p>
-                The loss rewards plausible text. Checking it remains your job.
-              </p>
-            </div>
-          </div>
-        </section>
-      </article>
-      <aside class="lesson-aside">
-        <nav aria-label="On this page">
-          <h2>On this page</h2>
-          <ul>
-            <li><a href="#idea">Three stages of training</a></li>
-            <li><a href="#ladder">How big is big?</a></li>
-            <li><a href="#arithmetic">What scale does not buy</a></li>
-            <li><a href="#check">Knowledge check</a></li>
-            <li><a href="#takeaways">Takeaways</a></li>
-          </ul>
-        </nav>
-        <div class="aside-card">
-          <h2>Go deeper</h2>
-          <p>
-            Size a model of your own and see what it would cost to train, store
-            and feed.
-          </p>
-          <a href="scale-ladder.html">Open the Scale Ladder →</a>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </main>
     <footer class="lesson-next">
       <div>
