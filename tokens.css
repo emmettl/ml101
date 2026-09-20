@@ -463,6 +463,90 @@ h3 {
   font-weight: 700;
 }
 
+.generated {
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font:
+    15px/1.7 ui-monospace,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.generated .prompt {
+  color: var(--muted);
+}
+
+.generated mark {
+  border-bottom: 2px solid var(--brick);
+  background: var(--brick-wash);
+  color: inherit;
+}
+
+.generated .cursor {
+  border-right: 2px solid var(--amber-dark);
+}
+
+.next-bars {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.next-bars li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 118px;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.next-bars .token {
+  padding: 2px 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--tint);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-weight: 700;
+  text-align: center;
+}
+
+.next-bars .track {
+  height: 14px;
+  border-radius: 3px;
+  background: var(--tint-2);
+}
+
+.next-bars .fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: 3px;
+  background: var(--jade);
+}
+
+.next-bars li.cut .fill {
+  background: var(--muted);
+  opacity: 0.35;
+}
+
+.next-bars .odds {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

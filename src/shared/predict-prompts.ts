@@ -186,6 +186,52 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#play-simulation-status",
     },
   ],
+  "next-token-lab": [
+    {
+      id: "context-copied",
+      question:
+        "With 5 characters of context the model writes real words and copies nothing. You let it see 12 characters instead, which should make it better informed. What happens to the share of its output copied word for word from the book?",
+      readout: {
+        selector: "#lm-stats",
+        match: "Copied from the book",
+        label: "copied from the book",
+      },
+      change: {
+        selector: "#lm-context",
+        value: "12",
+        describe: "The lab will set the context to 12 characters.",
+      },
+      choices: [
+        { id: "same", label: "It stays near zero" },
+        { id: "small", label: "It rises a little: under half is copied" },
+        { id: "big", label: "Most of the output is now copied" },
+      ],
+      judge: (_before, after) => (after >= 50 ? "big" : after >= 8 ? "small" : "same"),
+      explain: (_before, after) =>
+        `${after}% is lifted straight from the book. A twelve-character run almost never occurs twice in 81,000 characters, so at each step exactly one continuation is on offer and the model can only recite. Better informed, with nothing left to decide. It is lesson 02 again: too much capacity for the data.`,
+      settle: "#lm-simulation-status",
+    },
+    {
+      id: "greedy-variety",
+      question:
+        "Back at 5 characters. To make the output as sensible as possible you set top-k to 1, so the model always takes the single most likely character and never gambles. What happens to the number of different words it uses in 600 characters?",
+      readout: { selector: "#lm-stats", match: "Different words", label: "different words" },
+      change: {
+        selector: "#lm-topK",
+        value: "1",
+        describe: "The lab will set top-k to 1.",
+      },
+      choices: [
+        { id: "up", label: "More: it picks better words" },
+        { id: "same", label: "About the same" },
+        { id: "down", label: "Far fewer" },
+      ],
+      judge: judges.direction(10),
+      explain: (before, after) =>
+        `From ${before} different words to ${after}. Always taking the favourite leads back to a phrase it has already written, and from an identical context it makes identical choices, for ever. Read the sample. The safest pick at every step produces the worst text overall, which is why real systems keep some randomness in.`,
+      settle: "#lm-simulation-status",
+    },
+  ],
   "overfitting-lab": [
     {
       id: "degree-up",

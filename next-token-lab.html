@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="A complete language model built from one book: see the odds for every next character, sample from them, and find where composing turns into reciting."
+    />
+    <title>ML 101 — Next-Token Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-07-next-token.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 08 · Language models</p>
+      <h1>Next-Token Lab</h1>
+      <p class="lede">
+        The bars are the model's entire output: odds for the next character,
+        given the last few. Everything else is a loop around them. Write one
+        character at a time and watch the odds change with every pick, then find
+        the context length at which the model stops composing and starts
+        reciting.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> a character-level model over the first seven chapters of
+      <em>Alice's Adventures in Wonderland</em> (public domain; about 81,000
+      characters, lower-cased, 33 symbols). It counts what followed each context
+      in the book and backs off to a shorter context when a run was never seen.
+      There are no learned knobs, no embeddings and no attention, so it cannot
+      generalise to contexts it has not met. Real models predict word pieces,
+      not characters, from billions of pages.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="lm-name">5 characters of context</strong>
+        <p id="lm-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Model and sampler</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="lm-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="lm-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="write-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The loop, slowed down</p>
+                <h2 id="write-title">What comes next, and how sure is it?</h2>
+                <p>
+                  Grey text is your starting prompt. Red underlining marks
+                  stretches that appear word for word in the book. Bars show the
+                  chance of each next character after temperature and top-k; the
+                  figure beside each is its raw share in the book.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="lm-play" class="resample">
+                    Write
+                  </button>
+                  <button type="button" id="lm-step" class="resample quiet">
+                    One character
+                  </button>
+                  <button type="button" id="lm-restart" class="resample quiet">
+                    Start again
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <p class="generated" id="lm-output" aria-live="off"></p>
+            </div>
+            <div class="chart-wrap" style="margin-top: 14px">
+              <p class="chart-caption" id="lm-odds-caption">
+                Odds for the next character
+              </p>
+              <ol class="next-bars" id="lm-odds"></ol>
+            </div>
+            <div class="outcome">
+              <strong>This step</strong>
+              <p id="lm-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="sweep-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">600 characters at these settings</p>
+                <h2 id="sweep-title">Is it composing, or reciting?</h2>
+                <p>
+                  Whenever a setting changes, the lab writes 600 characters from
+                  a fixed start and scores them, then repeats the experiment at
+                  every context length for the chart.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="lm-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="lm-sweep-chart"
+                  role="img"
+                  aria-label="Share of real words and share copied from the book, at each context length"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>real words</span>
+              <span
+                ><i class="held"></i>copied word for word from the book</span
+              >
+            </div>
+            <p class="simulation-status" id="lm-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The same rule at every context length</p>
+                <h2 id="ledger-title">
+                  Where does it stop being a writer and become a photocopier?
+                </h2>
+                <p>
+                  “Options per step” is how many different continuations the
+                  book offered, on average. When it reaches one, there is
+                  nothing left to choose between.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Context</th>
+                    <th>Sample</th>
+                    <th>Real words</th>
+                    <th>Copied</th>
+                    <th>Options per step</th>
+                    <th>Reading</th>
+                  </tr>
+                </thead>
+                <tbody id="lm-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The model only makes odds</h3>
+          <p>
+            Everything that feels like a decision, including whether to be safe
+            or surprising, is made by the sampler afterwards. That is why the
+            same model can be run “creative” or “precise”.
+          </p>
+        </article>
+        <article>
+          <h3>One pick changes everything after it</h3>
+          <p>
+            Each character becomes part of the context for the next. An unlucky
+            pick is never corrected; the text simply carries on from wherever it
+            landed.
+          </p>
+        </article>
+        <article>
+          <h3>Fluent is not the same as new</h3>
+          <p>
+            The longest contexts give the best-looking prose and the least
+            original. Judging a model by how polished its output looks rewards
+            exactly the wrong thing.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Predicting text from counts of what followed what is Claude Shannon's
+          idea; his 1948 paper
+          <a
+            href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf"
+            >“A Mathematical Theory of Communication”</a
+          >
+          prints samples very like the ones in the table. For how neural
+          networks replaced the counts, see Bengio et al.,
+          <a href="https://www.jmlr.org/papers/v3/bengio03a.html"
+            >“A Neural Probabilistic Language Model”</a
+          >
+          (2003). On large models reproducing their training text, see Carlini
+          et al.,
+          <a href="https://arxiv.org/abs/2012.07805"
+            >“Extracting Training Data from Large Language Models”</a
+          >
+          (2021). The text is Lewis Carroll's, from Project Gutenberg's
+          public-domain edition.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/next-token-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>
