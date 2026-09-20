@@ -35,7 +35,9 @@ function curve(f: (x: number) => number): Point[] {
 }
 
 function miss(value: number): string {
-  return value >= 100 ? value.toFixed(0) : value >= 10 ? value.toFixed(1) : value.toFixed(3);
+  if (value >= 100) return value.toFixed(0);
+  if (value >= 10) return value.toFixed(1);
+  return value >= 0.01 ? value.toFixed(3) : value.toPrecision(1);
 }
 
 function prose(chosen: number, trainError: number, heldError: number): string {
@@ -69,7 +71,11 @@ function render(): void {
   byId("stat-3").textContent = miss(row.heldOutError);
   const reading = verdict(sweep, chosen);
   byId("stat-4").textContent =
-    reading === "too simple" ? "Too stiff" : reading === "about right" ? "About right" : "Memorising";
+    reading === "too simple"
+      ? "Too stiff"
+      : reading === "about right"
+        ? "About right"
+        : "Memorising";
   byId("fit-prose").textContent = prose(chosen, row.trainError, row.heldOutError);
 }
 

@@ -13,12 +13,17 @@ export default defineConfig({
     baseURL: "http://127.0.0.1:4173",
     screenshot: "only-on-failure",
     trace: "on-first-retry",
-    video: "retain-on-failure",
+    // Video needs a downloaded ffmpeg; skip it when running in a locally installed browser.
+    video: process.env.PW_CHANNEL ? "off" : "retain-on-failure",
   },
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      // PW_CHANNEL=chrome runs the suite in an installed Chrome instead of a downloaded Chromium.
+      use: {
+        ...devices["Desktop Chrome"],
+        ...(process.env.PW_CHANNEL ? { channel: process.env.PW_CHANNEL } : {}),
+      },
     },
   ],
   webServer: {

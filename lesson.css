@@ -400,6 +400,7 @@ a {
   display: block;
   width: 100%;
   min-height: 340px;
+  height: auto;
 }
 
 .chart-grid {
@@ -617,6 +618,8 @@ a {
   padding: 10px 14px;
   border: 1px solid var(--line);
   border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
 }
 
 .glossary-count {
@@ -637,6 +640,7 @@ a {
   padding: 20px;
   border: 1px solid var(--line);
   border-radius: 9px;
+  background: var(--surface);
 }
 
 .glossary-entry h2 {
@@ -788,10 +792,6 @@ a {
   font-size: 14px;
 }
 
-.lesson-chart {
-  height: auto;
-}
-
 .lesson-topbar .topbar-links {
   display: flex;
   align-items: center;
@@ -833,5 +833,11 @@ a {
   display: block;
   padding: 15px 17px;
   font-size: 12px;
+  font-weight: 750;
+}
+
+.glossary-entry a {
+  display: inline-block;
+  margin-top: 6px;
   font-weight: 750;
 }

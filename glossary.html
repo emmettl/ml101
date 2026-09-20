@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Plain-English definitions of the machine-learning terms used in ML 101."
+    />
+    <title>Glossary — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body>
+    <!-- include: lesson-topbar -->
+    <header class="lesson-hero">
+      <div class="lesson-hero-grid">
+        <div>
+          <p class="eyebrow">Searchable reference</p>
+          <h1>Glossary</h1>
+          <p class="lede">
+            Every term the course uses, in two sentences of plain English. The
+            jargon comes after the idea, never before it.
+          </p>
+        </div>
+      </div>
+    </header>
+    <main class="glossary-main">
+      <div class="glossary-tools">
+        <label class="visually-hidden" for="glossary-search"
+          >Search the glossary</label
+        >
+        <input
+          id="glossary-search"
+          type="search"
+          placeholder="Try “loss”, “learning rate” or “overfitting”"
+          autocomplete="off"
+        />
+        <span
+          class="glossary-count"
+          id="glossary-count"
+          aria-live="polite"
+        ></span>
+      </div>
+      <div class="glossary-list">
+        <article class="glossary-entry" id="batch">
+          <h2>Batch</h2>
+          <p>
+            The handful of examples looked at in one step of training. A full
+            batch uses every example; a mini-batch uses a random few, which is
+            cheaper and noisier.
+            <a href="descent-lab.html">Try batch sizes in the Descent Lab →</a>
+          </p>
+        </article>
+        <article class="glossary-entry" id="capacity">
+          <h2>Capacity</h2>
+          <p>
+            How flexible a model is: roughly, how many different shapes its
+            knobs let it take. More capacity can fit more patterns, and more
+            noise.
+            <a href="overfitting-lab.html"
+              >Raise the capacity in the Overfitting Lab →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="convergence">
+          <h2>Convergence</h2>
+          <p>
+            The point at which further training steps stop changing anything
+            much, because the slope underfoot has flattened out.
+          </p>
+        </article>
+        <article class="glossary-entry" id="divergence">
+          <h2>Divergence</h2>
+          <p>
+            Training that makes the model steadily worse, usually because the
+            learning rate is too large and every step overshoots. It often ends
+            with the numbers overflowing.
+            <a href="descent-lab.html">Find the edge in the Descent Lab →</a>
+          </p>
+        </article>
+        <article class="glossary-entry" id="example">
+          <h2>Example</h2>
+          <p>
+            One input paired with the answer we wanted for it. Examples are the
+            only teacher a model has. Also called a data point or a sample.
+          </p>
+        </article>
+        <article class="glossary-entry" id="generalisation">
+          <h2>Generalisation</h2>
+          <p>
+            Doing well on inputs the model has never seen. It is the entire
+            point of machine learning, and it cannot be measured on the training
+            examples.
+          </p>
+        </article>
+        <article class="glossary-entry" id="gradient">
+          <h2>Gradient</h2>
+          <p>
+            One number per knob saying how fast the loss would rise if that knob
+            were turned up a hair. Together they point uphill, so training steps
+            the opposite way.
+            <a href="descent-lab.html">Watch it work in the Descent Lab →</a>
+          </p>
+        </article>
+        <article class="glossary-entry" id="gradient-descent">
+          <h2>Gradient descent</h2>
+          <p>
+            The training loop: measure the gradient, move every knob a little
+            way downhill, repeat. Nothing more clever than that is happening, at
+            any scale.
+          </p>
+        </article>
+        <article class="glossary-entry" id="held-out-data">
+          <h2>Held-out data</h2>
+          <p>
+            Examples kept back from training and used only to score the finished
+            model. Their score is the honest one. See also test set.
+          </p>
+        </article>
+        <article class="glossary-entry" id="hyperparameter">
+          <h2>Hyperparameter</h2>
+          <p>
+            A setting chosen by a person rather than learned from examples: the
+            learning rate, the batch size, the capacity of the model. Knobs
+            about the knobs.
+          </p>
+        </article>
+        <article class="glossary-entry" id="learning-rate">
+          <h2>Learning rate</h2>
+          <p>
+            How far to move each knob per step, as a multiple of the slope. Too
+            small and training crawls; too large and it overshoots and diverges.
+            <a href="descent-lab.html"
+              >Lengthen the stride in the Descent Lab →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="loss">
+          <h2>Loss</h2>
+          <p>
+            A single number for how wrong the model currently is across its
+            examples. Training is the business of making this number smaller.
+            This course often calls it the miss.
+            <a href="line-fitter.html"
+              >See it as a landscape in the Line Fitter →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="loss-landscape">
+          <h2>Loss landscape</h2>
+          <p>
+            The loss at every possible setting of the knobs, pictured as
+            terrain. With two knobs it can be drawn; with billions it cannot,
+            but descent works the same way.
+            <a href="line-fitter.html">Explore one in the Line Fitter →</a>
+          </p>
+        </article>
+        <article class="glossary-entry" id="model">
+          <h2>Model</h2>
+          <p>
+            A fixed recipe for turning an input into a guess, with adjustable
+            numbers inside it. A straight line is a model. So is a chatbot.
+          </p>
+        </article>
+        <article class="glossary-entry" id="noise">
+          <h2>Noise</h2>
+          <p>
+            The part of the answers that the inputs cannot explain. It sets a
+            floor under the loss that no setting of the knobs can get beneath.
+          </p>
+        </article>
+        <article class="glossary-entry" id="outlier">
+          <h2>Outlier</h2>
+          <p>
+            An example far from the rest. Under squared loss a single outlier
+            can pull a model a long way, because large misses are counted so
+            heavily.
+            <a href="line-fitter.html">Switch one on in the Line Fitter →</a>
+          </p>
+        </article>
+        <article class="glossary-entry" id="overfitting">
+          <h2>Overfitting</h2>
+          <p>
+            Fitting the noise in the training examples as well as the pattern.
+            The symptom is an excellent training score beside a poor held-out
+            one.
+            <a href="overfitting-lab.html"
+              >Cause it, then cure it, in the Overfitting Lab →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="parameter">
+          <h2>Parameter</h2>
+          <p>
+            One of the adjustable numbers inside a model: a knob. A line has
+            two. Large language models have hundreds of billions. Also called a
+            weight.
+          </p>
+        </article>
+        <article class="glossary-entry" id="regularisation">
+          <h2>Regularisation</h2>
+          <p>
+            Any nudge that makes a model prefer simpler explanations, most often
+            a charge added to the loss for large knob values. It trades a little
+            training error for better generalisation.
+            <a href="overfitting-lab.html"
+              >Apply a penalty in the Overfitting Lab →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="sgd">
+          <h2>Stochastic gradient descent (SGD)</h2>
+          <p>
+            Gradient descent using a small random batch of examples for each
+            step instead of all of them. The slope is only roughly right, but
+            steps are so much cheaper that it wins easily.
+          </p>
+        </article>
+        <article class="glossary-entry" id="squared-error">
+          <h2>Squared error</h2>
+          <p>
+            A way of scoring a guess: the difference from the right answer,
+            squared. It is always positive and it punishes large misses far more
+            than small ones.
+          </p>
+        </article>
+        <article class="glossary-entry" id="test-set">
+          <h2>Test set</h2>
+          <p>
+            Held-out examples scored exactly once, at the very end. If you tune
+            against a held-out set repeatedly you begin to fit it too, so the
+            final exam must stay unseen.
+          </p>
+        </article>
+        <article class="glossary-entry" id="training">
+          <h2>Training</h2>
+          <p>
+            Turning the knobs until the loss on the examples is small. The
+            model's recipe does not change during training; only the numbers
+            inside it do.
+          </p>
+        </article>
+        <article class="glossary-entry" id="underfitting">
+          <h2>Underfitting</h2>
+          <p>
+            A model too stiff to follow the pattern. Both its scores are poor,
+            and close together. More training will not help; more capacity will.
+          </p>
+        </article>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div><span>Course home</span><a href="./">← ML 101</a></div>
+      <div>
+        <span>Start the course</span
+        ><a href="lesson-00-knobs.html">A machine with knobs →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/glossary.ts"></script>
+  </body>
+</html>

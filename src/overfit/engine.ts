@@ -52,10 +52,12 @@ export function features(x: number, degree: number): number[] {
   return row.slice(0, degree + 1);
 }
 
+const zeros = (length: number): number[] => Array.from({ length }, () => 0);
+
 /** Solve A·w = b for symmetric positive-definite A. Returns undefined if A is not. */
 export function choleskySolve(a: number[][], b: number[]): number[] | undefined {
   const n = b.length;
-  const lower = Array.from({ length: n }, () => new Array<number>(n).fill(0));
+  const lower = Array.from({ length: n }, () => zeros(n));
   for (let i = 0; i < n; i += 1) {
     for (let j = 0; j <= i; j += 1) {
       let sum = a[i][j];
@@ -68,13 +70,13 @@ export function choleskySolve(a: number[][], b: number[]): number[] | undefined 
       }
     }
   }
-  const y = new Array<number>(n).fill(0);
+  const y = zeros(n);
   for (let i = 0; i < n; i += 1) {
     let sum = b[i];
     for (let k = 0; k < i; k += 1) sum -= lower[i][k] * y[k];
     y[i] = sum / lower[i][i];
   }
-  const w = new Array<number>(n).fill(0);
+  const w = zeros(n);
   for (let i = n - 1; i >= 0; i -= 1) {
     let sum = y[i];
     for (let k = i + 1; k < n; k += 1) sum -= lower[k][i] * w[k];
@@ -95,8 +97,8 @@ export interface Fit {
  */
 export function fitPolynomial(samples: readonly Sample[], degree: number, penalty: number): Fit {
   const size = degree + 1;
-  const normal = Array.from({ length: size }, () => new Array<number>(size).fill(0));
-  const target = new Array<number>(size).fill(0);
+  const normal = Array.from({ length: size }, () => zeros(size));
+  const target = zeros(size);
   for (const sample of samples) {
     const row = features(sample.x, degree);
     for (let i = 0; i < size; i += 1) {
@@ -107,7 +109,7 @@ export function fitPolynomial(samples: readonly Sample[], degree: number, penalt
   for (let k = 0; k < size; k += 1) {
     normal[k][k] += penalty * samples.length * k * k + 1e-9 * samples.length;
   }
-  return { degree, weights: choleskySolve(normal, target) ?? new Array<number>(size).fill(0) };
+  return { degree, weights: choleskySolve(normal, target) ?? zeros(size) };
 }
 
 export function evaluate(fit: Fit, x: number): number {

@@ -17,14 +17,15 @@
           <p class="eyebrow">Lesson 01 · How learning happens</p>
           <h1>Rolling downhill</h1>
           <p class="lede">
-            You fitted a line by nudging two knobs and watching one number. A computer does the
-            same, except it never has to guess which way to nudge, and it can do it for a billion
-            knobs at once.
+            You fitted a line by nudging two knobs and watching one number. A
+            computer does the same, except it never has to guess which way to
+            nudge, and it can do it for a billion knobs at once.
           </p>
         </div>
         <aside class="lesson-meta">
           <span>Estimated reading time</span><strong>10 minutes</strong
-          ><span>Builds on</span><strong>Lesson 00 · A machine with knobs</strong
+          ><span>Builds on</span
+          ><strong>Lesson 00 · A machine with knobs</strong
           ><a href="descent-lab.html">Open the Descent Lab →</a>
         </aside>
       </div>
@@ -36,41 +37,52 @@
           <p class="section-label">The one idea</p>
           <h2>Feel the slope under your feet, take a step downhill, repeat</h2>
           <p>
-            Imagine every possible setting of the two knobs laid out as a map, with the height of
-            the ground at each spot equal to the miss you would get there. Bad settings are
-            hillsides. The best setting is the bottom of a valley. Training is walking to the
-            bottom in fog: you cannot see the valley, but you can always feel which way the ground
+            Imagine every possible setting of the two knobs laid out as a map,
+            with the height of the ground at each spot equal to the miss you
+            would get there. Bad settings are hillsides. The best setting is the
+            bottom of a valley. Training is walking to the bottom in fog: you
+            cannot see the valley, but you can always feel which way the ground
             slopes where you stand.
           </p>
           <p>
-            For each knob the computer asks one question: if I turned this a hair, would the miss
-            go up or down, and how steeply? The answers, one per knob, are the
-            <a class="term" href="glossary.html#gradient">gradient</a>. It points uphill. So step
-            the other way.
+            For each knob the computer asks one question: if I turned this a
+            hair, would the miss go up or down, and how steeply? The answers,
+            one per knob, are the
+            <a class="term" href="glossary.html#gradient">gradient</a>. It
+            points uphill. So step the other way.
           </p>
           <div class="callout">
-            The direction comes free from the slope. The only thing you have to choose is how far
-            to step.
+            The direction comes free from the slope. The only thing you have to
+            choose is how far to step.
           </div>
           <div class="concept-grid">
             <div class="concept">
               <strong>Gradient</strong>
-              <p>One number per knob: how fast the miss rises if that knob is turned up.</p>
+              <p>
+                One number per knob: how fast the miss rises if that knob is
+                turned up.
+              </p>
             </div>
             <div class="concept">
               <strong>Learning rate</strong>
               <p>
-                How far to move each knob per step, as a multiple of the slope. The single most
-                consequential setting in training.
+                How far to move each knob per step, as a multiple of the slope.
+                The single most consequential setting in training.
               </p>
             </div>
             <div class="concept">
               <strong>Step</strong>
-              <p>Measure the slope, move every knob a little downhill. Then do it again.</p>
+              <p>
+                Measure the slope, move every knob a little downhill. Then do it
+                again.
+              </p>
             </div>
             <div class="concept">
               <strong>Convergence</strong>
-              <p>The steps have become so small that nothing is changing. You are at the bottom.</p>
+              <p>
+                The steps have become so small that nothing is changing. You are
+                at the bottom.
+              </p>
             </div>
           </div>
         </section>
@@ -78,24 +90,29 @@
           <p class="section-label">Why the stride matters</p>
           <h2>Too timid, it never arrives. Too bold, it leaves.</h2>
           <p>
-            The chart below runs sixty steps of descent on the flat-rent examples from lesson 00,
-            always starting from the same bad line. The height is the miss after each step, on a
-            scale where each gridline is ten times the last. Change only the
-            <a class="term" href="glossary.html#learning-rate">learning rate</a> and watch three
-            different things happen.
+            The chart below runs sixty steps of descent on the flat-rent
+            examples from lesson 00, always starting from the same bad line. The
+            height is the miss after each step, on a scale where each gridline
+            is ten times the last. Change only the
+            <a class="term" href="glossary.html#learning-rate">learning rate</a>
+            and watch three different things happen.
           </p>
           <div class="interactive" aria-labelledby="interactive-title">
             <div class="interactive-head">
               <div>
                 <h3 id="interactive-title">Sixty steps, one setting</h3>
-                <p>Drag slowly from left to right. There is a cliff edge near the top.</p>
+                <p>
+                  Drag slowly from left to right. There is a cliff edge near the
+                  top.
+                </p>
               </div>
               <span class="engine-badge">Live descent engine</span>
             </div>
             <div class="interactive-controls">
               <div class="control">
                 <label for="descent-rate"
-                  >Learning rate · <span id="descent-rate-value">0.020</span></label
+                  >Learning rate ·
+                  <span id="descent-rate-value">0.020</span></label
                 ><input
                   id="descent-rate"
                   type="range"
@@ -139,47 +156,59 @@
                 <dd id="stat-4">–</dd>
               </div>
             </dl>
-            <p class="interactive-prose" id="descent-prose" aria-live="polite"></p>
+            <p
+              class="interactive-prose"
+              id="descent-prose"
+              aria-live="polite"
+            ></p>
           </div>
           <p>
-            The failure at the top is worth a second look. Every one of those steps pointed the
-            right way. The stride was simply so long that each step sailed across the valley and
-            landed higher up the far side than where it started. From there the slope is steeper,
-            so the next step is longer still. Engineers call this
-            <a class="term" href="glossary.html#divergence">divergence</a>, and a training run
-            that prints <code>NaN</code> has usually done exactly this.
+            The failure at the top is worth a second look. Every one of those
+            steps pointed the right way. The stride was simply so long that each
+            step sailed across the valley and landed higher up the far side than
+            where it started. From there the slope is steeper, so the next step
+            is longer still. Engineers call this
+            <a class="term" href="glossary.html#divergence">divergence</a>, and
+            a training run that suddenly reports “not a number” for its miss has
+            usually done exactly this.
           </p>
         </section>
         <section id="arithmetic">
           <p class="section-label">The arithmetic</p>
           <h2>One step, written out</h2>
           <p>
-            Suppose the line is currently too low for most examples. Turning the lift knob up by a
-            hair would reduce the miss, so the slope for that knob is negative: say −6. With a
-            learning rate of 0.05 the update is
+            Suppose the line is currently too low for most examples. Turning the
+            lift knob up by a hair would reduce the miss, so the slope for that
+            knob is negative: say −6. With a learning rate of 0.05 the update is
           </p>
-          <p><strong>new lift = old lift − 0.05 × (−6) = old lift + 0.3</strong></p>
           <p>
-            That is the entire algorithm. There is no search and no cleverness: subtract a small
-            multiple of the slope, for every knob, again and again. When a model has a hundred
-            billion knobs the sum is the same, done a hundred billion times per step.
+            <strong>new lift = old lift − 0.05 × (−6) = old lift + 0.3</strong>
+          </p>
+          <p>
+            That is the entire algorithm. There is no search and no cleverness:
+            subtract a small multiple of the slope, for every knob, again and
+            again. When a model has a hundred billion knobs the sum is the same,
+            done a hundred billion times per step.
           </p>
           <div class="concept-grid">
             <div class="concept">
               <strong>Why use only a few examples per step?</strong>
               <p>
-                Measuring the slope on every example is accurate and slow. A random handful gives
-                a rough slope for a fraction of the cost. The path jitters but gets there far
-                sooner per unit of computing. This is
-                <a class="term" href="glossary.html#sgd">stochastic gradient descent</a>, and it
-                is how every large model is trained.
+                Measuring the slope on every example is accurate and slow. A
+                random handful gives a rough slope for a fraction of the cost.
+                The path jitters but gets there far sooner per unit of
+                computing. This is
+                <a class="term" href="glossary.html#sgd"
+                  >stochastic gradient descent</a
+                >, and it is how every large model is trained.
               </p>
             </div>
             <div class="concept">
               <strong>Why not just solve for the bottom?</strong>
               <p>
-                For a straight line you can, with one formula. For anything with layers there is
-                no formula, only the slope underfoot. Descent is what remains.
+                For a straight line you can, with one formula. For anything with
+                layers there is no formula, only the slope underfoot. Descent is
+                what remains.
               </p>
             </div>
           </div>
@@ -189,8 +218,8 @@
           <h2>Direction and stride</h2>
           <div class="quiz">
             <h3>
-              A training run's miss goes 16, 40, 310, 9,000 and then the numbers overflow. What
-              went wrong?
+              A training run's miss goes 16, 40, 310, 9,000 and then the numbers
+              overflow. What went wrong?
             </h3>
             <p>Use the chart: find a setting that produces this shape.</p>
             <div class="quiz-options">
@@ -216,10 +245,13 @@
           </div>
           <div class="quiz">
             <h3>
-              Looking at 4 random examples per step instead of all 24 makes the path jittery. Why
-              would anyone choose that?
+              Looking at 4 random examples per step instead of all 24 makes the
+              path jittery. Why would anyone choose that?
             </h3>
-            <p>Think about cost per step when there are a billion examples, not 24.</p>
+            <p>
+              Think about cost per step when there are a billion examples, not
+              24.
+            </p>
             <div class="quiz-options">
               <button
                 type="button"
@@ -231,7 +263,8 @@
                 data-correct="true"
                 data-feedback="Correct. A rough slope from a small batch costs a tiny fraction of an exact one, so you can take vastly more steps for the same computing. On average the rough slopes still point downhill."
               >
-                Each step is far cheaper, and rough slopes still point downhill on average</button
+                Each step is far cheaper, and rough slopes still point downhill
+                on average</button
               ><button
                 type="button"
                 data-feedback="Jitter does not remove the error floor from lesson 00. Noise in the examples is still noise."
@@ -248,19 +281,31 @@
           <div class="takeaway-grid">
             <div>
               <strong>The slope gives the direction</strong>
-              <p>Nobody searches for good knob settings. The gradient says which way is down.</p>
+              <p>
+                Nobody searches for good knob settings. The gradient says which
+                way is down.
+              </p>
             </div>
             <div>
               <strong>You choose the stride</strong>
-              <p>Too small wastes the budget. Too large overshoots, and then it runs away.</p>
+              <p>
+                Too small wastes the budget. Too large overshoots, and then it
+                runs away.
+              </p>
             </div>
             <div>
               <strong>Rough slopes are good enough</strong>
-              <p>Small random batches trade a jittery path for many more steps per second.</p>
+              <p>
+                Small random batches trade a jittery path for many more steps
+                per second.
+              </p>
             </div>
             <div>
               <strong>It is only subtraction</strong>
-              <p>knob ← knob − rate × slope. Every model in this course is trained this way.</p>
+              <p>
+                knob ← knob − rate × slope. Every model in this course is
+                trained this way.
+              </p>
             </div>
           </div>
         </section>
@@ -279,8 +324,8 @@
         <div class="aside-card">
           <h2>Go deeper</h2>
           <p>
-            Watch the walk itself on the landscape, one step at a time, and find the exact rate
-            at which it stops working.
+            Watch the walk itself on the landscape, one step at a time, and find
+            the exact rate at which it stops working.
           </p>
           <a href="descent-lab.html">Open the Descent Lab →</a>
         </div>
@@ -288,10 +333,12 @@
     </main>
     <footer class="lesson-next">
       <div>
-        <span>Previous lesson</span><a href="lesson-00-knobs.html">← A machine with knobs</a>
+        <span>Previous lesson</span
+        ><a href="lesson-00-knobs.html">← A machine with knobs</a>
       </div>
       <div>
-        <span>Next lesson</span><a href="lesson-02-overfitting.html">Too clever by half →</a>
+        <span>Next lesson</span
+        ><a href="lesson-02-overfitting.html">Too clever by half →</a>
       </div>
     </footer>
     <script type="module" src="/src/lessons/descent.ts"></script>

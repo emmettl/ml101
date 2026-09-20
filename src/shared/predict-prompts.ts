@@ -161,6 +161,10 @@ const prompts: Record<string, PredictPrompt[]> = {
 };
 
 export function promptsForPage(pathname: string): PredictPrompt[] {
-  const name = pathname.split("/").pop()?.replace(/\.html$/, "") ?? "";
+  const name =
+    pathname
+      .split("/")
+      .pop()
+      ?.replace(/\.html$/, "") ?? "";
   return prompts[name] ?? [];
 }

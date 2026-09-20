@@ -63,7 +63,9 @@ function render(): void {
   const verdict = describeRun(run, learningRate);
   byId("descent-rate-value").textContent = learningRate.toFixed(3);
   byId("stat-1").textContent = learningRate.toFixed(3);
-  byId("stat-2").textContent = run.diverged ? "over 1,000,000" : (run.losses.at(-1) ?? 0).toFixed(2);
+  byId("stat-2").textContent = run.diverged
+    ? "over 1,000,000"
+    : (run.losses.at(-1) ?? 0).toFixed(2);
   byId("stat-3").textContent = run.settledAt === undefined ? "not reached" : String(run.settledAt);
   byId("stat-4").textContent = verdict;
   byId("descent-prose").textContent = prose(run, learningRate, batchSize < data.length);

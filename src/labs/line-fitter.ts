@@ -158,14 +158,19 @@ function drawMap(data: readonly DataPoint[], line: Line, best: Line): void {
   heat.draw(plot, grid, GRID, GRID, (value) => ramp(stops, (Math.log(value) - logLow) / span));
   plot.circle(best.slope, best.intercept, 9, "goal");
   plot.circle(line.slope, line.intercept, 7, "here");
-  syncHandles(mapChart, plot, [{ x: line.slope, y: line.intercept, label: "Current knob setting" }], {
-    onMove(_index, x, y) {
-      params.slope = x;
-      params.intercept = y;
-      panel.sync();
-      render();
+  syncHandles(
+    mapChart,
+    plot,
+    [{ x: line.slope, y: line.intercept, label: "Current knob setting" }],
+    {
+      onMove(_index, x, y) {
+        params.slope = x;
+        params.intercept = y;
+        panel.sync();
+        render();
+      },
     },
-  });
+  );
 }
 
 function outcome(current: number, floor: number, data: readonly DataPoint[], line: Line): string {

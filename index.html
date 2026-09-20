@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="ML 101: a short, hands-on course that builds real intuition for how modern machine learning works, from fitting a line to language models. No maths beyond a straight line."
+    />
+    <meta
+      property="og:title"
+      content="ML 101 — See the knobs. Understand the machine."
+    />
+    <meta
+      property="og:description"
+      content="Short lessons and interactive labs for building intuition about machine learning, without hiding the mechanism behind the vocabulary."
+    />
+    <meta property="og:type" content="website" />
+    <title>ML 101 — See the knobs. Understand the machine.</title>
+    <link rel="stylesheet" href="course.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <nav class="topbar" aria-label="Course navigation">
+        <a class="brand" href="./">ML 101</a>
+        <div class="toplinks">
+          <a class="toplink" href="#learning-path">Lessons</a>
+          <a class="toplink" href="labs.html">Labs</a>
+          <a class="toplink" href="glossary.html">Glossary</a>
+          <!-- include: theme-toggle -->
+        </div>
+      </nav>
+      <div class="hero-grid">
+        <div>
+          <p class="eyebrow">A short course in how machines learn</p>
+          <h1>See the knobs.<br /><span>Understand the machine.</span></h1>
+          <p class="intro">
+            Short lessons and hands-on labs that build a working intuition for
+            modern machine learning, from fitting a line to language
+            models—without hiding the mechanism behind the vocabulary. For
+            developers who do not train models for a living, and for anyone who
+            wants to know what is actually going on.
+          </p>
+          <div class="hero-actions">
+            <a
+              class="button primary"
+              id="resume-link"
+              href="lesson-00-knobs.html"
+              >Start with lesson 00</a
+            >
+            <a class="button secondary" href="#learning-path"
+              >Browse the learning path</a
+            >
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Course at a glance">
+          <div id="learner-progress" hidden>
+            <p class="card-label">Your progress</p>
+            <div class="progress-summary">
+              <strong id="progress-lessons">0 of 3</strong
+              ><span>lessons complete</span>
+            </div>
+            <div
+              class="progress-track"
+              id="progress-track"
+              role="progressbar"
+              aria-label="Lessons complete"
+              aria-valuemin="0"
+              aria-valuemax="3"
+              aria-valuenow="0"
+            >
+              <span id="progress-bar"></span>
+            </div>
+            <div class="progress-details">
+              <span
+                ><strong id="progress-quizzes">0</strong> checks correct</span
+              >
+              <span
+                ><strong id="progress-predictions">0</strong> predictions
+                tried</span
+              >
+            </div>
+            <p class="progress-next" id="progress-next"></p>
+          </div>
+          <p class="card-label">Course at a glance</p>
+          <div class="metric">
+            <strong>3</strong><span>lessons live, six more in preparation</span>
+          </div>
+          <div class="metric">
+            <strong>3</strong><span>interactive labs</span>
+          </div>
+          <div class="metric">
+            <strong>0</strong><span>equations you need to know first</span>
+          </div>
+          <p class="hero-note">
+            Everything runs in your browser. Progress is saved on this device
+            only; there are no accounts.
+          </p>
+        </aside>
+      </div>
+      <nav class="hero-lab-nav" id="labs" aria-label="Interactive labs">
+        <div class="lab-nav-intro">
+          <p class="eyebrow">Interactive labs</p>
+          <h2>Change one thing. Watch the model move.</h2>
+          <p>
+            Each lab is a real, tiny model running live. Predict what a change
+            will do, then let the lab show you.
+          </p>
+        </div>
+        <div class="lab-nav-groups">
+          <div class="lab-nav-group">
+            <p class="lab-nav-label">Fit</p>
+            <a href="line-fitter.html">Line Fitter</a>
+            <a href="labs.html">All labs</a>
+          </div>
+          <div class="lab-nav-group">
+            <p class="lab-nav-label">Learn</p>
+            <a href="descent-lab.html">Descent Lab</a>
+          </div>
+          <div class="lab-nav-group">
+            <p class="lab-nav-label">Generalise</p>
+            <a href="overfitting-lab.html">Overfitting Lab</a>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <section class="section" id="learning-path">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">The learning path</p>
+            <h2>From a straight line to a language model</h2>
+          </div>
+          <p>
+            Each lesson is a ten-minute reading with a live experiment and two
+            checks. One idea runs through all of them: a model is a machine with
+            knobs, and learning is turning the knobs to shrink the error.
+          </p>
+        </div>
+        <ol class="lesson-grid">
+          <li class="lesson-card featured" data-lesson-id="knobs">
+            <span class="lesson-number" aria-hidden="true">00</span>
+            <p class="lesson-kicker">Foundations</p>
+            <h3>A machine with knobs</h3>
+            <p>
+              What a model is, what it learns, and the one number that says how
+              wrong it is.
+            </p>
+            <div class="lesson-links">
+              <a href="lesson-00-knobs.html">Read lesson</a>
+              <a href="line-fitter.html">Line Fitter lab →</a>
+            </div>
+          </li>
+          <li class="lesson-card" data-lesson-id="descent">
+            <span class="lesson-number" aria-hidden="true">01</span>
+            <p class="lesson-kicker">How learning happens</p>
+            <h3>Rolling downhill</h3>
+            <p>
+              Gradient descent without the calculus, and why the size of each
+              step decides everything.
+            </p>
+            <div class="lesson-links">
+              <a href="lesson-01-descent.html">Read lesson</a>
+              <a href="descent-lab.html">Descent Lab →</a>
+            </div>
+          </li>
+          <li class="lesson-card" data-lesson-id="overfitting">
+            <span class="lesson-number" aria-hidden="true">02</span>
+            <p class="lesson-kicker">Generalisation</p>
+            <h3>Too clever by half</h3>
+            <p>
+              Why a model that is perfect on its examples can be useless on
+              anything new, and how to catch it.
+            </p>
+            <div class="lesson-links">
+              <a href="lesson-02-overfitting.html">Read lesson</a>
+              <a href="overfitting-lab.html">Overfitting Lab →</a>
+            </div>
+          </li>
+          <li class="lesson-card planned">
+            <span class="lesson-number" aria-hidden="true">03</span>
+            <p class="lesson-kicker">Classification</p>
+            <h3>From numbers to decisions</h3>
+            <p>
+              One neuron: a line, a squish, and a probability. And the puzzle it
+              cannot solve.
+            </p>
+            <div class="lesson-links"><span>In preparation</span></div>
+          </li>
+          <li class="lesson-card planned">
+            <span class="lesson-number" aria-hidden="true">04</span>
+            <p class="lesson-kicker">Neural networks</p>
+            <h3>Stacking neurons</h3>
+            <p>
+              Layers, and how blame flows backwards through them to reach every
+              knob.
+            </p>
+            <div class="lesson-links"><span>In preparation</span></div>
+          </li>
+          <li class="lesson-card planned">
+            <span class="lesson-number" aria-hidden="true">05</span>
+            <p class="lesson-kicker">Representation</p>
+            <h3>Text becomes numbers</h3>
+            <p>Tokens and embeddings: how meaning turns into position.</p>
+            <div class="lesson-links"><span>In preparation</span></div>
+          </li>
+          <li class="lesson-card planned">
+            <span class="lesson-number" aria-hidden="true">06</span>
+            <p class="lesson-kicker">Transformers</p>
+            <h3>Attention</h3>
+            <p>How each word decides which other words to listen to.</p>
+            <div class="lesson-links"><span>In preparation</span></div>
+          </li>
+          <li class="lesson-card planned">
+            <span class="lesson-number" aria-hidden="true">07</span>
+            <p class="lesson-kicker">Language models</p>
+            <h3>Predict the next token</h3>
+            <p>
+              Generation, temperature, and why a model can recite what it should
+              not.
+            </p>
+            <div class="lesson-links"><span>In preparation</span></div>
+          </li>
+          <li class="lesson-card planned">
+            <span class="lesson-number" aria-hidden="true">08</span>
+            <p class="lesson-kicker">Scale</p>
+            <h3>From toy to ChatGPT</h3>
+            <p>
+              Pretraining, fine-tuning, feedback, and what changes when the
+              knobs number billions.
+            </p>
+            <div class="lesson-links"><span>In preparation</span></div>
+          </li>
+        </ol>
+      </section>
+      <section class="section resources" id="reference">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow dark">Keep nearby</p>
+            <h2>Reference</h2>
+          </div>
+          <p>
+            Every term in the course is defined once, in plain words, and linked
+            where it is used.
+          </p>
+        </div>
+        <div class="series-link">
+          <div>
+            <span class="file-tag">Searchable reference</span>
+            <strong>Need a definition?</strong>
+            <p>
+              Loss, gradient, learning rate, overfitting and the rest, each in
+              two sentences.
+            </p>
+          </div>
+          <a class="button outline" href="glossary.html">Open the glossary</a>
+        </div>
+        <div class="series-link">
+          <div>
+            <span class="file-tag">All interactive labs</span>
+            <strong>Prefer to poke at things first?</strong>
+            <p>
+              Every lab works on its own, with a note on what it models and what
+              it leaves out.
+            </p>
+          </div>
+          <a class="button outline" href="labs.html">Open the lab hub</a>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <strong>ML 101</strong>
+      <p>
+        Independent educational project. The models here are deliberately tiny
+        and illustrative; they show how the mechanism works, not how production
+        systems are built.
+      </p>
+      <a href="labs.html">All labs</a>
+    </footer>
+    <script type="module" src="/src/progress/main.ts"></script>
+  </body>
+</html>

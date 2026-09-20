@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="See training and held-out error part company as a model gets more flexible, then rescue it with more data or a penalty."
+    />
+    <title>ML 101 — Overfitting Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="chart-interactions.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-02-overfitting.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 03 · Generalisation</p>
+      <h1>Overfitting Lab</h1>
+      <p class="lede">
+        The upper chart is one curve at one flexibility. The lower chart is the
+        same experiment run at every flexibility at once, scored twice: on the
+        points the curve trained on, and on 200 it never saw. The gap between
+        those two lines is the whole subject.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> one input, a polynomial curve of adjustable degree fitted by
+      least squares, synthetic examples from a fixed smooth wave plus noise, and
+      a single fixed held-out set of 200 points. Here flexibility means
+      polynomial degree; in a neural network it would be layers and units, and
+      the curve can look different. Cross-validation, early stopping and the
+      behaviour of very large networks are omitted.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="overfit-name">About right</strong>
+        <p id="overfit-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Experiment</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="overfit-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="overfit-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="curve-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">One curve</p>
+                <h2 id="curve-title">
+                  Is it following the pattern, or the points?
+                </h2>
+                <p>
+                  Solid points were used for training. Hollow points were held
+                  back. The dotted line is the truth that generated both, which
+                  a real project never gets to see.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="overfit-resample" class="resample">
+                    New examples
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="overfit-fit-chart"
+                  role="img"
+                  aria-label="Training points, held-out points, the hidden truth and the fitted curve"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i></i>fitted curve</span>
+              <span><i class="truth"></i>hidden truth</span>
+              <span><i class="train"></i>training points (solid)</span>
+              <span><i class="held"></i>held-out points (hollow)</span>
+            </div>
+            <div class="outcome">
+              <strong>Reading the curve</strong>
+              <p id="overfit-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="sweep-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Every flexibility, scored twice</p>
+                <h2 id="sweep-title">Where do the two scores part company?</h2>
+                <p>
+                  Each gridline is ten times the one below. Drag across the
+                  chart, or use the arrow keys, to choose a flexibility; the
+                  curve above follows.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="overfit-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg id="overfit-sweep-chart"></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>training miss</span>
+              <span><i class="held"></i>held-out miss</span>
+            </div>
+            <p class="simulation-status" id="overfit-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The sweep, in numbers</p>
+                <h2 id="ledger-title">
+                  Which row would you have picked from training error alone?
+                </h2>
+                <p>
+                  The training column only ever improves. The green bar marks
+                  the row the held-out column prefers. They are rarely the same
+                  row.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Flexibility</th>
+                    <th>Knobs</th>
+                    <th>Training miss</th>
+                    <th>Held-out miss</th>
+                    <th>Held-out ÷ training</th>
+                    <th>Reading</th>
+                  </tr>
+                </thead>
+                <tbody id="overfit-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The gap is the symptom</h3>
+          <p>
+            Two poor scores that agree mean the model is too stiff. A brilliant
+            training score and a poor held-out one mean it is memorising. You
+            can diagnose either without seeing the curve.
+          </p>
+        </article>
+        <article>
+          <h3>Capacity is relative to data</h3>
+          <p>
+            Thirteen knobs is reckless with 14 points and harmless with 60. “Too
+            big” never describes a model alone, only a model and its data
+            together.
+          </p>
+        </article>
+        <article>
+          <h3>A penalty is a preference</h3>
+          <p>
+            Charging for large knob values says: among curves that fit about
+            equally well, prefer the calm one. Push it too far and the curve
+            goes stiff again.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The trade-off shown here is the bias–variance decomposition; see James
+          et al.,
+          <a href="https://www.statlearning.com/"
+            ><em>An Introduction to Statistical Learning</em></a
+          >, section 2.2, or Hastie, Tibshirani and Friedman,
+          <a href="https://hastie.su.domains/ElemStatLearn/"
+            ><em>The Elements of Statistical Learning</em></a
+          >, chapter 7. Very large neural networks can behave differently, with
+          held-out error falling a second time beyond the point of memorisation;
+          see Belkin et al.,
+          <a href="https://www.pnas.org/doi/10.1073/pnas.1903070116"
+            >“Reconciling modern machine-learning practice and the classical
+            bias–variance trade-off”</a
+          >, PNAS 2019. That does not rescue the 13-knob curve here.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/overfitting-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

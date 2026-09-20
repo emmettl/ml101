@@ -17,8 +17,9 @@
           <p class="eyebrow">Lesson 02 · Generalisation</p>
           <h1>Too clever by half</h1>
           <p class="lede">
-            Give a machine enough knobs and it will fit its examples perfectly, and be wrong about
-            everything else. The only honest score is on examples it has never seen.
+            Give a machine enough knobs and it will fit its examples perfectly,
+            and be wrong about everything else. The only honest score is on
+            examples it has never seen.
           </p>
         </div>
         <aside class="lesson-meta">
@@ -33,34 +34,39 @@
       <article class="lesson-copy">
         <section id="idea">
           <p class="section-label">The one idea</p>
-          <h2>Memorising the examples is not the same as learning the pattern</h2>
+          <h2>
+            Memorising the examples is not the same as learning the pattern
+          </h2>
           <p>
-            A student who memorises last year's exam paper scores full marks on last year's paper.
-            Set a new paper and you find out what they actually understood. Models are the same.
-            The miss on the examples used for training always looks good, and always flatters. It
-            tells you how well the knobs were turned. It does not tell you whether the machine
-            will be right tomorrow.
+            A student who memorises last year's exam paper scores full marks on
+            last year's paper. Set a new paper and you find out what they
+            actually understood. Models are the same. The miss on the examples
+            used for training always looks good, and always flatters. It tells
+            you how well the knobs were turned. It does not tell you whether the
+            machine will be right tomorrow.
           </p>
           <p>
-            So before training, set some examples aside and never let the model see them. After
-            training, score it on those. That second number is the one that matters.
+            So before training, set some examples aside and never let the model
+            see them. After training, score it on those. That second number is
+            the one that matters.
           </p>
           <div class="callout">
-            Training error tells you how hard the model tried. Held-out error tells you what it
-            learned.
+            Training error tells you how hard the model tried. Held-out error
+            tells you what it learned.
           </div>
           <div class="concept-grid">
             <div class="concept">
               <strong>Capacity</strong>
               <p>
-                How flexible the machine is: roughly, how many knobs it has. A line has two. The
-                curve below can have thirteen.
+                How flexible the machine is: roughly, how many knobs it has. A
+                line has two. The curve below can have thirteen.
               </p>
             </div>
             <div class="concept">
               <strong>Held-out data</strong>
               <p>
-                Examples kept back from training and used only for scoring. Also called a
+                Examples kept back from training and used only for scoring. Also
+                called a
                 <a class="term" href="glossary.html#test-set">test set</a>.
               </p>
             </div>
@@ -71,31 +77,37 @@
             <div class="concept">
               <strong>Overfitting</strong>
               <p>
-                Flexible enough to chase the noise. Superb on the training score, bad on the
-                held-out one. See
-                <a class="term" href="glossary.html#overfitting">overfitting</a>.
+                Flexible enough to chase the noise. Superb on the training
+                score, bad on the held-out one. See
+                <a class="term" href="glossary.html#overfitting">overfitting</a
+                >.
               </p>
             </div>
           </div>
         </section>
         <section id="capacity">
           <p class="section-label">Why more knobs can be worse</p>
-          <h2>Watch the curve stop describing the world and start describing the dots</h2>
+          <h2>
+            Watch the curve stop describing the world and start describing the
+            dots
+          </h2>
           <p>
-            The 14 solid points are training examples: a smooth wave plus noise. The hollow points
-            are 200 held-out examples from the same source. The machine is a curve whose
-            flexibility you control. At 1 it is a straight line. Each step up adds a knob and lets
-            it bend once more.
+            The 14 solid points are training examples: a smooth wave plus noise.
+            The hollow points are 200 held-out examples from the same source.
+            The machine is a curve whose flexibility you control. At 1 it is a
+            straight line. Each step up adds a knob and lets it bend once more.
           </p>
           <p>
-            Raise the flexibility slowly and keep one eye on each score. They agree for a while.
-            Then they part company.
+            Raise the flexibility slowly and keep one eye on each score. They
+            agree for a while. Then they part company.
           </p>
           <div class="interactive" aria-labelledby="interactive-title">
             <div class="interactive-head">
               <div>
                 <h3 id="interactive-title">One curve, two scores</h3>
-                <p>The training score only ever improves. The other one does not.</p>
+                <p>
+                  The training score only ever improves. The other one does not.
+                </p>
               </div>
               <span class="engine-badge">Live curve-fitting engine</span>
             </div>
@@ -103,16 +115,27 @@
               <div class="control">
                 <label for="fit-degree"
                   >Flexibility · <span id="fit-degree-value">1</span></label
-                ><input id="fit-degree" type="range" min="1" max="12" step="1" value="1" />
+                ><input
+                  id="fit-degree"
+                  type="range"
+                  min="1"
+                  max="12"
+                  step="1"
+                  value="1"
+                />
               </div>
               <div class="control check">
                 <label for="fit-held"
-                  ><input id="fit-held" type="checkbox" checked /> Show held-out points</label
+                  ><input id="fit-held" type="checkbox" checked /> Show held-out
+                  points</label
                 >
                 <small>The model never trains on these.</small>
               </div>
               <div class="control check">
-                <label for="fit-truth"><input id="fit-truth" type="checkbox" /> Reveal the truth</label>
+                <label for="fit-truth"
+                  ><input id="fit-truth" type="checkbox" /> Reveal the
+                  truth</label
+                >
                 <small>The smooth wave hiding under the noise.</small>
               </div>
             </div>
@@ -145,44 +168,53 @@
             <p class="interactive-prose" id="fit-prose" aria-live="polite"></p>
           </div>
           <p>
-            At the top setting the curve passes almost exactly through all 14 training points, and
-            between them it swings wildly. It has spent its flexibility reproducing the noise in
-            those particular points. Noise does not repeat, so the next 200 points land nowhere
-            near the swings.
+            At the top setting the curve passes almost exactly through all 14
+            training points, and between them it swings wildly. It has spent its
+            flexibility reproducing the noise in those particular points. Noise
+            does not repeat, so the next 200 points land nowhere near the
+            swings.
           </p>
         </section>
         <section id="arithmetic">
           <p class="section-label">The arithmetic</p>
           <h2>Three ways to buy back generalisation</h2>
           <p>
-            Overfitting is a mismatch between how much the machine can express and how much the
-            examples can pin down. Thirteen knobs and fourteen points leaves almost nothing to
-            check the knobs against. There are three remedies, and real systems use all of them.
+            Overfitting is a mismatch between how much the machine can express
+            and how much the examples can pin down. Thirteen knobs and fourteen
+            points leaves almost nothing to check the knobs against. There are
+            three remedies, and real systems use all of them.
           </p>
           <div class="concept-grid">
             <div class="concept">
               <strong>Fewer knobs</strong>
-              <p>Choose the flexibility where the held-out miss is lowest, not the training miss.</p>
+              <p>
+                Choose the flexibility where the held-out miss is lowest, not
+                the training miss.
+              </p>
             </div>
             <div class="concept">
               <strong>More examples</strong>
               <p>
-                With 30 points instead of 14, the same 13-knob curve's held-out miss falls from
-                about 22 to about 0.12. Data is the most reliable cure there is.
+                With 30 points instead of 14, the same 13-knob curve's held-out
+                miss falls from about 22 to about 0.12. Data is the most
+                reliable cure there is.
               </p>
             </div>
             <div class="concept">
               <strong>A penalty on wildness</strong>
               <p>
-                Add a charge to the loss for large knob values, so wiggling must pay for itself.
-                This is <a class="term" href="glossary.html#regularisation">regularisation</a>.
+                Add a charge to the loss for large knob values, so wiggling must
+                pay for itself. This is
+                <a class="term" href="glossary.html#regularisation"
+                  >regularisation</a
+                >.
               </p>
             </div>
             <div class="concept">
               <strong>And never peek</strong>
               <p>
-                If you tune against the held-out set often enough, you start fitting it too. Keep
-                a final set that is scored exactly once.
+                If you tune against the held-out set often enough, you start
+                fitting it too. Keep a final set that is scored exactly once.
               </p>
             </div>
           </div>
@@ -192,10 +224,14 @@
           <h2>Two scores</h2>
           <div class="quiz">
             <h3>
-              A colleague reports that their model now gets 99.8% of its training examples right,
-              up from 94%. What do you know about how it will do on new data?
+              A colleague reports that their model now gets 99.8% of its
+              training examples right, up from 94%. What do you know about how
+              it will do on new data?
             </h3>
-            <p>Use the chart: what does the training score do as flexibility rises?</p>
+            <p>
+              Use the chart: what does the training score do as flexibility
+              rises?
+            </p>
             <div class="quiz-options">
               <button
                 type="button"
@@ -219,8 +255,9 @@
           </div>
           <div class="quiz">
             <h3>
-              The most flexible curve has a training miss near zero and a held-out miss above 20.
-              Which change would help most while keeping the same curve?
+              The most flexible curve has a training miss near zero and a
+              held-out miss above 20. Which change would help most while keeping
+              the same curve?
             </h3>
             <p>Think about what the curve's freedom is being spent on.</p>
             <div class="quiz-options">
@@ -251,11 +288,16 @@
           <div class="takeaway-grid">
             <div>
               <strong>Training error always flatters</strong>
-              <p>It can only go down as capacity goes up. It cannot warn you.</p>
+              <p>
+                It can only go down as capacity goes up. It cannot warn you.
+              </p>
             </div>
             <div>
               <strong>Held-out error is U-shaped</strong>
-              <p>Too stiff on the left, memorising on the right, and a sweet spot between.</p>
+              <p>
+                Too stiff on the left, memorising on the right, and a sweet spot
+                between.
+              </p>
             </div>
             <div>
               <strong>Data beats cleverness</strong>
@@ -264,8 +306,8 @@
             <div>
               <strong>This never goes away</strong>
               <p>
-                A language model that recites its training text word for word is doing the same
-                thing as the 13-knob curve.
+                A language model that recites its training text word for word is
+                doing the same thing as the 13-knob curve.
               </p>
             </div>
           </div>
@@ -285,8 +327,8 @@
         <div class="aside-card">
           <h2>Go deeper</h2>
           <p>
-            See the whole U-curve at once, then try to rescue the wildest curve with more data or
-            a penalty.
+            See the whole U-curve at once, then try to rescue the wildest curve
+            with more data or a penalty.
           </p>
           <a href="overfitting-lab.html">Open the Overfitting Lab →</a>
         </div>
@@ -294,7 +336,8 @@
     </main>
     <footer class="lesson-next">
       <div>
-        <span>Previous lesson</span><a href="lesson-01-descent.html">← Rolling downhill</a>
+        <span>Previous lesson</span
+        ><a href="lesson-01-descent.html">← Rolling downhill</a>
       </div>
       <div><span>Next</span><a href="labs.html">Explore the labs →</a></div>
     </footer>

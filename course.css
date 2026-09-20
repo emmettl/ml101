@@ -518,6 +518,9 @@ h1 span {
   font-size: 13px;
   font-weight: 800;
   text-decoration: none;
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
 }
 
 .lesson-links a:hover {
@@ -768,10 +771,4 @@ footer a {
 
 .topbar .theme-toggle {
   color: var(--chrome-muted);
-}
-
-.lesson-links a {
-  display: inline-flex;
-  min-height: 32px;
-  align-items: center;
 }

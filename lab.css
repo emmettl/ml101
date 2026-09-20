@@ -825,11 +825,26 @@ a.hub-card:hover {
 
 @media (width <= 1000px) {
   .lab-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Stacked: the first chart leads and the knobs sit directly beneath it, so a learner can
+     see what they are changing. `display: contents` lets panels and controls share one grid. */
+  .content {
+    display: contents;
+  }
+
+  .content > * {
+    order: 2;
+  }
+
+  .content > :first-child {
+    order: 0;
   }
 
   .controls {
     position: static;
+    order: 1;
   }
 
   .hub {
@@ -940,4 +955,15 @@ a.hub-card:hover {
     600 17px/1.4 "Segoe UI",
     system-ui,
     sans-serif;
+}
+
+/* Lab charts are narrower than the inspector expects, so keep its tooltip pinned inside. */
+.plot-host .svg-chart-tooltip {
+  right: 8px;
+  left: auto !important;
+}
+
+.plot-host .svg-chart-hint {
+  top: auto;
+  bottom: 8px;
 }

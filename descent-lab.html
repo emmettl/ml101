@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Watch gradient descent walk down a loss landscape one step at a time, and find the learning rate at which it stops working."
+    />
+    <title>ML 101 — Descent Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-01-descent.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 02 · How learning happens</p>
+      <h1>Descent Lab</h1>
+      <p class="lede">
+        The map is the landscape from the Line Fitter. This time nobody drags
+        the dot. It feels the slope, steps downhill, and repeats. The
+        interesting part is what the path looks like as you lengthen the stride,
+        right up to the point where it stops working.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> plain gradient descent, with optional mini-batches, on a
+      two-knob straight-line model with squared misses and a fixed starting
+      point. This valley has a single bottom, so descent always finds it if the
+      stride is safe. Momentum, adaptive step sizes such as Adam, learning-rate
+      schedules and landscapes with many valleys are omitted.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="descent-name">Full-batch descent</strong>
+        <p id="descent-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="descent-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="descent-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="walk-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The walk, one step at a time</p>
+                <h2 id="walk-title">Where does each step land?</h2>
+                <p>
+                  Press Step to take one, or Play to watch. The amber trail is
+                  where the knobs have been; the ring is the bottom of the
+                  valley. The left chart shows the line those knobs draw.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="descent-play" class="resample">
+                    Play
+                  </button>
+                  <button
+                    type="button"
+                    id="descent-step"
+                    class="resample quiet"
+                  >
+                    Step
+                  </button>
+                  <button
+                    type="button"
+                    id="descent-restart"
+                    class="resample quiet"
+                  >
+                    Back to start
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-pair">
+              <div class="chart-wrap">
+                <p class="chart-caption">The line right now</p>
+                <div class="plot-host">
+                  <svg
+                    id="descent-data-chart"
+                    role="img"
+                    aria-label="The examples and the line drawn by the current knob settings"
+                  ></svg>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <p class="chart-caption">The path across the landscape</p>
+                <div class="plot-host" id="descent-map-host">
+                  <svg
+                    id="descent-map-chart"
+                    role="img"
+                    aria-label="Loss landscape with the path taken by gradient descent so far"
+                  ></svg>
+                </div>
+                <div class="heat-legend">
+                  <span>small miss</span><i></i><span>large miss</span>
+                </div>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>The walk so far</strong>
+              <p id="descent-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="curve-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Sixty steps at this setting, all at once</p>
+                <h2 id="curve-title">
+                  Does this stride arrive, crawl or run away?
+                </h2>
+                <p>
+                  The same walk, run to sixty steps instantly whenever you
+                  change a setting. Each gridline is ten times the one below.
+                  This is the chart engineers actually watch while a model
+                  trains.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="descent-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="descent-curve-chart"
+                  role="img"
+                  aria-label="The miss after each of sixty steps, on a logarithmic scale"
+                ></svg>
+              </div>
+            </div>
+            <p class="simulation-status" id="descent-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The first ten steps, in full</p>
+                <h2 id="ledger-title">What does one step actually compute?</h2>
+                <p>
+                  Each row is the rule from the lesson: new knob = old knob −
+                  rate × slope. Watch the slopes shrink as the walk nears the
+                  bottom, and the steps shrink with them.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Step</th>
+                    <th>Tilt</th>
+                    <th>Lift</th>
+                    <th>Slope for tilt</th>
+                    <th>Slope for lift</th>
+                    <th>Miss</th>
+                    <th>Change</th>
+                  </tr>
+                </thead>
+                <tbody id="descent-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Steps shrink on their own</h3>
+          <p>
+            The stride is a multiple of the slope, and the slope flattens near
+            the bottom. Descent slows down exactly where it should, with no one
+            telling it to.
+          </p>
+        </article>
+        <article>
+          <h3>The valley is narrow one way, long the other</h3>
+          <p>
+            A stride that is safe along the valley can be too long across it.
+            That is the zig-zag you see, and the reason a single learning rate
+            is always a compromise.
+          </p>
+        </article>
+        <article>
+          <h3>The edge has no warning</h3>
+          <p>
+            Just under the largest safe rate the walk is at its fastest. Just
+            over, it is destroyed. In practice people start lower than they need
+            to and creep up.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Gradient descent goes back to Cauchy in 1847. The mini-batch form used
+          to train modern networks is described in Goodfellow, Bengio and
+          Courville,
+          <a href="https://www.deeplearningbook.org/"><em>Deep Learning</em></a
+          >, chapter 8, which also covers the refinements left out here
+          (momentum, RMSProp, Adam). The divergence threshold shown in this lab
+          is exact only for a bowl-shaped loss like this one; for deep networks
+          it has to be found by experiment.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/descent-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

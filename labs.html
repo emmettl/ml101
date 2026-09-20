@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="All ML 101 interactive labs: tiny real models you can run, break and repair in the browser."
+    />
+    <title>ML 101 — Labs</title>
+    <link rel="stylesheet" href="lab.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="./#learning-path" lesson-label="Lessons" -->
+    <div class="hero">
+      <p class="eyebrow">Interactive labs</p>
+      <h1>Run it. Break it. Fix it.</h1>
+      <p class="lede">
+        Every lab is a small, real model running live in your browser. Each one
+        asks you to predict what a change will do before it shows you, because
+        being surprised is how intuition gets built.
+      </p>
+    </div>
+    <main>
+      <div class="sequence" aria-label="The sequence every model follows">
+        <div>
+          <span>01</span><strong>Guess</strong>
+          <p>
+            The machine turns an input into an answer using its current knob
+            settings.
+          </p>
+        </div>
+        <div>
+          <span>02</span><strong>Measure the miss</strong>
+          <p>
+            Compare the guesses with the right answers and boil it down to one
+            number.
+          </p>
+        </div>
+        <div>
+          <span>03</span><strong>Nudge the knobs</strong>
+          <p>Find which way is downhill for that number, and step that way.</p>
+        </div>
+        <div>
+          <span>04</span><strong>Check on unseen data</strong>
+          <p>
+            Score it on examples it never trained on. Only that score counts.
+          </p>
+        </div>
+      </div>
+      <section class="hub" aria-label="Labs">
+        <a class="hub-card" href="line-fitter.html">
+          <span class="number">LAB 01 · STEPS 1–2</span>
+          <h2>Line Fitter</h2>
+          <p>
+            Drag the examples and the knobs. See every possible setting at once
+            as a landscape, and what one odd example does to it.
+          </p>
+          <strong>See the landscape →</strong>
+        </a>
+        <a class="hub-card" href="descent-lab.html">
+          <span class="number">LAB 02 · STEP 3</span>
+          <h2>Descent Lab</h2>
+          <p>
+            Watch gradient descent walk downhill one step at a time, then
+            lengthen the stride until it falls off the edge.
+          </p>
+          <strong>Follow the walk →</strong>
+        </a>
+        <a class="hub-card" href="overfitting-lab.html">
+          <span class="number">LAB 03 · STEP 4</span>
+          <h2>Overfitting Lab</h2>
+          <p>
+            Give a curve too much freedom, watch the two scores part company,
+            then rescue it with data or a penalty.
+          </p>
+          <strong>Find the sweet spot →</strong>
+        </a>
+        <div class="hub-card planned">
+          <span class="number">LAB 04 · IN PREPARATION</span>
+          <h2>Neuron Lab</h2>
+          <p>
+            One neuron turning two inputs into a probability, and the pattern it
+            cannot learn.
+          </p>
+          <strong>Coming with lesson 03</strong>
+        </div>
+        <div class="hub-card planned">
+          <span class="number">LAB 05 · IN PREPARATION</span>
+          <h2>Network Playground</h2>
+          <p>
+            A small neural network trained live, with its decision map redrawn
+            as it learns.
+          </p>
+          <strong>Coming with lesson 04</strong>
+        </div>
+        <div class="hub-card planned">
+          <span class="number">LABS 06–09 · IN PREPARATION</span>
+          <h2>Tokens, attention and next-token prediction</h2>
+          <p>
+            The route from numbers to language: embeddings, attention, sampling
+            and scale.
+          </p>
+          <strong>Coming with lessons 05–08</strong>
+        </div>
+      </section>
+      <section class="explain" aria-label="How to use the labs">
+        <article>
+          <h3>Predict first</h3>
+          <p>
+            Each lab has a “Predict before you move it” card. Commit to an
+            answer, then let the lab apply the change. It grades you against its
+            own live numbers.
+          </p>
+        </article>
+        <article>
+          <h3>Read the scope note</h3>
+          <p>
+            Every lab says what it models and what it leaves out. The models are
+            tiny on purpose: small enough to see inside.
+          </p>
+        </article>
+        <article>
+          <h3>Developers: open the code</h3>
+          <p>
+            At the foot of each lab, “Show me the code” reveals the dozen lines
+            the lab is actually running, beside the NumPy equivalent.
+          </p>
+        </article>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/hub.ts"></script>
+  </body>
+</html>
