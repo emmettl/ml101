@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="The same next-character job done two ways: a table of counts and a small neural network trained in your browser. One memorises the book. The other cannot."
+    />
+    <title>ML 101 — Table vs Network</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-07-next-token.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 10 · Language models</p>
+        <h1>Table vs Network</h1>
+        <p class="lede">
+          Lesson 07 predicted the next character by counting. Here the same job
+          is given to a small neural network, built from the pieces of lessons
+          03 to 05 and trained while you watch. On one small book the counting
+          table is hard to beat, and this lab does not pretend otherwise. Watch
+          instead for what each machine does when it is given more context than
+          the book can support.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> both models read the first 90% of seven chapters of
+        <em>Alice's Adventures in Wonderland</em> and are scored on the last
+        10%, which neither has seen. The table is smoothed (Witten–Bell
+        interpolation), so that an unseen continuation is unlikely and not
+        impossible; without that it could not be scored at all. The network
+        gives each of 33 characters 8 learned numbers, lays the last few
+        characters side by side, and passes them through one hidden layer of 64
+        neurons. It is trained one character at a time by plain gradient
+        descent. Real language models use attention in place of “side by side”,
+        word pieces in place of characters, and about a billion times more of
+        everything.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="duel-name">6 characters of context</strong>
+        <p id="duel-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="duel-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="duel-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="odds-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Same text, two machines</p>
+                <h2 id="odds-title">What does each expect next?</h2>
+                <p>
+                  The table answers at once, because counting needs no training.
+                  The network starts with random knobs and has to learn: press
+                  Train and watch its odds move from nonsense towards the
+                  table's.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="duel-train" class="resample">
+                    Train the network
+                  </button>
+                  <button
+                    type="button"
+                    id="duel-restart"
+                    class="resample quiet"
+                  >
+                    New start
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <p class="generated" id="duel-text"></p>
+            </div>
+            <div class="chart-pair" style="margin-top: 14px">
+              <div class="chart-wrap">
+                <p class="chart-caption" id="duel-table-caption">
+                  The table of counts
+                </p>
+                <ol class="next-bars" id="duel-table-odds"></ol>
+              </div>
+              <div class="chart-wrap">
+                <p class="chart-caption" id="duel-network-caption">
+                  The network
+                </p>
+                <ol class="next-bars" id="duel-network-odds"></ol>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>Reading the odds</strong>
+              <p id="duel-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="gap-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Text it studied against text it never saw</p>
+                <h2 id="gap-title">
+                  Which one learned, and which one memorised?
+                </h2>
+                <p>
+                  Surprise is the loss from lesson 03: lower is better, and 3.5
+                  is what blind guessing scores. The curves are the network as
+                  it trains. The straight guides are the table, which has no
+                  training to show.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="duel-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="duel-chart"
+                  role="img"
+                  aria-label="The network's surprise on studied and unseen text as it trains, with the table's two scores as horizontal guides"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>network, on text it studied</span>
+              <span><i class="held"></i>network, on unseen text</span>
+              <span
+                ><i class="best"></i>table, studied (lower guide) and unseen
+                (upper)</span
+              >
+            </div>
+            <p class="simulation-status" id="duel-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Side by side</p>
+                <h2 id="ledger-title">
+                  What did each machine turn the book into?
+                </h2>
+                <p>
+                  “Copied” is the share of 600 freshly written characters that
+                  appear word for word in the book. The last row is what the
+                  network decided, unprompted, about which characters are alike.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Machine</th>
+                    <th>Numbers it stores</th>
+                    <th>Surprise, studied</th>
+                    <th>Surprise, unseen</th>
+                    <th>Gap</th>
+                    <th>Copied</th>
+                    <th>It writes</th>
+                  </tr>
+                </thead>
+                <tbody id="duel-ledger"></tbody>
+              </table>
+            </div>
+            <div class="outcome">
+              <strong>Characters it thinks are alike</strong>
+              <p id="duel-neighbours"></p>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Too few knobs to cheat</h3>
+          <p>
+            A few thousand numbers cannot hold a book, so the network is forced
+            to find regularities. Its two scores stay close however much context
+            you give it. That is generalisation, enforced by a shortage of room.
+          </p>
+        </article>
+        <article>
+          <h3>On a small book, counting wins</h3>
+          <p>
+            At its best context the table beats this network outright. Neural
+            language models only pulled ahead once text was counted in millions
+            of words, and they were a curiosity for a decade before that.
+          </p>
+        </article>
+        <article>
+          <h3>Only one of them scales</h3>
+          <p>
+            Each extra character of context adds 512 knobs to the network and
+            multiplies the table's possible entries by 33. Give both a thousand
+            times more text and only one of them is still a machine you can
+            build.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          This network is a miniature of Bengio et al.,
+          <a href="https://www.jmlr.org/papers/v3/bengio03a.html"
+            >“A Neural Probabilistic Language Model”</a
+          >
+          (2003), which reported a clear but modest gain over the best count
+          models on about a million words. On how strong well-smoothed count
+          models are, see Chen and Goodman,
+          <a href="https://dash.harvard.edu/handle/1/25104739"
+            >“An Empirical Study of Smoothing Techniques for Language
+            Modeling”</a
+          >
+          (1998). Andrej Karpathy's
+          <a href="https://github.com/karpathy/makemore"><em>makemore</em></a>
+          builds the same progression in Python, from counts to a transformer.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/table-vs-network.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

@@ -440,3 +440,39 @@ test("on a desktop the settings stay a sidebar with every control showing", asyn
   await expect(page.locator(".dock-pager")).toBeHidden();
   await expect(page.locator(".control-block:visible")).toHaveCount(3);
 });
+
+test("the network trains in a worker, cannot memorise, and is scored beside the table", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/table-vs-network.html");
+  const status = page.locator("#duel-simulation-status");
+  await expect(status).toContainText("not yet trained");
+  await expect(page.locator("#duel-network-caption")).toContainText("untrained");
+
+  await page.locator("#duel-budget").selectOption("200000");
+  await page.locator("#duel-train").click();
+  await expect(page.locator("#duel-train")).toHaveText("Stop");
+  await expect(status).toContainText("trained on 200,000 characters", { timeout: 60_000 });
+
+  const figure = async (label: string) =>
+    Number(
+      (
+        await page.locator("#duel-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/,/g, ""),
+    );
+  expect(await figure("Network: gap")).toBeLessThan(await figure("Table: gap"));
+  expect(await figure("Network: knobs")).toBeLessThan((await figure("Table: numbers stored")) / 5);
+  await expect(page.locator("#duel-ledger tr").nth(1).locator("td").nth(5)).toHaveText("0%");
+  await expect(page.locator("#duel-neighbours")).toContainText("sits nearest");
+
+  expect(errors).toEqual([]);
+});
+
+test("an unseen context makes the table fall back while the network still reads it all", async ({
+  page,
+}) => {
+  await page.goto("/table-vs-network.html");
+  await page.locator("#duel-prompt").selectOption("alice looked at the jabberw");
+  await expect(page.locator("#duel-table-caption")).toContainText("never seen these characters");
+});

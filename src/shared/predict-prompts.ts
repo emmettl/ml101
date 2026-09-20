@@ -127,6 +127,58 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#embed-simulation-status",
     },
   ],
+  "table-vs-network": [
+    {
+      id: "table-gap",
+      question:
+        "The table sees 6 characters of context. You give it 8, so it knows more about what came before. Its surprise on text it studied will fall. What happens to the gap between that and its surprise on text it has never seen?",
+      readout: {
+        selector: "#duel-stats",
+        match: "Table: gap, unseen minus studied",
+        label: "the table's gap",
+      },
+      change: {
+        selector: "#duel-context",
+        value: "8",
+        describe: "The lab will set the context to 8 characters and rebuild the table.",
+      },
+      choices: [
+        { id: "down", label: "It narrows: more context helps everywhere" },
+        { id: "same", label: "It stays about the same" },
+        { id: "up", label: "It widens" },
+      ],
+      judge: judges.direction(0.1),
+      explain: (before, after) =>
+        `From ${before.toFixed(2)} to ${after.toFixed(2)}. With 8 characters almost every run occurs once in the book, so on studied text the table simply recalls what came next, and on new text that recall is worthless. It is the 13-knob curve from lesson 02. Now compare the network's gap at the same setting once it is trained: a few thousand knobs cannot hold the book, so it has no choice but to generalise.`,
+      settle: "#duel-simulation-status",
+    },
+    {
+      id: "table-size",
+      question:
+        "Same change, 6 characters to 8. With 33 symbols there are over a thousand times more possible 8-character contexts than 6-character ones. What happens to the number of entries the table actually stores?",
+      readout: {
+        selector: "#duel-stats",
+        match: "Table: numbers stored",
+        label: "numbers the table stores",
+        parse: plainNumber,
+      },
+      change: {
+        selector: "#duel-context",
+        value: "8",
+        describe: "The lab will set the context to 8 characters and rebuild the table.",
+      },
+      choices: [
+        { id: "same", label: "About the same" },
+        { id: "some", label: "It grows by roughly a third" },
+        { id: "big", label: "It grows more than tenfold" },
+      ],
+      judge: (before, after) =>
+        after / before >= 10 ? "big" : after / before >= 1.15 ? "some" : "same",
+      explain: (before, after) =>
+        `From ${before.toLocaleString("en-GB")} to ${after.toLocaleString("en-GB")}. The table can only store what the book contains, and the book has 73,000 positions however you slice it. So the table does not explode. It starves: a thousand times more possible contexts, and nearly all of them empty. Filling them would take a thousand times more text, which is the wall that count models hit and networks do not.`,
+      settle: "#duel-simulation-status",
+    },
+  ],
   "line-fitter": [
     {
       id: "outlier-tilt",
