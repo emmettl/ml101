@@ -10,7 +10,7 @@
   --ink: #0b1e2d;
   --deep: #123b54;
   --steel: #2c5670;
-  --muted: #5f7484;
+  --muted: #566b7a;
   --line: #d3dbe2;
   --grid: #e7ecef;
   --paper: #fff;
@@ -19,9 +19,9 @@
   --tint: #f2f5f7;
   --tint-2: #e6ecf0;
   --amber: #e4a340;
-  --amber-dark: #a96f18;
+  --amber-dark: #8f5c0e;
   --amber-wash: #fff8eb;
-  --jade: #2f8071;
+  --jade: #287264;
   --jade-wash: #edf8f5;
   --brick: #b5443a;
   --brick-wash: #fff2f0;
@@ -131,6 +131,12 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+@media (width <= 680px) {
+  html {
+    scroll-padding-bottom: 180px;
+  }
 }
 
 body {

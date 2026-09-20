@@ -11,323 +11,332 @@
   </head>
   <body data-lesson="attention">
     <!-- include: lesson-topbar -->
-    <header class="lesson-hero">
-      <div class="lesson-hero-grid">
-        <div>
-          <p class="eyebrow">Lesson 06 · Transformers</p>
-          <h1>Attention</h1>
-          <p class="lede">
-            An embedding gives a word one fixed position. But “bank” by a river
-            and “bank” with a vault are different things, and “it” means nothing
-            until you know what it points at. Attention is how each word gets to
-            look at the others and adjust itself to fit. It is the “T” in GPT.
-          </p>
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 06 · Transformers</p>
+            <h1>Attention</h1>
+            <p class="lede">
+              An embedding gives a word one fixed position. But “bank” by a
+              river and “bank” with a vault are different things, and “it” means
+              nothing until you know what it points at. Attention is how each
+              word gets to look at the others and adjust itself to fit. It is
+              the “T” in GPT.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>11 minutes</strong
+            ><span>Builds on</span
+            ><strong>Lesson 05 · Meaning as position</strong
+            ><a href="attention-lab.html">Open the Attention Lab →</a>
+          </aside>
         </div>
-        <aside class="lesson-meta">
-          <span>Estimated reading time</span><strong>11 minutes</strong
-          ><span>Builds on</span><strong>Lesson 05 · Meaning as position</strong
-          ><a href="attention-lab.html">Open the Attention Lab →</a>
-        </aside>
-      </div>
-    </header>
-    <!-- include: lesson-sequence -->
-    <main id="content" class="lesson-layout">
-      <article class="lesson-copy">
-        <section id="idea">
-          <p class="section-label">The one idea</p>
-          <h2>
-            Every word asks a question, and listens to whoever answers best
-          </h2>
-          <p>
-            Picture the words of a sentence at a party. Each one wears a badge
-            saying what it is: “I am a living thing”, “I am a place”, “I am just
-            grammar”. Each one also has something it wants to find out. The word
-            “it” wants to know: which of you am I standing in for?
-          </p>
-          <p>
-            “It” compares its question with every badge in the room. Where
-            question and badge match well, it listens closely; where they do
-            not, it barely listens. Then it rewrites itself as a blend of what
-            it heard, weighted by how closely it listened. After that step “it”
-            is no longer a vague pronoun. It carries most of the meaning of
-            “animal”.
-          </p>
-          <div class="callout">
-            Attention is a weighted average. The weights come from how well one
-            word's question matches each other word's badge. Everything else is
-            bookkeeping.
-          </div>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>Query</strong>
-              <p>
-                The question a word asks. A list of numbers, computed from the
-                word by learned knobs.
-              </p>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>
+              Every word asks a question, and listens to whoever answers best
+            </h2>
+            <p>
+              Picture the words of a sentence at a party. Each one wears a badge
+              saying what it is: “I am a living thing”, “I am a place”, “I am
+              just grammar”. Each one also has something it wants to find out.
+              The word “it” wants to know: which of you am I standing in for?
+            </p>
+            <p>
+              “It” compares its question with every badge in the room. Where
+              question and badge match well, it listens closely; where they do
+              not, it barely listens. Then it rewrites itself as a blend of what
+              it heard, weighted by how closely it listened. After that step
+              “it” is no longer a vague pronoun. It carries most of the meaning
+              of “animal”.
+            </p>
+            <div class="callout">
+              Attention is a weighted average. The weights come from how well
+              one word's question matches each other word's badge. Everything
+              else is bookkeeping.
             </div>
-            <div class="concept">
-              <strong>Key</strong>
-              <p>
-                The badge a word wears. Also numbers, also computed by learned
-                knobs.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Score, then share</strong>
-              <p>
-                Query times key gives a match score. A squashing step, softmax,
-                turns the scores into shares that add up to 100%.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Value</strong>
-              <p>
-                What a word hands over when listened to. The asker becomes the
-                share-weighted mix.
-              </p>
-            </div>
-          </div>
-        </section>
-        <section id="it">
-          <p class="section-label">One word, two readings</p>
-          <h2>What does “it” mean? Depends how the sentence ends.</h2>
-          <p>
-            The sentence below is a well-known test. Change only its last word
-            and the correct reading of “it” flips from the animal to the street.
-            A person does this without noticing. Watch the arcs, whose thickness
-            shows how much “it” listens to each word, then turn the focus knob
-            down to zero and see what is lost.
-          </p>
-          <div class="interactive" aria-labelledby="interactive-title">
-            <div class="interactive-head">
-              <div>
-                <h3 id="interactive-title">Where does “it” look?</h3>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Query</strong>
                 <p>
-                  Arcs and bars show the share of attention each word receives
-                  from “it”.
+                  The question a word asks. A list of numbers, computed from the
+                  word by learned knobs.
                 </p>
               </div>
-              <span class="engine-badge">Live attention engine</span>
-            </div>
-            <div class="interactive-controls">
-              <div class="control">
-                <label for="attn-ending">The sentence ends…</label
-                ><select id="attn-ending">
-                  <option value="tired" selected>
-                    …because it was too tired
-                  </option>
-                  <option value="wide">…because it was too wide</option>
-                </select>
+              <div class="concept">
+                <strong>Key</strong>
+                <p>
+                  The badge a word wears. Also numbers, also computed by learned
+                  knobs.
+                </p>
               </div>
-              <div class="control">
-                <label for="attn-sharpness"
-                  >Focus · <span id="attn-sharpness-value">1.0</span></label
-                ><input
-                  id="attn-sharpness"
-                  type="range"
-                  min="0"
-                  max="4"
-                  step="0.1"
-                  value="1"
-                />
+              <div class="concept">
+                <strong>Score, then share</strong>
+                <p>
+                  Query times key gives a match score. A squashing step,
+                  softmax, turns the scores into shares that add up to 100%.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Value</strong>
+                <p>
+                  What a word hands over when listened to. The asker becomes the
+                  share-weighted mix.
+                </p>
               </div>
             </div>
-            <div class="chart-wrap">
-              <svg
-                id="lesson-chart"
-                class="lesson-chart"
-                role="img"
-                aria-label="The sentence, with arcs from the word it to every other word, as thick as the attention paid"
-              ></svg>
+          </section>
+          <section id="it">
+            <p class="section-label">One word, two readings</p>
+            <h2>What does “it” mean? Depends how the sentence ends.</h2>
+            <p>
+              The sentence below is a well-known test. Change only its last word
+              and the correct reading of “it” flips from the animal to the
+              street. A person does this without noticing. Watch the arcs, whose
+              thickness shows how much “it” listens to each word, then turn the
+              focus knob down to zero and see what is lost.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">Where does “it” look?</h3>
+                  <p>
+                    Arcs and bars show the share of attention each word receives
+                    from “it”.
+                  </p>
+                </div>
+                <span class="engine-badge">Live attention engine</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="attn-ending">The sentence ends…</label
+                  ><select id="attn-ending">
+                    <option value="tired" selected>
+                      …because it was too tired
+                    </option>
+                    <option value="wide">…because it was too wide</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="attn-sharpness"
+                    >Focus · <span id="attn-sharpness-value">1.0</span></label
+                  ><input
+                    id="attn-sharpness"
+                    type="range"
+                    min="0"
+                    max="4"
+                    step="0.1"
+                    value="1"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <svg
+                  id="lesson-chart"
+                  class="lesson-chart"
+                  role="img"
+                  aria-label="The sentence, with arcs from the word it to every other word, as thick as the attention paid"
+                ></svg>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>“it” listens most to</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>That word's share</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Words that matter</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>“it” now reads as</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="attn-prose"
+                aria-live="polite"
+              ></p>
             </div>
-            <dl class="interactive-readout">
+            <p>
+              With the focus at zero every word gets an equal share and “it”
+              becomes an average of the whole sentence: a bag of words, with no
+              idea who did what. With the focus very high it listens to one word
+              and ignores the rest, which is brittle. Trained models settle in
+              between, and they learn where, because focus is set by knobs like
+              everything else.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">
+              The arithmetic, and the rest of a transformer
+            </p>
+            <h2>Do that for every word, many times over</h2>
+            <p>
+              In this lesson the questions and badges were set by hand. In a
+              real model three small sets of learned weights turn each word's
+              embedding into its query, its key and its value. Nobody tells them
+              what to ask. As in lesson 04, useful questions emerge because they
+              lower the loss.
+            </p>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Every word at once</strong>
+                <p>
+                  All words ask their questions in parallel. That is a great
+                  many multiplications of the same kind, which is exactly what
+                  graphics chips are built for.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Many heads</strong>
+                <p>
+                  Each layer runs dozens of attentions side by side, free to
+                  specialise: one tracks what pronouns refer to, another which
+                  verb a noun belongs to.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Many layers</strong>
+                <p>
+                  Attention, then a small network from lesson 04 applied to each
+                  word, repeated dozens of times. Each round refines every word
+                  in light of the others.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The cost</strong>
+                <p>
+                  Every word looks at every other word, so doubling the length
+                  of the text quadruples the work. This is why context windows
+                  have limits.
+                </p>
+              </div>
+            </div>
+            <p>
+              One more rule applies to chatbots. When predicting the next word,
+              a word may look only backwards, at what has already been written.
+              Anything else would be reading the answer. The lab has a switch
+              for it.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Questions and badges</h2>
+            <div class="quiz">
+              <h3>
+                What, mechanically, is the output of attention for the word
+                “it”?
+              </h3>
+              <p>Look at what the fourth readout tile is made from.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Nothing is looked up or chosen outright. Even at 62% the other words still contribute the remaining 38%."
+                >
+                  The single word it refers to</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. It is an average of what the other words hand over, weighted by the shares. Because it is an average and not a choice, the whole thing has a slope, so descent can train it."
+                >
+                  A blend of the other words, weighted by how well each matched
+                  its question</button
+                ><button
+                  type="button"
+                  data-feedback="No rules about pronouns exist anywhere in the model. Behaviour that looks like grammar emerges from matching questions to badges."
+                >
+                  The result of applying grammar rules about pronouns
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                A model's context window is doubled from 100,000 tokens to
+                200,000. Roughly what happens to the work attention has to do?
+              </h3>
+              <p>Every token looks at every other token.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="That would be true if each token looked at a fixed number of others. In plain attention each looks at all of them."
+                >
+                  It doubles</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. Twice as many askers, each comparing against twice as many badges: four times the comparisons. This quadratic cost is the main reason long contexts are expensive, and a great deal of engineering goes into softening it."
+                >
+                  It roughly quadruples</button
+                ><button
+                  type="button"
+                  data-feedback="The knobs do not change, but the amount of computation per reply certainly does."
+                >
+                  Nothing: the model has the same number of knobs
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
               <div>
-                <dt>“it” listens most to</dt>
-                <dd id="stat-1">–</dd>
+                <strong>Attention is a weighted average</strong>
+                <p>Match scores become shares; the word becomes the blend.</p>
               </div>
               <div>
-                <dt>That word's share</dt>
-                <dd id="stat-2">–</dd>
+                <strong>Meaning becomes contextual</strong>
+                <p>The same token ends up different in different sentences.</p>
               </div>
               <div>
-                <dt>Words that matter</dt>
-                <dd id="stat-3">–</dd>
+                <strong>The questions are learned</strong>
+                <p>
+                  Queries, keys and values come from trained knobs, not from
+                  rules.
+                </p>
               </div>
               <div>
-                <dt>“it” now reads as</dt>
-                <dd id="stat-4">–</dd>
+                <strong>A transformer is this, stacked</strong>
+                <p>
+                  Many heads, many layers, and a quadratic bill for long text.
+                </p>
               </div>
-            </dl>
-            <p class="interactive-prose" id="attn-prose" aria-live="polite"></p>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#it">What does “it” mean?</a></li>
+              <li><a href="#arithmetic">The rest of a transformer</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Drag the question “it” is asking around the plane and watch the
+              shares follow, then forbid it from looking ahead.
+            </p>
+            <a href="attention-lab.html">Open the Attention Lab →</a>
           </div>
-          <p>
-            With the focus at zero every word gets an equal share and “it”
-            becomes an average of the whole sentence: a bag of words, with no
-            idea who did what. With the focus very high it listens to one word
-            and ignores the rest, which is brittle. Trained models settle in
-            between, and they learn where, because focus is set by knobs like
-            everything else.
-          </p>
-        </section>
-        <section id="arithmetic">
-          <p class="section-label">
-            The arithmetic, and the rest of a transformer
-          </p>
-          <h2>Do that for every word, many times over</h2>
-          <p>
-            In this lesson the questions and badges were set by hand. In a real
-            model three small sets of learned weights turn each word's embedding
-            into its query, its key and its value. Nobody tells them what to
-            ask. As in lesson 04, useful questions emerge because they lower the
-            loss.
-          </p>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>Every word at once</strong>
-              <p>
-                All words ask their questions in parallel. That is a great many
-                multiplications of the same kind, which is exactly what graphics
-                chips are built for.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Many heads</strong>
-              <p>
-                Each layer runs dozens of attentions side by side, free to
-                specialise: one tracks what pronouns refer to, another which
-                verb a noun belongs to.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Many layers</strong>
-              <p>
-                Attention, then a small network from lesson 04 applied to each
-                word, repeated dozens of times. Each round refines every word in
-                light of the others.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>The cost</strong>
-              <p>
-                Every word looks at every other word, so doubling the length of
-                the text quadruples the work. This is why context windows have
-                limits.
-              </p>
-            </div>
-          </div>
-          <p>
-            One more rule applies to chatbots. When predicting the next word, a
-            word may look only backwards, at what has already been written.
-            Anything else would be reading the answer. The lab has a switch for
-            it.
-          </p>
-        </section>
-        <section id="check">
-          <p class="section-label">Check your understanding</p>
-          <h2>Questions and badges</h2>
-          <div class="quiz">
-            <h3>
-              What, mechanically, is the output of attention for the word “it”?
-            </h3>
-            <p>Look at what the fourth readout tile is made from.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="Nothing is looked up or chosen outright. Even at 62% the other words still contribute the remaining 38%."
-              >
-                The single word it refers to</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. It is an average of what the other words hand over, weighted by the shares. Because it is an average and not a choice, the whole thing has a slope, so descent can train it."
-              >
-                A blend of the other words, weighted by how well each matched
-                its question</button
-              ><button
-                type="button"
-                data-feedback="No rules about pronouns exist anywhere in the model. Behaviour that looks like grammar emerges from matching questions to badges."
-              >
-                The result of applying grammar rules about pronouns
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-          <div class="quiz">
-            <h3>
-              A model's context window is doubled from 100,000 tokens to
-              200,000. Roughly what happens to the work attention has to do?
-            </h3>
-            <p>Every token looks at every other token.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="That would be true if each token looked at a fixed number of others. In plain attention each looks at all of them."
-              >
-                It doubles</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. Twice as many askers, each comparing against twice as many badges: four times the comparisons. This quadratic cost is the main reason long contexts are expensive, and a great deal of engineering goes into softening it."
-              >
-                It roughly quadruples</button
-              ><button
-                type="button"
-                data-feedback="The knobs do not change, but the amount of computation per reply certainly does."
-              >
-                Nothing: the model has the same number of knobs
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-        </section>
-        <section id="takeaways">
-          <p class="section-label">Takeaways</p>
-          <h2>What to remember</h2>
-          <div class="takeaway-grid">
-            <div>
-              <strong>Attention is a weighted average</strong>
-              <p>Match scores become shares; the word becomes the blend.</p>
-            </div>
-            <div>
-              <strong>Meaning becomes contextual</strong>
-              <p>The same token ends up different in different sentences.</p>
-            </div>
-            <div>
-              <strong>The questions are learned</strong>
-              <p>
-                Queries, keys and values come from trained knobs, not from
-                rules.
-              </p>
-            </div>
-            <div>
-              <strong>A transformer is this, stacked</strong>
-              <p>
-                Many heads, many layers, and a quadratic bill for long text.
-              </p>
-            </div>
-          </div>
-        </section>
-      </article>
-      <aside class="lesson-aside">
-        <nav aria-label="On this page">
-          <h2>On this page</h2>
-          <ul>
-            <li><a href="#idea">The one idea</a></li>
-            <li><a href="#it">What does “it” mean?</a></li>
-            <li><a href="#arithmetic">The rest of a transformer</a></li>
-            <li><a href="#check">Knowledge check</a></li>
-            <li><a href="#takeaways">Takeaways</a></li>
-          </ul>
-        </nav>
-        <div class="aside-card">
-          <h2>Go deeper</h2>
-          <p>
-            Drag the question “it” is asking around the plane and watch the
-            shares follow, then forbid it from looking ahead.
-          </p>
-          <a href="attention-lab.html">Open the Attention Lab →</a>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </main>
     <footer class="lesson-next">
       <div>

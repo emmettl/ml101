@@ -1047,3 +1047,11 @@ label.chart-caption {
     visibility: hidden;
   }
 }
+
+/* The intro sits inside <main>, which already supplies the side padding and the measure. */
+.lab main > .hero,
+.lab main > .scope-note {
+  max-width: none;
+  padding-right: 0;
+  padding-left: 0;
+}

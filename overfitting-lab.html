@@ -14,25 +14,25 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-02-overfitting.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 03 · Generalisation</p>
-      <h1>Overfitting Lab</h1>
-      <p class="lede">
-        The upper chart is one curve at one flexibility. The lower chart is the
-        same experiment run at every flexibility at once, scored twice: on the
-        points the curve trained on, and on 200 it never saw. The gap between
-        those two lines is the whole subject.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> one input, a polynomial curve of adjustable degree fitted by
-      least squares, synthetic examples from a fixed smooth wave plus noise, and
-      a single fixed held-out set of 200 points. Here flexibility means
-      polynomial degree; in a neural network it would be layers and units, and
-      the curve can look different. Cross-validation, early stopping and the
-      behaviour of very large networks are omitted.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 03 · Generalisation</p>
+        <h1>Overfitting Lab</h1>
+        <p class="lede">
+          The upper chart is one curve at one flexibility. The lower chart is
+          the same experiment run at every flexibility at once, scored twice: on
+          the points the curve trained on, and on 200 it never saw. The gap
+          between those two lines is the whole subject.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> one input, a polynomial curve of adjustable degree fitted
+        by least squares, synthetic examples from a fixed smooth wave plus
+        noise, and a single fixed held-out set of 200 points. Here flexibility
+        means polynomial degree; in a neural network it would be layers and
+        units, and the curve can look different. Cross-validation, early
+        stopping and the behaviour of very large networks are omitted.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="overfit-name">About right</strong>
         <p id="overfit-description"></p>

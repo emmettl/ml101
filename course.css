@@ -772,3 +772,8 @@ footer a {
 .topbar .theme-toggle {
   color: var(--chrome-muted);
 }
+
+/* The watermark numeral is decoration, so it is drawn from CSS and is not text content. */
+.lesson-number::before {
+  content: attr(data-number);
+}

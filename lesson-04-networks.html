@@ -11,313 +11,323 @@
   </head>
   <body data-lesson="networks">
     <!-- include: lesson-topbar -->
-    <header class="lesson-hero">
-      <div class="lesson-hero-grid">
-        <div>
-          <p class="eyebrow">Lesson 04 · Neural networks</p>
-          <h1>Stacking neurons</h1>
-          <p class="lede">
-            One neuron draws one line and fails on opposite corners. Feed
-            several neurons into another neuron and the lines combine into
-            corners, rings and spirals. That is a neural network. Nothing else
-            new is needed except a way to work out which knob to blame.
-          </p>
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 04 · Neural networks</p>
+            <h1>Stacking neurons</h1>
+            <p class="lede">
+              One neuron draws one line and fails on opposite corners. Feed
+              several neurons into another neuron and the lines combine into
+              corners, rings and spirals. That is a neural network. Nothing else
+              new is needed except a way to work out which knob to blame.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>11 minutes</strong
+            ><span>Builds on</span
+            ><strong>Lesson 03 · One neuron, one line</strong
+            ><a href="network-playground.html">Open the Network Playground →</a>
+          </aside>
         </div>
-        <aside class="lesson-meta">
-          <span>Estimated reading time</span><strong>11 minutes</strong
-          ><span>Builds on</span
-          ><strong>Lesson 03 · One neuron, one line</strong
-          ><a href="network-playground.html">Open the Network Playground →</a>
-        </aside>
-      </div>
-    </header>
-    <!-- include: lesson-sequence -->
-    <main id="content" class="lesson-layout">
-      <article class="lesson-copy">
-        <section id="idea">
-          <p class="section-label">The one idea</p>
-          <h2>Let neurons vote on each other's answers</h2>
-          <p>
-            Put a row of neurons side by side, all looking at the same two
-            inputs. Each learns its own line and reports how far the example
-            sits from it. Now add one more neuron whose inputs are not the raw
-            measurements but those reports. It can say “triangle if the example
-            is above line one <em>and</em> below line two”, which is a corner.
-            With enough lines to combine, any outline can be approximated.
-          </p>
-          <p>
-            The middle row is called a hidden
-            <a class="term" href="glossary.html#layer">layer</a>, because nobody
-            tells it what its lines should be. No example says “neuron three,
-            you handle the top-left corner”. The layer works out a useful
-            division of labour for itself, purely because doing so lowers the
-            loss. Stack more layers and later ones combine the shapes made by
-            earlier ones.
-          </p>
-          <div class="callout">
-            A neural network is neurons feeding neurons. The early ones carve
-            the input into simple pieces. The later ones assemble the pieces
-            into an answer.
-          </div>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>Hidden layer</strong>
-              <p>
-                A row of neurons between input and output. Its job is
-                discovered, not assigned.
-              </p>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>Let neurons vote on each other's answers</h2>
+            <p>
+              Put a row of neurons side by side, all looking at the same two
+              inputs. Each learns its own line and reports how far the example
+              sits from it. Now add one more neuron whose inputs are not the raw
+              measurements but those reports. It can say “triangle if the
+              example is above line one <em>and</em> below line two”, which is a
+              corner. With enough lines to combine, any outline can be
+              approximated.
+            </p>
+            <p>
+              The middle row is called a hidden
+              <a class="term" href="glossary.html#layer">layer</a>, because
+              nobody tells it what its lines should be. No example says “neuron
+              three, you handle the top-left corner”. The layer works out a
+              useful division of labour for itself, purely because doing so
+              lowers the loss. Stack more layers and later ones combine the
+              shapes made by earlier ones.
+            </p>
+            <div class="callout">
+              A neural network is neurons feeding neurons. The early ones carve
+              the input into simple pieces. The later ones assemble the pieces
+              into an answer.
             </div>
-            <div class="concept">
-              <strong>Width and depth</strong>
-              <p>
-                Neurons per layer, and number of layers. Together they set the
-                capacity from lesson 02.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>The squish is essential</strong>
-              <p>
-                Without the bend in each neuron, a stack of weighted sums
-                collapses into one weighted sum: one line again, however deep.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>Backpropagation</strong>
-              <p>
-                How the slope is found for knobs buried in the middle. See
-                <a class="term" href="glossary.html#backpropagation"
-                  >backpropagation</a
-                >.
-              </p>
-            </div>
-          </div>
-        </section>
-        <section id="width">
-          <p class="section-label">How many lines does it take?</p>
-          <h2>Watch a shape appear as neurons are added</h2>
-          <p>
-            Below is a network with one hidden layer, trained from scratch each
-            time you change something. Start with a single hidden neuron, which
-            is still only one line, and add them one at a time. Large markers
-            were used for training. Small faint ones were held back, and the
-            score that matters is on those.
-          </p>
-          <div class="interactive" aria-labelledby="interactive-title">
-            <div class="interactive-head">
-              <div>
-                <h3 id="interactive-title">One hidden layer, growing</h3>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Hidden layer</strong>
                 <p>
-                  Count the straight edges in the shaded boundary as you add
-                  neurons.
+                  A row of neurons between input and output. Its job is
+                  discovered, not assigned.
                 </p>
               </div>
-              <span class="engine-badge">Live network engine</span>
-            </div>
-            <div class="interactive-controls">
-              <div class="control">
-                <label for="net-pattern">Pattern</label
-                ><select id="net-pattern">
-                  <option value="xor" selected>Opposite corners</option>
-                  <option value="circle">Ring around a centre</option>
-                  <option value="spiral">Two spiral arms</option>
-                </select>
+              <div class="concept">
+                <strong>Width and depth</strong>
+                <p>
+                  Neurons per layer, and number of layers. Together they set the
+                  capacity from lesson 02.
+                </p>
               </div>
-              <div class="control">
-                <label for="net-units"
-                  >Hidden neurons · <span id="net-units-value">1</span></label
-                ><input
-                  id="net-units"
-                  type="range"
-                  min="1"
-                  max="8"
-                  step="1"
-                  value="1"
-                />
+              <div class="concept">
+                <strong>The squish is essential</strong>
+                <p>
+                  Without the bend in each neuron, a stack of weighted sums
+                  collapses into one weighted sum: one line again, however deep.
+                </p>
               </div>
-            </div>
-            <div class="chart-wrap">
-              <div class="plot-host" id="lesson-host">
-                <svg
-                  id="lesson-chart"
-                  class="lesson-chart"
-                  role="img"
-                  aria-label="Two classes of examples on a plane, shaded by the trained network's confidence"
-                ></svg>
+              <div class="concept">
+                <strong>Backpropagation</strong>
+                <p>
+                  How the slope is found for knobs buried in the middle. See
+                  <a class="term" href="glossary.html#backpropagation"
+                    >backpropagation</a
+                  >.
+                </p>
               </div>
             </div>
-            <dl class="interactive-readout">
+          </section>
+          <section id="width">
+            <p class="section-label">How many lines does it take?</p>
+            <h2>Watch a shape appear as neurons are added</h2>
+            <p>
+              Below is a network with one hidden layer, trained from scratch
+              each time you change something. Start with a single hidden neuron,
+              which is still only one line, and add them one at a time. Large
+              markers were used for training. Small faint ones were held back,
+              and the score that matters is on those.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">One hidden layer, growing</h3>
+                  <p>
+                    Count the straight edges in the shaded boundary as you add
+                    neurons.
+                  </p>
+                </div>
+                <span class="engine-badge">Live network engine</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="net-pattern">Pattern</label
+                  ><select id="net-pattern">
+                    <option value="xor" selected>Opposite corners</option>
+                    <option value="circle">Ring around a centre</option>
+                    <option value="spiral">Two spiral arms</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="net-units"
+                    >Hidden neurons · <span id="net-units-value">1</span></label
+                  ><input
+                    id="net-units"
+                    type="range"
+                    min="1"
+                    max="8"
+                    step="1"
+                    value="1"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="plot-host" id="lesson-host">
+                  <svg
+                    id="lesson-chart"
+                    class="lesson-chart"
+                    role="img"
+                    aria-label="Two classes of examples on a plane, shaded by the trained network's confidence"
+                  ></svg>
+                </div>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Hidden neurons</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Knobs in total</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Right on unseen examples</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Verdict</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="net-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              Opposite corners fall to two or three hidden neurons. The ring
+              needs exactly three, since three lines is the fewest that can
+              enclose anything. This gentle spiral also yields to three, a
+              reminder that these are small, clean puzzles. In each case there
+              is a point beyond which extra neurons add nothing, because the
+              pattern is already captured. On clean patterns the spare capacity
+              is harmless. On noisy data it is exactly what lesson 02 warned
+              about.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">The arithmetic</p>
+            <h2>Blame flows backwards</h2>
+            <p>
+              Descent needs a slope for every knob. For the output neuron that
+              is easy: its error is the guess minus the answer. But how wrong
+              was hidden neuron three? It has no right answer to compare
+              against.
+            </p>
+            <p>
+              The resolution is to pass the blame back along the wires. The
+              output's error is shared among the hidden neurons in proportion to
+              the weights connecting them: a neuron the output listened to
+              closely takes more of the blame. Each hidden neuron then treats
+              its share as its own error and does what any neuron does. With
+              more layers, repeat. One sweep forwards to make a guess, one sweep
+              backwards to distribute blame, and every knob in the network has
+              its slope.
+            </p>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Counting knobs</strong>
+                <p>
+                  Two inputs into 8 neurons is 16 weights and 8 biases. Those 8
+                  into one output is 8 weights and a bias. Total: 33.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The same sum, larger</strong>
+                <p>
+                  A large language model is this arithmetic with hundreds of
+                  billions of knobs. The update rule is unchanged: knob ← knob −
+                  rate × slope.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Layers and blame</h2>
+            <div class="quiz">
+              <h3>Who decides what each hidden neuron should detect?</h3>
+              <p>Think about what the training examples actually contain.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="The examples only carry the final answer, circle or triangle. They say nothing about what the middle of the network should do."
+                >
+                  The training examples label it</button
+                ><button
+                  type="button"
+                  data-feedback="A person chooses how many neurons and layers there are, but not what any of them comes to mean."
+                >
+                  The engineer assigns each neuron a job</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. Each hidden neuron drifts towards whatever role most reduces the loss, given what the others are doing. This is why networks are powerful, and also why they are hard to interpret: nobody wrote down what the pieces mean."
+                >
+                  Nobody. Each settles on whatever lowers the loss
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                Someone removes the squashing curve from every hidden neuron “to
+                simplify things”, leaving plain weighted sums. What happens to a
+                ten-layer network?
+              </h3>
+              <p>A weighted sum of weighted sums is…</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. A weighted sum of weighted sums is just another weighted sum, so all ten layers collapse into one line. The bend in each neuron is what lets layers build shapes."
+                >
+                  It can only draw a single straight line, like one neuron</button
+                ><button
+                  type="button"
+                  data-feedback="Speed is not the issue. Without the bends the network loses the ability to represent anything but a straight boundary."
+                >
+                  It trains faster and works the same</button
+                ><button
+                  type="button"
+                  data-feedback="Depth only helps when each layer bends its input. Ten straight layers are exactly as expressive as one."
+                >
+                  It gets more expressive, because there is less distortion
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
               <div>
-                <dt>Hidden neurons</dt>
-                <dd id="stat-1">–</dd>
+                <strong>Networks are neurons feeding neurons</strong>
+                <p>Simple pieces first, combinations of pieces later.</p>
               </div>
               <div>
-                <dt>Knobs in total</dt>
-                <dd id="stat-2">–</dd>
+                <strong>Hidden roles are discovered</strong>
+                <p>
+                  Nothing labels the middle. It organises itself to lower the
+                  loss.
+                </p>
               </div>
               <div>
-                <dt>Right on unseen examples</dt>
-                <dd id="stat-3">–</dd>
+                <strong>Backpropagation shares out the blame</strong>
+                <p>
+                  Forwards for the guess, backwards for the slopes, then the
+                  usual step downhill.
+                </p>
               </div>
               <div>
-                <dt>Verdict</dt>
-                <dd id="stat-4">–</dd>
+                <strong>Size is capacity</strong>
+                <p>
+                  Enough neurons to capture the pattern, and lesson 02 applies
+                  to every one beyond that.
+                </p>
               </div>
-            </dl>
-            <p class="interactive-prose" id="net-prose" aria-live="polite"></p>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#width">Adding neurons</a></li>
+              <li><a href="#arithmetic">Blame flows backwards</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Watch a network learn in real time, see its wiring thicken, and
+              click any example to see where its blame goes.
+            </p>
+            <a href="network-playground.html">Open the Network Playground →</a>
           </div>
-          <p>
-            Opposite corners fall to two or three hidden neurons. The ring needs
-            exactly three, since three lines is the fewest that can enclose
-            anything. This gentle spiral also yields to three, a reminder that
-            these are small, clean puzzles. In each case there is a point beyond
-            which extra neurons add nothing, because the pattern is already
-            captured. On clean patterns the spare capacity is harmless. On noisy
-            data it is exactly what lesson 02 warned about.
-          </p>
-        </section>
-        <section id="arithmetic">
-          <p class="section-label">The arithmetic</p>
-          <h2>Blame flows backwards</h2>
-          <p>
-            Descent needs a slope for every knob. For the output neuron that is
-            easy: its error is the guess minus the answer. But how wrong was
-            hidden neuron three? It has no right answer to compare against.
-          </p>
-          <p>
-            The resolution is to pass the blame back along the wires. The
-            output's error is shared among the hidden neurons in proportion to
-            the weights connecting them: a neuron the output listened to closely
-            takes more of the blame. Each hidden neuron then treats its share as
-            its own error and does what any neuron does. With more layers,
-            repeat. One sweep forwards to make a guess, one sweep backwards to
-            distribute blame, and every knob in the network has its slope.
-          </p>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>Counting knobs</strong>
-              <p>
-                Two inputs into 8 neurons is 16 weights and 8 biases. Those 8
-                into one output is 8 weights and a bias. Total: 33.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>The same sum, larger</strong>
-              <p>
-                A large language model is this arithmetic with hundreds of
-                billions of knobs. The update rule is unchanged: knob ← knob −
-                rate × slope.
-              </p>
-            </div>
-          </div>
-        </section>
-        <section id="check">
-          <p class="section-label">Check your understanding</p>
-          <h2>Layers and blame</h2>
-          <div class="quiz">
-            <h3>Who decides what each hidden neuron should detect?</h3>
-            <p>Think about what the training examples actually contain.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="The examples only carry the final answer, circle or triangle. They say nothing about what the middle of the network should do."
-              >
-                The training examples label it</button
-              ><button
-                type="button"
-                data-feedback="A person chooses how many neurons and layers there are, but not what any of them comes to mean."
-              >
-                The engineer assigns each neuron a job</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. Each hidden neuron drifts towards whatever role most reduces the loss, given what the others are doing. This is why networks are powerful, and also why they are hard to interpret: nobody wrote down what the pieces mean."
-              >
-                Nobody. Each settles on whatever lowers the loss
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-          <div class="quiz">
-            <h3>
-              Someone removes the squashing curve from every hidden neuron “to
-              simplify things”, leaving plain weighted sums. What happens to a
-              ten-layer network?
-            </h3>
-            <p>A weighted sum of weighted sums is…</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. A weighted sum of weighted sums is just another weighted sum, so all ten layers collapse into one line. The bend in each neuron is what lets layers build shapes."
-              >
-                It can only draw a single straight line, like one neuron</button
-              ><button
-                type="button"
-                data-feedback="Speed is not the issue. Without the bends the network loses the ability to represent anything but a straight boundary."
-              >
-                It trains faster and works the same</button
-              ><button
-                type="button"
-                data-feedback="Depth only helps when each layer bends its input. Ten straight layers are exactly as expressive as one."
-              >
-                It gets more expressive, because there is less distortion
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-        </section>
-        <section id="takeaways">
-          <p class="section-label">Takeaways</p>
-          <h2>What to remember</h2>
-          <div class="takeaway-grid">
-            <div>
-              <strong>Networks are neurons feeding neurons</strong>
-              <p>Simple pieces first, combinations of pieces later.</p>
-            </div>
-            <div>
-              <strong>Hidden roles are discovered</strong>
-              <p>
-                Nothing labels the middle. It organises itself to lower the
-                loss.
-              </p>
-            </div>
-            <div>
-              <strong>Backpropagation shares out the blame</strong>
-              <p>
-                Forwards for the guess, backwards for the slopes, then the usual
-                step downhill.
-              </p>
-            </div>
-            <div>
-              <strong>Size is capacity</strong>
-              <p>
-                Enough neurons to capture the pattern, and lesson 02 applies to
-                every one beyond that.
-              </p>
-            </div>
-          </div>
-        </section>
-      </article>
-      <aside class="lesson-aside">
-        <nav aria-label="On this page">
-          <h2>On this page</h2>
-          <ul>
-            <li><a href="#idea">The one idea</a></li>
-            <li><a href="#width">Adding neurons</a></li>
-            <li><a href="#arithmetic">Blame flows backwards</a></li>
-            <li><a href="#check">Knowledge check</a></li>
-            <li><a href="#takeaways">Takeaways</a></li>
-          </ul>
-        </nav>
-        <div class="aside-card">
-          <h2>Go deeper</h2>
-          <p>
-            Watch a network learn in real time, see its wiring thicken, and
-            click any example to see where its blame goes.
-          </p>
-          <a href="network-playground.html">Open the Network Playground →</a>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </main>
     <footer class="lesson-next">
       <div>

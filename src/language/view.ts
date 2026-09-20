@@ -49,8 +49,15 @@ export function renderOdds(
       if (chance === undefined) item.className = "cut";
       const token = document.createElement("span");
       token.className = "token";
-      token.textContent = choice.token === " " ? SPACE : choice.token;
-      token.setAttribute("aria-label", choice.token === " " ? "space" : choice.token);
+      if (choice.token === " ") {
+        const glyph = document.createElement("span");
+        glyph.setAttribute("aria-hidden", "true");
+        glyph.textContent = SPACE;
+        const spoken = document.createElement("span");
+        spoken.className = "visually-hidden";
+        spoken.textContent = "space";
+        token.append(glyph, spoken);
+      } else token.textContent = choice.token;
       const track = document.createElement("span");
       track.className = "track";
       const fill = document.createElement("span");

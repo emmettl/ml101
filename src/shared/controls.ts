@@ -57,6 +57,8 @@ export function renderControls<P extends Record<string, number | string>>(
       name.textContent = spec.label;
       const output = document.createElement("output");
       output.htmlFor.add(id);
+      // An <output> is a live region; the slider already speaks this value.
+      output.setAttribute("aria-hidden", "true");
       heading.append(name, output);
       const input = document.createElement("input");
       input.type = "range";
@@ -64,6 +66,7 @@ export function renderControls<P extends Record<string, number | string>>(
       input.min = String(spec.min);
       input.max = String(spec.max);
       input.step = String(spec.step);
+      input.setAttribute("aria-label", spec.label);
       const toParam = spec.toParam ?? ((position: number) => position);
       const fromParam = spec.fromParam ?? ((value: number) => value);
       const show = () => {

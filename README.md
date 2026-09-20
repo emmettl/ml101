@@ -15,6 +15,7 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 - Device-local learner progress that marks completed lessons, counts correct checks and predictions, and resumes at the latest activity or next unfinished lesson
 - A searchable glossary in which the jargon always arrives after the idea
 - Light and dark themes, and layouts that work at phone width
+- Built to be usable with a keyboard and a screen reader: one `<main>` per page holding its heading, skip links, sliders that speak their value in real units, charts that are a single tab stop however many draggable points they hold, readouts announced once they settle instead of on every movement, and right/wrong said in words as well as colour
 
 | # | Lesson | Lab | Status |
 | --- | --- | --- | --- |
@@ -34,7 +35,7 @@ Two further pages follow the lessons. `names-guide.html` is a prose-first deep d
 
 Every push to `main` builds and publishes the multi-page site through GitHub Pages; pull requests run the same checks without publishing. `index.html` is the course home, the `lesson-*.html` pages are the primary readings, `labs.html` is the lab hub and `glossary.html` is the searchable reference.
 
-Run `npm install` once. Use `npm run dev` for local development and `npm run build` for a type-checked production bundle plus the complete site. `npm run check` verifies Oxfmt and Prettier formatting, runs Oxlint and Stylelint, checks TypeScript and executes the engine tests. `npm run test:e2e` runs a smoke sweep of every page (load, nudge the first controls, no runtime errors, no broken numbers, no horizontal overflow at phone width) plus focused checks of lesson completion, prediction grading, themes, descent, keyboard chart control and the code peek. It needs a browser: either `npx playwright install chromium`, or set `PW_CHANNEL=chrome` to use an installed Chrome (`PW_CHANNEL=chrome npm run test:e2e -- --workers=2`). `npm run check:all` runs every check and the production build. Use `npm run format` and `npm run lint:fix` for automatic cleanup.
+Run `npm install` once. Use `npm run dev` for local development and `npm run build` for a type-checked production bundle plus the complete site. `npm run check` verifies Oxfmt and Prettier formatting, runs Oxlint and Stylelint, checks TypeScript and executes the engine tests. `npm run test:e2e` runs an automated WCAG 2.1 A/AA scan (axe) of every page in both themes, tests of what a screen reader is told (`e2e/a11y.spec.ts`), a smoke sweep of every page (load, nudge the first controls, no runtime errors, no broken numbers, no horizontal overflow at phone width) plus focused checks of lesson completion, prediction grading, themes, descent, keyboard chart control and the code peek. It needs a browser: either `npx playwright install chromium`, or set `PW_CHANNEL=chrome` to use an installed Chrome (`PW_CHANNEL=chrome npm run test:e2e -- --workers=2`). `npm run check:all` runs every check and the production build. Use `npm run format` and `npm run lint:fix` for automatic cleanup.
 
 ## Source layout
 
@@ -50,6 +51,7 @@ Run `npm install` once. Use `npm run dev` for local development and `npm run bui
   - `plot.ts` (responsive SVG plots coloured entirely by CSS classes), `heat.ts` (a canvas heatmap layered behind a plot), `drag.ts` (draggable, keyboard-movable points that survive redraws), `transport.ts` (play / pause / step for anything that learns over time; pauses when hidden, honours reduced motion), `controls.ts` (declarative lab controls and stat tiles), `codepeek.ts`
   - `theme.ts` and `tokens.ts`: themes live on `<html data-theme>`; `tokens.css` is the single source of colour and TypeScript reads it only for canvas drawing
   - `predict.ts`, `predict-prompts.ts`, `predict-mount.ts`: the predict-then-reveal module; prompts are keyed by page file name
+  - `announce.ts`: replaces chatty `aria-live` readouts with a hidden twin that speaks only once the text has stopped changing, and names tables by their panel heading
   - `dock.ts`: at phone width a lab's settings panel is pinned to the bottom of the screen and shows one control at a time, so the chart being changed stays in view (the stacked layout is a flex column, not a grid, because a sticky grid item is confined to its own row)
   - `progress.ts`, `lesson.ts`, `lab.ts`: progress storage (versioned, and harmless when storage is unavailable), lesson checks and completion, and shared lab setup
   - `svg-interaction.ts`, `chart-size.ts`, `collapsible.ts`, `random.ts`: chart inspection with full keyboard support, phone-legible chart sizing, phone-only accordions, and seeded randomness so every chart and test repeats exactly
@@ -57,7 +59,7 @@ Run `npm install` once. Use `npm run dev` for local development and `npm run bui
 
 ### Adding a page
 
-Create `name.html` in the repository root; every root HTML file is discovered automatically as a Vite entry and by the smoke test. Start it with `<!-- include: head -->`. Keep the rules of the model in a strict TypeScript engine module with no browser globals, where they can be unit-tested, and keep DOM work in the page's entry module. Mark the part of the engine worth showing with `// peek:start name` … `// peek:end`. Give the lab a status line whose id ends in `simulation-status` and that reads “Current …” once settled: the predict module and the smoke test both wait on it. Add the lab's prompts to `src/shared/predict-prompts.ts`, and a new lesson to `COURSE_LESSONS` in `src/shared/progress.ts` and to `partials/lesson-sequence.html`.
+Create `name.html` in the repository root; every root HTML file is discovered automatically as a Vite entry and by the smoke test. Start it with `<!-- include: head -->`. Keep the rules of the model in a strict TypeScript engine module with no browser globals, where they can be unit-tested, and keep DOM work in the page's entry module. Mark the part of the engine worth showing with `// peek:start name` … `// peek:end`. Charts that hold draggable handles must not be `role="img"` (that hides the handles from assistive technology; `drag.ts` switches them to `group`). Give the lab a status line whose id ends in `simulation-status` and that reads “Current …” once settled: the predict module and the smoke test both wait on it. Add the lab's prompts to `src/shared/predict-prompts.ts`, and a new lesson to `COURSE_LESSONS` in `src/shared/progress.ts` and to `partials/lesson-sequence.html`.
 
 ## Important note
 

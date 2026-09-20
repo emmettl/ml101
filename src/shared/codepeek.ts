@@ -37,6 +37,8 @@ function block(caption: string, code: string): HTMLElement {
   node.textContent = code.trim();
   pre.append(node);
   pre.tabIndex = 0;
+  pre.setAttribute("role", "region");
+  pre.setAttribute("aria-label", caption);
   figure.append(title, pre);
   return figure;
 }

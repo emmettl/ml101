@@ -2,6 +2,9 @@
  * Draggable points on a plot. Handles live in their own SVG layer, which a redraw never
  * clears, so a drag survives the re-render it causes. Each handle is a 44px invisible target
  * over the visible dot, takes pointer capture, and moves with the arrow keys.
+ *
+ * A chart is one tab stop however many points it holds: Tab reaches the point last used, and
+ * Page Up / Page Down step between points (a roving tabindex).
  */
 
 import { svgElement, type Plot } from "./plot";
@@ -24,6 +27,8 @@ interface HandleState {
   specs: readonly HandleSpec[];
   callbacks: HandleCallbacks;
   active: number | undefined;
+  /** The one handle currently in the tab order. */
+  current: number;
 }
 
 const states = new WeakMap<SVGSVGElement, HandleState>();
@@ -66,9 +71,23 @@ function attach(state: HandleState): void {
   layer.addEventListener("pointerup", release);
   layer.addEventListener("pointercancel", release);
 
+  layer.addEventListener("focusin", (event) => {
+    const index = indexOf(event.target);
+    if (index !== undefined) state.current = index;
+  });
   layer.addEventListener("keydown", (event) => {
     const index = indexOf(event.target);
     if (index === undefined) return;
+    if (event.key === "PageDown" || event.key === "PageUp") {
+      event.preventDefault();
+      const count = state.specs.length;
+      state.current = (index + (event.key === "PageDown" ? 1 : count - 1)) % count;
+      layer.querySelectorAll<SVGElement>("[data-handle]").forEach((handle, position) => {
+        handle.setAttribute("tabindex", position === state.current ? "0" : "-1");
+      });
+      layer.querySelector<SVGElement>(`[data-handle="${state.current}"]`)?.focus();
+      return;
+    }
     const spec = state.specs[index];
     const [x0, x1] = state.plot.xRange;
     const [y0, y1] = state.plot.yRange;
@@ -99,10 +118,12 @@ export function syncHandles(
   if (!state) {
     const layer = svgElement("g", { "data-handle-layer": "" });
     svg.append(layer);
-    state = { layer, plot, specs, callbacks, active: undefined };
+    state = { layer, plot, specs, callbacks, active: undefined, current: 0 };
     states.set(svg, state);
     attach(state);
   }
+  // role="img" tells assistive technology to ignore everything inside, handles included.
+  if (svg.getAttribute("role") === "img") svg.setAttribute("role", "group");
   state.plot = plot;
   state.specs = specs;
   state.callbacks = callbacks;
@@ -116,16 +137,21 @@ export function syncHandles(
         svgElement("circle", {
           r: 22,
           class: "plot-handle",
-          tabindex: 0,
           role: "button",
+          "aria-roledescription": "movable point",
           "data-handle": index,
         }),
       );
     handle.setAttribute("cx", plot.x(spec.x).toFixed(1));
     handle.setAttribute("cy", plot.y(spec.y).toFixed(1));
     handle.setAttribute(
+      "tabindex",
+      index === Math.min(state.current, specs.length - 1) ? "0" : "-1",
+    );
+    const many = specs.length > 1;
+    handle.setAttribute(
       "aria-label",
-      `${spec.label} at ${spec.x.toFixed(1)}, ${spec.y.toFixed(1)}. Drag, or use the arrow keys, to move it.`,
+      `${spec.label}${many ? `, ${index + 1} of ${specs.length}` : ""}, at ${spec.x.toFixed(1)}, ${spec.y.toFixed(1)}. Arrow keys move it${many ? "; Page Up and Page Down change point" : ""}.`,
     );
   });
   handles.slice(specs.length).forEach((handle) => handle.remove());

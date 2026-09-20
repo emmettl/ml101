@@ -11,319 +11,329 @@
   </head>
   <body data-lesson="knobs">
     <!-- include: lesson-topbar -->
-    <header class="lesson-hero">
-      <div class="lesson-hero-grid">
-        <div>
-          <p class="eyebrow">Lesson 00 · Foundations</p>
-          <h1>A machine with knobs</h1>
-          <p class="lede">
-            Strip away the vocabulary and every model, from a straight line to a
-            chatbot, is the same three things: some knobs, some examples, and a
-            number that says how wrong the knobs currently are.
-          </p>
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 00 · Foundations</p>
+            <h1>A machine with knobs</h1>
+            <p class="lede">
+              Strip away the vocabulary and every model, from a straight line to
+              a chatbot, is the same three things: some knobs, some examples,
+              and a number that says how wrong the knobs currently are.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>9 minutes</strong
+            ><span>You will need</span
+            ><strong>No maths beyond a straight line</strong
+            ><a href="line-fitter.html">Open the Line Fitter →</a>
+          </aside>
         </div>
-        <aside class="lesson-meta">
-          <span>Estimated reading time</span><strong>9 minutes</strong
-          ><span>You will need</span
-          ><strong>No maths beyond a straight line</strong
-          ><a href="line-fitter.html">Open the Line Fitter →</a>
-        </aside>
-      </div>
-    </header>
-    <!-- include: lesson-sequence -->
-    <main id="content" class="lesson-layout">
-      <article class="lesson-copy">
-        <section id="idea">
-          <p class="section-label">The one idea</p>
-          <h2>
-            Nobody writes the rules. They turn knobs until the examples fit.
-          </h2>
-          <p>
-            Ordinary software is a list of rules a person wrote down: if the
-            basket is over £50, delivery is free. That works when someone knows
-            the rules. Nobody knows the rules for recognising a cat, or for
-            which word should come next in a sentence. So we do something else.
-            We build a machine whose behaviour depends on a set of adjustable
-            numbers, show it examples of the right answer, and adjust the
-            numbers until its answers stop being wrong.
-          </p>
-          <p>
-            That is the whole subject. The rest of this course is the same idea
-            with more knobs.
-          </p>
-          <div class="callout">
-            A model is a machine with knobs. Learning is turning the knobs to
-            make the error smaller.
-          </div>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>The machine</strong>
-              <p>
-                A fixed recipe that turns an input into a guess. Here: multiply
-                by one number, add another.
-              </p>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>
+              Nobody writes the rules. They turn knobs until the examples fit.
+            </h2>
+            <p>
+              Ordinary software is a list of rules a person wrote down: if the
+              basket is over £50, delivery is free. That works when someone
+              knows the rules. Nobody knows the rules for recognising a cat, or
+              for which word should come next in a sentence. So we do something
+              else. We build a machine whose behaviour depends on a set of
+              adjustable numbers, show it examples of the right answer, and
+              adjust the numbers until its answers stop being wrong.
+            </p>
+            <p>
+              That is the whole subject. The rest of this course is the same
+              idea with more knobs.
+            </p>
+            <div class="callout">
+              A model is a machine with knobs. Learning is turning the knobs to
+              make the error smaller.
             </div>
-            <div class="concept">
-              <strong>The knobs</strong>
-              <p>
-                The adjustable numbers inside the recipe. Engineers call them
-                <a class="term" href="glossary.html#parameter">parameters</a>. A
-                line has two. Large language models have hundreds of billions.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>The examples</strong>
-              <p>
-                Inputs paired with the answer we wanted. The only teacher the
-                machine has.
-              </p>
-            </div>
-            <div class="concept">
-              <strong>The miss</strong>
-              <p>
-                One number for how wrong the current knobs are across all
-                examples. Its proper name is the
-                <a class="term" href="glossary.html#loss">loss</a>.
-              </p>
-            </div>
-          </div>
-        </section>
-        <section id="by-hand">
-          <p class="section-label">Try it by hand</p>
-          <h2>You are the learning algorithm</h2>
-          <p>
-            Below are 24 examples: say, the size of a flat and what it rented
-            for. The machine is a straight line. It has two knobs. One tilts the
-            line and the other lifts it. Before a computer does this for you, do
-            it yourself: move the two sliders until the line runs through the
-            cloud of points.
-          </p>
-          <p>
-            Each red square is one example's miss, squared. A guess that is
-            twice as far off draws a square four times the size, so large misses
-            dominate. Your job is to make the total red area as small as you
-            can.
-          </p>
-          <div class="interactive" aria-labelledby="interactive-title">
-            <div class="interactive-head">
-              <div>
-                <h3 id="interactive-title">Fit the line by hand</h3>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>The machine</strong>
                 <p>
-                  Move both knobs. Watch the squares, then watch the number.
+                  A fixed recipe that turns an input into a guess. Here:
+                  multiply by one number, add another.
                 </p>
               </div>
-              <span class="engine-badge">Live fitting engine</span>
+              <div class="concept">
+                <strong>The knobs</strong>
+                <p>
+                  The adjustable numbers inside the recipe. Engineers call them
+                  <a class="term" href="glossary.html#parameter">parameters</a>.
+                  A line has two. Large language models have hundreds of
+                  billions.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The examples</strong>
+                <p>
+                  Inputs paired with the answer we wanted. The only teacher the
+                  machine has.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The miss</strong>
+                <p>
+                  One number for how wrong the current knobs are across all
+                  examples. Its proper name is the
+                  <a class="term" href="glossary.html#loss">loss</a>.
+                </p>
+              </div>
             </div>
-            <div class="interactive-controls">
-              <div class="control">
-                <label for="knob-slope"
-                  >Tilt · <span id="knob-slope-value">0.20</span></label
-                ><input
-                  id="knob-slope"
-                  type="range"
-                  min="-1"
-                  max="3"
-                  step="0.01"
-                  value="0.2"
-                />
+          </section>
+          <section id="by-hand">
+            <p class="section-label">Try it by hand</p>
+            <h2>You are the learning algorithm</h2>
+            <p>
+              Below are 24 examples: say, the size of a flat and what it rented
+              for. The machine is a straight line. It has two knobs. One tilts
+              the line and the other lifts it. Before a computer does this for
+              you, do it yourself: move the two sliders until the line runs
+              through the cloud of points.
+            </p>
+            <p>
+              Each red square is one example's miss, squared. A guess that is
+              twice as far off draws a square four times the size, so large
+              misses dominate. Your job is to make the total red area as small
+              as you can.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">Fit the line by hand</h3>
+                  <p>
+                    Move both knobs. Watch the squares, then watch the number.
+                  </p>
+                </div>
+                <span class="engine-badge">Live fitting engine</span>
               </div>
-              <div class="control">
-                <label for="knob-intercept"
-                  >Lift · <span id="knob-intercept-value">3.00</span></label
-                ><input
-                  id="knob-intercept"
-                  type="range"
-                  min="-3"
-                  max="5"
-                  step="0.01"
-                  value="3"
-                />
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="knob-slope"
+                    >Tilt · <span id="knob-slope-value">0.20</span></label
+                  ><input
+                    id="knob-slope"
+                    type="range"
+                    min="-1"
+                    max="3"
+                    step="0.01"
+                    value="0.2"
+                  />
+                </div>
+                <div class="control">
+                  <label for="knob-intercept"
+                    >Lift · <span id="knob-intercept-value">3.00</span></label
+                  ><input
+                    id="knob-intercept"
+                    type="range"
+                    min="-3"
+                    max="5"
+                    step="0.01"
+                    value="3"
+                  />
+                </div>
+                <div class="control check">
+                  <label for="knob-squares"
+                    ><input id="knob-squares" type="checkbox" checked /> Show
+                    the squares</label
+                  >
+                  <small>Each square is one example's miss, squared.</small>
+                </div>
               </div>
-              <div class="control check">
-                <label for="knob-squares"
-                  ><input id="knob-squares" type="checkbox" checked /> Show the
-                  squares</label
+              <div class="interactive-actions">
+                <button type="button" id="knob-best">
+                  Show me the best possible line
+                </button>
+                <button type="button" id="knob-reset">Start again</button>
+              </div>
+              <div class="chart-wrap">
+                <svg
+                  id="lesson-chart"
+                  class="lesson-chart"
+                  role="img"
+                  aria-label="Scatter of 24 examples with the current line and the squared miss of each example"
+                ></svg>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Tilt (slope)</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Lift (intercept)</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Average miss, squared</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Best possible</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="knob-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              Notice what you did. You never worked out a formula. You nudged a
+              knob, looked at whether the number went down, and kept the change
+              if it did. That loop—nudge, measure, keep—is what training is. The
+              next lesson hands the loop to the computer.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">The arithmetic</p>
+            <h2>Why the best possible miss is not zero</h2>
+            <p>
+              However carefully you set the knobs, the miss stops at about 0.88
+              and will not go lower. That is not a failure of effort. The
+              examples contain
+              <a class="term" href="glossary.html#noise">noise</a>: two flats of
+              the same size rent for different amounts, for reasons the input
+              does not capture. A straight line cannot pass through both. The
+              part of the error no setting can remove is the honest limit of
+              what this input can tell you.
+            </p>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Reducible error</strong>
+                <p>The knobs are in the wrong place. Turning them helps.</p>
+              </div>
+              <div class="concept">
+                <strong>Irreducible error</strong>
+                <p>The world is noisy. No setting of these knobs helps.</p>
+              </div>
+            </div>
+            <p>
+              Hold on to this. In lesson 02 a more flexible machine
+              <em>will</em> drive the miss to zero on these examples, and it
+              will be a mistake.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Knobs, examples, miss</h2>
+            <div class="quiz">
+              <h3>In this lesson, what does the machine actually “learn”?</h3>
+              <p>Think about what changed between a bad line and a good one.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="The recipe never changed. It was “multiply by one number, add another” from start to finish."
                 >
-                <small>Each square is one example's miss, squared.</small>
+                  A new rule for turning flat size into rent</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. The recipe stayed fixed; only the two numbers inside it moved. That is all “learning” means, at any scale."
+                >
+                  Two numbers: the tilt and the lift</button
+                ><button
+                  type="button"
+                  data-feedback="The examples are the teacher, not the thing learned. After training you can throw them away and keep only the knob settings."
+                >
+                  The 24 examples
+                </button>
               </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
             </div>
-            <div class="interactive-actions">
-              <button type="button" id="knob-best">
-                Show me the best possible line
-              </button>
-              <button type="button" id="knob-reset">Start again</button>
+            <div class="quiz">
+              <h3>
+                One example sits 1 unit from the line. Another sits 3 units from
+                it. With squared misses, how much more does the second one
+                count?
+              </h3>
+              <p>Look at the sizes of the red squares.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="That would be true if we added up the plain distances. Squaring changes it."
+                >
+                  3 times as much</button
+                ><button
+                  type="button"
+                  data-feedback="Squaring multiplies, it does not add: 3 × 3, not 3 + 3."
+                >
+                  6 times as much</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. 3² is 9 and 1² is 1. Squared loss cares far more about one large miss than about several small ones, which is why a single odd example can drag a line towards it."
+                >
+                  9 times as much
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
             </div>
-            <div class="chart-wrap">
-              <svg
-                id="lesson-chart"
-                class="lesson-chart"
-                role="img"
-                aria-label="Scatter of 24 examples with the current line and the squared miss of each example"
-              ></svg>
-            </div>
-            <dl class="interactive-readout">
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
               <div>
-                <dt>Tilt (slope)</dt>
-                <dd id="stat-1">–</dd>
+                <strong>A model is a recipe with knobs</strong>
+                <p>
+                  The recipe is chosen by a person. The knob settings are found
+                  from examples.
+                </p>
               </div>
               <div>
-                <dt>Lift (intercept)</dt>
-                <dd id="stat-2">–</dd>
+                <strong>The loss is one number</strong>
+                <p>
+                  It compresses “how wrong, overall” into something you can push
+                  downhill.
+                </p>
               </div>
               <div>
-                <dt>Average miss, squared</dt>
-                <dd id="stat-3">–</dd>
+                <strong>Learning is nudge, measure, keep</strong>
+                <p>
+                  You just did it by hand. Everything later automates and scales
+                  that loop.
+                </p>
               </div>
               <div>
-                <dt>Best possible</dt>
-                <dd id="stat-4">–</dd>
+                <strong>Zero error is not the goal</strong>
+                <p>
+                  Noise sets a floor. Going below it means fitting the noise.
+                </p>
               </div>
-            </dl>
-            <p class="interactive-prose" id="knob-prose" aria-live="polite"></p>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#by-hand">Fit it by hand</a></li>
+              <li><a href="#arithmetic">The error floor</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Drag the examples themselves, add an outlier, and see every knob
+              setting at once as a landscape.
+            </p>
+            <a href="line-fitter.html">Open the Line Fitter →</a>
           </div>
-          <p>
-            Notice what you did. You never worked out a formula. You nudged a
-            knob, looked at whether the number went down, and kept the change if
-            it did. That loop—nudge, measure, keep—is what training is. The next
-            lesson hands the loop to the computer.
-          </p>
-        </section>
-        <section id="arithmetic">
-          <p class="section-label">The arithmetic</p>
-          <h2>Why the best possible miss is not zero</h2>
-          <p>
-            However carefully you set the knobs, the miss stops at about 0.88
-            and will not go lower. That is not a failure of effort. The examples
-            contain
-            <a class="term" href="glossary.html#noise">noise</a>: two flats of
-            the same size rent for different amounts, for reasons the input does
-            not capture. A straight line cannot pass through both. The part of
-            the error no setting can remove is the honest limit of what this
-            input can tell you.
-          </p>
-          <div class="concept-grid">
-            <div class="concept">
-              <strong>Reducible error</strong>
-              <p>The knobs are in the wrong place. Turning them helps.</p>
-            </div>
-            <div class="concept">
-              <strong>Irreducible error</strong>
-              <p>The world is noisy. No setting of these knobs helps.</p>
-            </div>
-          </div>
-          <p>
-            Hold on to this. In lesson 02 a more flexible machine
-            <em>will</em> drive the miss to zero on these examples, and it will
-            be a mistake.
-          </p>
-        </section>
-        <section id="check">
-          <p class="section-label">Check your understanding</p>
-          <h2>Knobs, examples, miss</h2>
-          <div class="quiz">
-            <h3>In this lesson, what does the machine actually “learn”?</h3>
-            <p>Think about what changed between a bad line and a good one.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="The recipe never changed. It was “multiply by one number, add another” from start to finish."
-              >
-                A new rule for turning flat size into rent</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. The recipe stayed fixed; only the two numbers inside it moved. That is all “learning” means, at any scale."
-              >
-                Two numbers: the tilt and the lift</button
-              ><button
-                type="button"
-                data-feedback="The examples are the teacher, not the thing learned. After training you can throw them away and keep only the knob settings."
-              >
-                The 24 examples
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-          <div class="quiz">
-            <h3>
-              One example sits 1 unit from the line. Another sits 3 units from
-              it. With squared misses, how much more does the second one count?
-            </h3>
-            <p>Look at the sizes of the red squares.</p>
-            <div class="quiz-options">
-              <button
-                type="button"
-                data-feedback="That would be true if we added up the plain distances. Squaring changes it."
-              >
-                3 times as much</button
-              ><button
-                type="button"
-                data-feedback="Squaring multiplies, it does not add: 3 × 3, not 3 + 3."
-              >
-                6 times as much</button
-              ><button
-                type="button"
-                data-correct="true"
-                data-feedback="Correct. 3² is 9 and 1² is 1. Squared loss cares far more about one large miss than about several small ones, which is why a single odd example can drag a line towards it."
-              >
-                9 times as much
-              </button>
-            </div>
-            <p class="quiz-feedback" aria-live="polite"></p>
-          </div>
-        </section>
-        <section id="takeaways">
-          <p class="section-label">Takeaways</p>
-          <h2>What to remember</h2>
-          <div class="takeaway-grid">
-            <div>
-              <strong>A model is a recipe with knobs</strong>
-              <p>
-                The recipe is chosen by a person. The knob settings are found
-                from examples.
-              </p>
-            </div>
-            <div>
-              <strong>The loss is one number</strong>
-              <p>
-                It compresses “how wrong, overall” into something you can push
-                downhill.
-              </p>
-            </div>
-            <div>
-              <strong>Learning is nudge, measure, keep</strong>
-              <p>
-                You just did it by hand. Everything later automates and scales
-                that loop.
-              </p>
-            </div>
-            <div>
-              <strong>Zero error is not the goal</strong>
-              <p>Noise sets a floor. Going below it means fitting the noise.</p>
-            </div>
-          </div>
-        </section>
-      </article>
-      <aside class="lesson-aside">
-        <nav aria-label="On this page">
-          <h2>On this page</h2>
-          <ul>
-            <li><a href="#idea">The one idea</a></li>
-            <li><a href="#by-hand">Fit it by hand</a></li>
-            <li><a href="#arithmetic">The error floor</a></li>
-            <li><a href="#check">Knowledge check</a></li>
-            <li><a href="#takeaways">Takeaways</a></li>
-          </ul>
-        </nav>
-        <div class="aside-card">
-          <h2>Go deeper</h2>
-          <p>
-            Drag the examples themselves, add an outlier, and see every knob
-            setting at once as a landscape.
-          </p>
-          <a href="line-fitter.html">Open the Line Fitter →</a>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </main>
     <footer class="lesson-next">
       <div><span>Course home</span><a href="./">← ML 101</a></div>

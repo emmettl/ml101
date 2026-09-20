@@ -13,27 +13,27 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-04-networks.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 05 · Neural networks</p>
-      <h1>Network Playground</h1>
-      <p class="lede">
-        A real neural network, trained from random knobs while you watch. The
-        map shows what it currently believes about every spot on the plane. The
-        wiring shows the knobs themselves. Nothing here is pre-computed: press
-        Play and it learns, in your browser, by the same downhill rule as the
-        straight line in lab 02.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> a fully connected network with two inputs, one or two hidden
-      layers of up to eight neurons, and one sigmoid output, trained by
-      mini-batch gradient descent (16 examples a step) on cross-entropy. 160
-      examples train it and 40 are held out. Adam and other adaptive optimisers,
-      dropout, normalisation layers and anything involving images or text are
-      omitted. Different random starts give different runs; “New start” shows
-      how much.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 05 · Neural networks</p>
+        <h1>Network Playground</h1>
+        <p class="lede">
+          A real neural network, trained from random knobs while you watch. The
+          map shows what it currently believes about every spot on the plane.
+          The wiring shows the knobs themselves. Nothing here is pre-computed:
+          press Play and it learns, in your browser, by the same downhill rule
+          as the straight line in lab 02.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> a fully connected network with two inputs, one or two
+        hidden layers of up to eight neurons, and one sigmoid output, trained by
+        mini-batch gradient descent (16 examples a step) on cross-entropy. 160
+        examples train it and 40 are held out. Adam and other adaptive
+        optimisers, dropout, normalisation layers and anything involving images
+        or text are omitted. Different random starts give different runs; “New
+        start” shows how much.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="play-name">2 → 8 → 1</strong>
         <p id="play-description"></p>
@@ -71,8 +71,9 @@
                 <h2 id="map-title">What does it believe right now?</h2>
                 <p>
                   Large markers train the network; small faint ones are held
-                  out. Click or tap any example to select it, and the wiring on
-                  the right shows where its blame goes.
+                  out. Click or tap any example to select it, or use “Select
+                  another example”, and the wiring on the right shows where its
+                  blame goes.
                 </p>
               </div>
               <div class="path-actions">
@@ -116,6 +117,9 @@
                   ></svg>
                 </div>
                 <div class="transport" style="margin-top: 8px">
+                  <button type="button" id="play-pick" class="resample quiet">
+                    Select another example
+                  </button>
                   <button
                     type="button"
                     id="play-mode"

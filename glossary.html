@@ -11,572 +11,585 @@
   </head>
   <body>
     <!-- include: lesson-topbar -->
-    <header class="lesson-hero">
-      <div class="lesson-hero-grid">
-        <div>
-          <p class="eyebrow">Searchable reference</p>
-          <h1>Glossary</h1>
-          <p class="lede">
-            Every term the course uses, in two sentences of plain English. The
-            jargon comes after the idea, never before it.
-          </p>
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Searchable reference</p>
+            <h1>Glossary</h1>
+            <p class="lede">
+              Every term the course uses, in two sentences of plain English. The
+              jargon comes after the idea, never before it.
+            </p>
+          </div>
         </div>
-      </div>
-    </header>
-    <main id="content" class="glossary-main">
-      <div class="glossary-tools">
-        <label class="visually-hidden" for="glossary-search"
-          >Search the glossary</label
-        >
-        <input
-          id="glossary-search"
-          type="search"
-          placeholder="Try “loss”, “learning rate” or “overfitting”"
-          autocomplete="off"
-        />
-        <span
-          class="glossary-count"
-          id="glossary-count"
-          aria-live="polite"
-        ></span>
-      </div>
-      <div class="glossary-list">
-        <article class="glossary-entry" id="activation">
-          <h2>Activation</h2>
-          <p>
-            The bend applied to a neuron's weighted sum before it is passed on.
-            Without it, any stack of layers collapses into a single straight
-            line.
-            <a href="network-playground.html"
-              >Swap activations in the Network Playground →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="attention">
-          <h2>Attention</h2>
-          <p>
-            How a word adjusts its meaning to its context: it scores every other
-            word for relevance, turns the scores into shares that add up to
-            100%, and becomes the share-weighted blend of what those words
-            offer.
-            <a href="attention-lab.html">Steer it in the Attention Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="backpropagation">
-          <h2>Backpropagation</h2>
-          <p>
-            How a network finds the slope for every knob: one sweep forwards to
-            make a guess, one sweep backwards sharing out the blame along the
-            wires in proportion to the weights.
-            <a href="network-playground.html"
-              >See blame flow in the Network Playground →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="baseline">
-          <h2>Baseline</h2>
-          <p>
-            The score of the simplest thing you could do instead, such as always
-            predicting the commonest outcome. A model's score means little until
-            it is set beside one.
-            <a href="capstone.html">Beat one in the capstone →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="batch">
-          <h2>Batch</h2>
-          <p>
-            The handful of examples looked at in one step of training. A full
-            batch uses every example; a mini-batch uses a random few, which is
-            cheaper and noisier.
-            <a href="descent-lab.html">Try batch sizes in the Descent Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="capacity">
-          <h2>Capacity</h2>
-          <p>
-            How flexible a model is: roughly, how many different shapes its
-            knobs let it take. More capacity can fit more patterns, and more
-            noise.
-            <a href="overfitting-lab.html"
-              >Raise the capacity in the Overfitting Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="class-imbalance">
-          <h2>Class imbalance</h2>
-          <p>
-            When one outcome is much rarer than the other. Accuracy then
-            flatters: a model that never predicts the rare outcome is right most
-            of the time and useless.
-            <a href="capstone.html">Meet it in the capstone →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="classification">
-          <h2>Classification</h2>
-          <p>
-            Predicting a category (spam or not) instead of a quantity. The model
-            outputs a probability for each category; turning that into a verdict
-            is a separate decision.
-            <a href="neuron-lab.html">Try it in the Neuron Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="context-window">
-          <h2>Context window</h2>
-          <p>
-            How much preceding text a language model can take into account at
-            once, measured in tokens. Attention compares every token with every
-            other, so doubling the window roughly quadruples the work.
-          </p>
-        </article>
-        <article class="glossary-entry" id="convergence">
-          <h2>Convergence</h2>
-          <p>
-            The point at which further training steps stop changing anything
-            much, because the slope underfoot has flattened out.
-          </p>
-        </article>
-        <article class="glossary-entry" id="cross-entropy">
-          <h2>Cross-entropy</h2>
-          <p>
-            The usual loss for classification: the average surprise at the right
-            answer, measured as the negative logarithm of the probability the
-            model gave it. Confident mistakes cost the most.
-          </p>
-        </article>
-        <article class="glossary-entry" id="data-leakage">
-          <h2>Data leakage</h2>
-          <p>
-            An input that would not be available at the moment a real prediction
-            is needed, usually because it was recorded after the event being
-            predicted. It produces superb scores on archived data and failure in
-            use. <a href="capstone.html">Find the leak in the capstone →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="decision-boundary">
-          <h2>Decision boundary</h2>
-          <p>
-            The places where a classifier is exactly undecided between two
-            categories. For one neuron it is a straight line; for a network it
-            can be any shape.
-          </p>
-        </article>
-        <article class="glossary-entry" id="dimension">
-          <h2>Dimension</h2>
-          <p>
-            One of the coordinates in an embedding. More dimensions give meaning
-            more independent directions to vary along; too few and different
-            kinds of meaning interfere.
-            <a href="embedding-lab.html"
-              >Compare 2 and 8 in the Embedding Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="divergence">
-          <h2>Divergence</h2>
-          <p>
-            Training that makes the model steadily worse, usually because the
-            learning rate is too large and every step overshoots. It often ends
-            with the numbers overflowing.
-            <a href="descent-lab.html">Find the edge in the Descent Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="embedding">
-          <h2>Embedding</h2>
-          <p>
-            A token's learned position in space: a list of numbers, trained like
-            any other knobs, such that tokens used in similar company end up
-            close together.
-            <a href="embedding-lab.html"
-              >Watch one form in the Embedding Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="epoch">
-          <h2>Epoch</h2>
-          <p>
-            One complete pass through the training data. Not the same as a step,
-            which is a single update from a single batch; an epoch may contain
-            thousands of steps.
-          </p>
-        </article>
-        <article class="glossary-entry" id="example">
-          <h2>Example</h2>
-          <p>
-            One input paired with the answer we wanted for it. Examples are the
-            only teacher a model has. Also called a data point or a sample.
-          </p>
-        </article>
-        <article class="glossary-entry" id="fine-tuning">
-          <h2>Fine-tuning</h2>
-          <p>
-            Continuing to train an already-trained model on a much smaller set
-            of examples chosen to shape its behaviour, such as conversations
-            showing what a good answer looks like. Same loss, new examples.
-          </p>
-        </article>
-        <article class="glossary-entry" id="generalisation">
-          <h2>Generalisation</h2>
-          <p>
-            Doing well on inputs the model has never seen. It is the entire
-            point of machine learning, and it cannot be measured on the training
-            examples.
-          </p>
-        </article>
-        <article class="glossary-entry" id="gradient">
-          <h2>Gradient</h2>
-          <p>
-            One number per knob saying how fast the loss would rise if that knob
-            were turned up a hair. Together they point uphill, so training steps
-            the opposite way.
-            <a href="descent-lab.html">Watch it work in the Descent Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="gradient-descent">
-          <h2>Gradient descent</h2>
-          <p>
-            The training loop: measure the gradient, move every knob a little
-            way downhill, repeat. Nothing more clever than that is happening, at
-            any scale.
-          </p>
-        </article>
-        <article class="glossary-entry" id="hallucination">
-          <h2>Hallucination</h2>
-          <p>
-            Fluent, confident output that is not true. It is not a malfunction:
-            the model was trained to produce plausible text, and plausible is a
-            different property from correct.
-          </p>
-        </article>
-        <article class="glossary-entry" id="held-out-data">
-          <h2>Held-out data</h2>
-          <p>
-            Examples kept back from training and used only to score the finished
-            model. Their score is the honest one. See also test set.
-          </p>
-        </article>
-        <article class="glossary-entry" id="hyperparameter">
-          <h2>Hyperparameter</h2>
-          <p>
-            A setting chosen by a person rather than learned from examples: the
-            learning rate, the batch size, the capacity of the model. Knobs
-            about the knobs.
-          </p>
-        </article>
-        <article class="glossary-entry" id="inference">
-          <h2>Inference</h2>
-          <p>
-            Using a trained model to answer a question, with its knobs frozen.
-            Training is done once at great cost; inference is what is paid for
-            with every request.
-          </p>
-        </article>
-        <article class="glossary-entry" id="language-model">
-          <h2>Language model</h2>
-          <p>
-            A model that, given some text, produces odds for what comes next.
-            Generating text is a loop around it: pick from the odds, append the
-            pick, ask again.
-            <a href="next-token-lab.html"
-              >Build one from a book in the Next-Token Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="layer">
-          <h2>Layer</h2>
-          <p>
-            A row of neurons that all read the same inputs. Hidden layers sit
-            between input and output, and what each of their neurons comes to
-            detect is discovered during training, not assigned.
-          </p>
-        </article>
-        <article class="glossary-entry" id="learning-rate">
-          <h2>Learning rate</h2>
-          <p>
-            How far to move each knob per step, as a multiple of the slope. Too
-            small and training crawls; too large and it overshoots and diverges.
-            <a href="descent-lab.html"
-              >Lengthen the stride in the Descent Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="loss">
-          <h2>Loss</h2>
-          <p>
-            A single number for how wrong the model currently is across its
-            examples. Training is the business of making this number smaller.
-            This course often calls it the miss.
-            <a href="line-fitter.html"
-              >See it as a landscape in the Line Fitter →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="loss-landscape">
-          <h2>Loss landscape</h2>
-          <p>
-            The loss at every possible setting of the knobs, pictured as
-            terrain. With two knobs it can be drawn; with billions it cannot,
-            but descent works the same way.
-            <a href="line-fitter.html">Explore one in the Line Fitter →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="model">
-          <h2>Model</h2>
-          <p>
-            A fixed recipe for turning an input into a guess, with adjustable
-            numbers inside it. A straight line is a model. So is a chatbot.
-          </p>
-        </article>
-        <article class="glossary-entry" id="neural-network">
-          <h2>Neural network</h2>
-          <p>
-            Neurons feeding neurons. Early layers carve the input into simple
-            pieces and later layers combine the pieces, all trained together by
-            gradient descent.
-            <a href="network-playground.html"
-              >Train one in the Network Playground →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="neuron">
-          <h2>Neuron</h2>
-          <p>
-            A weighted sum of inputs plus a bias, passed through a bend. On its
-            own it can draw exactly one straight boundary.
-            <a href="neuron-lab.html">Meet one in the Neuron Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="noise">
-          <h2>Noise</h2>
-          <p>
-            The part of the answers that the inputs cannot explain. It sets a
-            floor under the loss that no setting of the knobs can get beneath.
-          </p>
-        </article>
-        <article class="glossary-entry" id="outlier">
-          <h2>Outlier</h2>
-          <p>
-            An example far from the rest. Under squared loss a single outlier
-            can pull a model a long way, because large misses are counted so
-            heavily.
-            <a href="line-fitter.html">Switch one on in the Line Fitter →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="overfitting">
-          <h2>Overfitting</h2>
-          <p>
-            Fitting the noise in the training examples as well as the pattern.
-            The symptom is an excellent training score beside a poor held-out
-            one.
-            <a href="overfitting-lab.html"
-              >Cause it, then cure it, in the Overfitting Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="parameter">
-          <h2>Parameter</h2>
-          <p>
-            One of the adjustable numbers inside a model: a knob. A line has
-            two. Large language models have hundreds of billions. Also called a
-            weight.
-          </p>
-        </article>
-        <article class="glossary-entry" id="precision-and-recall">
-          <h2>Precision and recall</h2>
-          <p>
-            Two ways of scoring a classifier's positive calls. Precision: of
-            those it flagged, how many were right. Recall: of those it should
-            have flagged, how many it caught. Moving the cut-off trades one for
-            the other.
-            <a href="neuron-lab.html">Watch the trade in the Neuron Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="pretraining">
-          <h2>Pretraining</h2>
-          <p>
-            The first and by far the largest stage of training a language model:
-            predicting the next token across trillions of tokens of text. Almost
-            all of a model's cost and knowledge come from it.
-            <a href="scale-ladder.html">Price one in the Scale Ladder →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="query-key-value">
-          <h2>Query, key and value</h2>
-          <p>
-            The three roles a word plays in attention. Its query is the question
-            it asks, its key is what it advertises to other words' questions,
-            and its value is what it hands over when listened to. All three are
-            computed by learned weights.
-          </p>
-        </article>
-        <article class="glossary-entry" id="regularisation">
-          <h2>Regularisation</h2>
-          <p>
-            Any nudge that makes a model prefer simpler explanations, most often
-            a charge added to the loss for large knob values. It trades a little
-            training error for better generalisation.
-            <a href="overfitting-lab.html"
-              >Apply a penalty in the Overfitting Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="rlhf">
-          <h2>Reinforcement learning from human feedback (RLHF)</h2>
-          <p>
-            A later training stage in which people compare pairs of answers, a
-            second model learns to predict their preferences, and the chatbot is
-            nudged towards answers that score well. It makes models more
-            helpful, and more eager to please.
-          </p>
-        </article>
-        <article class="glossary-entry" id="sampling">
-          <h2>Sampling</h2>
-          <p>
-            Choosing one token from a language model's odds. It is a separate
-            step from the model, with its own settings, and it is where the
-            randomness in a chatbot's replies comes from.
-          </p>
-        </article>
-        <article class="glossary-entry" id="scaling-laws">
-          <h2>Scaling laws</h2>
-          <p>
-            The observation that a language model's loss falls smoothly and
-            predictably as its size, its training text and its training
-            arithmetic grow together. It is why labs can plan enormous training
-            runs in advance.
-            <a href="scale-ladder.html">See the curve in the Scale Ladder →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="sigmoid">
-          <h2>Sigmoid</h2>
-          <p>
-            An S-shaped curve that squashes any number into the range 0 to 1, so
-            it can be read as a probability. Large positive inputs give nearly
-            1, large negative nearly 0, and zero gives 0.5.
-          </p>
-        </article>
-        <article class="glossary-entry" id="softmax">
-          <h2>Softmax</h2>
-          <p>
-            A squashing step that turns any list of scores into positive shares
-            adding up to 100%, with higher scores getting disproportionately
-            more. Used to turn attention scores into attention weights, and a
-            model's raw outputs into odds.
-          </p>
-        </article>
-        <article class="glossary-entry" id="squared-error">
-          <h2>Squared error</h2>
-          <p>
-            A way of scoring a guess: the difference from the right answer,
-            squared. It is always positive and it punishes large misses far more
-            than small ones.
-          </p>
-        </article>
-        <article class="glossary-entry" id="sgd">
-          <h2>Stochastic gradient descent (SGD)</h2>
-          <p>
-            Gradient descent using a small random batch of examples for each
-            step instead of all of them. The slope is only roughly right, but
-            steps are so much cheaper that it wins easily.
-          </p>
-        </article>
-        <article class="glossary-entry" id="temperature">
-          <h2>Temperature</h2>
-          <p>
-            A sampling setting that reshapes the odds before a pick is made. Low
-            values favour the likeliest token and make output repetitive; high
-            values give long shots a real chance and make it erratic.
-            <a href="next-token-lab.html">Turn it up in the Next-Token Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="test-set">
-          <h2>Test set</h2>
-          <p>
-            Held-out examples scored exactly once, at the very end. If you tune
-            against a held-out set repeatedly you begin to fit it too, so the
-            final exam must stay unseen.
-          </p>
-        </article>
-        <article class="glossary-entry" id="threshold">
-          <h2>Threshold (cut-off)</h2>
-          <p>
-            How confident a classifier must be before it says yes. It is a
-            policy choice, set by the cost of each kind of mistake, and no
-            amount of training chooses it for you.
-            <a href="neuron-lab.html">Move it in the Neuron Lab →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="token">
-          <h2>Token</h2>
-          <p>
-            The unit of text a language model reads and writes: a piece from a
-            fixed vocabulary, often a whole common word, often a fragment of a
-            rarer one. Models never see letters or words as such.
-            <a href="embedding-lab.html"
-              >Tokenise your own text in the Embedding Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="tokeniser">
-          <h2>Tokeniser</h2>
-          <p>
-            The rule that cuts text into tokens. It is built once, before
-            training, by repeatedly merging the most frequent neighbouring
-            pieces in a large body of text.
-          </p>
-        </article>
-        <article class="glossary-entry" id="top-k">
-          <h2>Top-k</h2>
-          <p>
-            A sampling setting that discards all but the k likeliest tokens
-            before picking. At k = 1 the model always takes its favourite, which
-            tends to trap it in loops.
-            <a href="next-token-lab.html"
-              >Set it to 1 in the Next-Token Lab →</a
-            >
-          </p>
-        </article>
-        <article class="glossary-entry" id="training">
-          <h2>Training</h2>
-          <p>
-            Turning the knobs until the loss on the examples is small. The
-            model's recipe does not change during training; only the numbers
-            inside it do.
-          </p>
-        </article>
-        <article class="glossary-entry" id="transformer">
-          <h2>Transformer</h2>
-          <p>
-            The architecture behind modern language models: embeddings, then
-            many layers that each apply attention followed by a small neural
-            network to every token, all trained together to predict the next
-            token.
-          </p>
-        </article>
-        <article class="glossary-entry" id="underfitting">
-          <h2>Underfitting</h2>
-          <p>
-            A model too stiff to follow the pattern. Both its scores are poor,
-            and close together. More training will not help; more capacity will.
-          </p>
-        </article>
-        <article class="glossary-entry" id="validation-set">
-          <h2>Validation set</h2>
-          <p>
-            Examples kept out of training and consulted while making choices,
-            such as the learning rate or when to stop. Because it influences
-            decisions, its score slowly becomes optimistic, which is why a
-            separate test set is kept back.
-            <a href="names-guide.html">Decode the three piles →</a>
-          </p>
-        </article>
-        <article class="glossary-entry" id="weight">
-          <h2>Weight</h2>
-          <p>
-            A knob that scales one input to a neuron. A large weight means the
-            neuron listens closely to that input; a negative one means the input
-            counts against. Weights and biases together are the parameters.
-          </p>
-        </article>
+      </header>
+      <div class="glossary-main">
+        <div class="glossary-tools">
+          <label class="visually-hidden" for="glossary-search"
+            >Search the glossary</label
+          >
+          <input
+            id="glossary-search"
+            type="search"
+            placeholder="Try “loss”, “learning rate” or “overfitting”"
+            autocomplete="off"
+          />
+          <span
+            class="glossary-count"
+            id="glossary-count"
+            aria-live="polite"
+          ></span>
+        </div>
+        <div class="glossary-list">
+          <article class="glossary-entry" id="activation">
+            <h2>Activation</h2>
+            <p>
+              The bend applied to a neuron's weighted sum before it is passed
+              on. Without it, any stack of layers collapses into a single
+              straight line.
+              <a href="network-playground.html"
+                >Swap activations in the Network Playground →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="attention">
+            <h2>Attention</h2>
+            <p>
+              How a word adjusts its meaning to its context: it scores every
+              other word for relevance, turns the scores into shares that add up
+              to 100%, and becomes the share-weighted blend of what those words
+              offer.
+              <a href="attention-lab.html">Steer it in the Attention Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="backpropagation">
+            <h2>Backpropagation</h2>
+            <p>
+              How a network finds the slope for every knob: one sweep forwards
+              to make a guess, one sweep backwards sharing out the blame along
+              the wires in proportion to the weights.
+              <a href="network-playground.html"
+                >See blame flow in the Network Playground →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="baseline">
+            <h2>Baseline</h2>
+            <p>
+              The score of the simplest thing you could do instead, such as
+              always predicting the commonest outcome. A model's score means
+              little until it is set beside one.
+              <a href="capstone.html">Beat one in the capstone →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="batch">
+            <h2>Batch</h2>
+            <p>
+              The handful of examples looked at in one step of training. A full
+              batch uses every example; a mini-batch uses a random few, which is
+              cheaper and noisier.
+              <a href="descent-lab.html"
+                >Try batch sizes in the Descent Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="capacity">
+            <h2>Capacity</h2>
+            <p>
+              How flexible a model is: roughly, how many different shapes its
+              knobs let it take. More capacity can fit more patterns, and more
+              noise.
+              <a href="overfitting-lab.html"
+                >Raise the capacity in the Overfitting Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="class-imbalance">
+            <h2>Class imbalance</h2>
+            <p>
+              When one outcome is much rarer than the other. Accuracy then
+              flatters: a model that never predicts the rare outcome is right
+              most of the time and useless.
+              <a href="capstone.html">Meet it in the capstone →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="classification">
+            <h2>Classification</h2>
+            <p>
+              Predicting a category (spam or not) instead of a quantity. The
+              model outputs a probability for each category; turning that into a
+              verdict is a separate decision.
+              <a href="neuron-lab.html">Try it in the Neuron Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="context-window">
+            <h2>Context window</h2>
+            <p>
+              How much preceding text a language model can take into account at
+              once, measured in tokens. Attention compares every token with
+              every other, so doubling the window roughly quadruples the work.
+            </p>
+          </article>
+          <article class="glossary-entry" id="convergence">
+            <h2>Convergence</h2>
+            <p>
+              The point at which further training steps stop changing anything
+              much, because the slope underfoot has flattened out.
+            </p>
+          </article>
+          <article class="glossary-entry" id="cross-entropy">
+            <h2>Cross-entropy</h2>
+            <p>
+              The usual loss for classification: the average surprise at the
+              right answer, measured as the negative logarithm of the
+              probability the model gave it. Confident mistakes cost the most.
+            </p>
+          </article>
+          <article class="glossary-entry" id="data-leakage">
+            <h2>Data leakage</h2>
+            <p>
+              An input that would not be available at the moment a real
+              prediction is needed, usually because it was recorded after the
+              event being predicted. It produces superb scores on archived data
+              and failure in use.
+              <a href="capstone.html">Find the leak in the capstone →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="decision-boundary">
+            <h2>Decision boundary</h2>
+            <p>
+              The places where a classifier is exactly undecided between two
+              categories. For one neuron it is a straight line; for a network it
+              can be any shape.
+            </p>
+          </article>
+          <article class="glossary-entry" id="dimension">
+            <h2>Dimension</h2>
+            <p>
+              One of the coordinates in an embedding. More dimensions give
+              meaning more independent directions to vary along; too few and
+              different kinds of meaning interfere.
+              <a href="embedding-lab.html"
+                >Compare 2 and 8 in the Embedding Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="divergence">
+            <h2>Divergence</h2>
+            <p>
+              Training that makes the model steadily worse, usually because the
+              learning rate is too large and every step overshoots. It often
+              ends with the numbers overflowing.
+              <a href="descent-lab.html">Find the edge in the Descent Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="embedding">
+            <h2>Embedding</h2>
+            <p>
+              A token's learned position in space: a list of numbers, trained
+              like any other knobs, such that tokens used in similar company end
+              up close together.
+              <a href="embedding-lab.html"
+                >Watch one form in the Embedding Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="epoch">
+            <h2>Epoch</h2>
+            <p>
+              One complete pass through the training data. Not the same as a
+              step, which is a single update from a single batch; an epoch may
+              contain thousands of steps.
+            </p>
+          </article>
+          <article class="glossary-entry" id="example">
+            <h2>Example</h2>
+            <p>
+              One input paired with the answer we wanted for it. Examples are
+              the only teacher a model has. Also called a data point or a
+              sample.
+            </p>
+          </article>
+          <article class="glossary-entry" id="fine-tuning">
+            <h2>Fine-tuning</h2>
+            <p>
+              Continuing to train an already-trained model on a much smaller set
+              of examples chosen to shape its behaviour, such as conversations
+              showing what a good answer looks like. Same loss, new examples.
+            </p>
+          </article>
+          <article class="glossary-entry" id="generalisation">
+            <h2>Generalisation</h2>
+            <p>
+              Doing well on inputs the model has never seen. It is the entire
+              point of machine learning, and it cannot be measured on the
+              training examples.
+            </p>
+          </article>
+          <article class="glossary-entry" id="gradient">
+            <h2>Gradient</h2>
+            <p>
+              One number per knob saying how fast the loss would rise if that
+              knob were turned up a hair. Together they point uphill, so
+              training steps the opposite way.
+              <a href="descent-lab.html">Watch it work in the Descent Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="gradient-descent">
+            <h2>Gradient descent</h2>
+            <p>
+              The training loop: measure the gradient, move every knob a little
+              way downhill, repeat. Nothing more clever than that is happening,
+              at any scale.
+            </p>
+          </article>
+          <article class="glossary-entry" id="hallucination">
+            <h2>Hallucination</h2>
+            <p>
+              Fluent, confident output that is not true. It is not a
+              malfunction: the model was trained to produce plausible text, and
+              plausible is a different property from correct.
+            </p>
+          </article>
+          <article class="glossary-entry" id="held-out-data">
+            <h2>Held-out data</h2>
+            <p>
+              Examples kept back from training and used only to score the
+              finished model. Their score is the honest one. See also test set.
+            </p>
+          </article>
+          <article class="glossary-entry" id="hyperparameter">
+            <h2>Hyperparameter</h2>
+            <p>
+              A setting chosen by a person rather than learned from examples:
+              the learning rate, the batch size, the capacity of the model.
+              Knobs about the knobs.
+            </p>
+          </article>
+          <article class="glossary-entry" id="inference">
+            <h2>Inference</h2>
+            <p>
+              Using a trained model to answer a question, with its knobs frozen.
+              Training is done once at great cost; inference is what is paid for
+              with every request.
+            </p>
+          </article>
+          <article class="glossary-entry" id="language-model">
+            <h2>Language model</h2>
+            <p>
+              A model that, given some text, produces odds for what comes next.
+              Generating text is a loop around it: pick from the odds, append
+              the pick, ask again.
+              <a href="next-token-lab.html"
+                >Build one from a book in the Next-Token Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="layer">
+            <h2>Layer</h2>
+            <p>
+              A row of neurons that all read the same inputs. Hidden layers sit
+              between input and output, and what each of their neurons comes to
+              detect is discovered during training, not assigned.
+            </p>
+          </article>
+          <article class="glossary-entry" id="learning-rate">
+            <h2>Learning rate</h2>
+            <p>
+              How far to move each knob per step, as a multiple of the slope.
+              Too small and training crawls; too large and it overshoots and
+              diverges.
+              <a href="descent-lab.html"
+                >Lengthen the stride in the Descent Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="loss">
+            <h2>Loss</h2>
+            <p>
+              A single number for how wrong the model currently is across its
+              examples. Training is the business of making this number smaller.
+              This course often calls it the miss.
+              <a href="line-fitter.html"
+                >See it as a landscape in the Line Fitter →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="loss-landscape">
+            <h2>Loss landscape</h2>
+            <p>
+              The loss at every possible setting of the knobs, pictured as
+              terrain. With two knobs it can be drawn; with billions it cannot,
+              but descent works the same way.
+              <a href="line-fitter.html">Explore one in the Line Fitter →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="model">
+            <h2>Model</h2>
+            <p>
+              A fixed recipe for turning an input into a guess, with adjustable
+              numbers inside it. A straight line is a model. So is a chatbot.
+            </p>
+          </article>
+          <article class="glossary-entry" id="neural-network">
+            <h2>Neural network</h2>
+            <p>
+              Neurons feeding neurons. Early layers carve the input into simple
+              pieces and later layers combine the pieces, all trained together
+              by gradient descent.
+              <a href="network-playground.html"
+                >Train one in the Network Playground →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="neuron">
+            <h2>Neuron</h2>
+            <p>
+              A weighted sum of inputs plus a bias, passed through a bend. On
+              its own it can draw exactly one straight boundary.
+              <a href="neuron-lab.html">Meet one in the Neuron Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="noise">
+            <h2>Noise</h2>
+            <p>
+              The part of the answers that the inputs cannot explain. It sets a
+              floor under the loss that no setting of the knobs can get beneath.
+            </p>
+          </article>
+          <article class="glossary-entry" id="outlier">
+            <h2>Outlier</h2>
+            <p>
+              An example far from the rest. Under squared loss a single outlier
+              can pull a model a long way, because large misses are counted so
+              heavily.
+              <a href="line-fitter.html">Switch one on in the Line Fitter →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="overfitting">
+            <h2>Overfitting</h2>
+            <p>
+              Fitting the noise in the training examples as well as the pattern.
+              The symptom is an excellent training score beside a poor held-out
+              one.
+              <a href="overfitting-lab.html"
+                >Cause it, then cure it, in the Overfitting Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="parameter">
+            <h2>Parameter</h2>
+            <p>
+              One of the adjustable numbers inside a model: a knob. A line has
+              two. Large language models have hundreds of billions. Also called
+              a weight.
+            </p>
+          </article>
+          <article class="glossary-entry" id="precision-and-recall">
+            <h2>Precision and recall</h2>
+            <p>
+              Two ways of scoring a classifier's positive calls. Precision: of
+              those it flagged, how many were right. Recall: of those it should
+              have flagged, how many it caught. Moving the cut-off trades one
+              for the other.
+              <a href="neuron-lab.html">Watch the trade in the Neuron Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="pretraining">
+            <h2>Pretraining</h2>
+            <p>
+              The first and by far the largest stage of training a language
+              model: predicting the next token across trillions of tokens of
+              text. Almost all of a model's cost and knowledge come from it.
+              <a href="scale-ladder.html">Price one in the Scale Ladder →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="query-key-value">
+            <h2>Query, key and value</h2>
+            <p>
+              The three roles a word plays in attention. Its query is the
+              question it asks, its key is what it advertises to other words'
+              questions, and its value is what it hands over when listened to.
+              All three are computed by learned weights.
+            </p>
+          </article>
+          <article class="glossary-entry" id="regularisation">
+            <h2>Regularisation</h2>
+            <p>
+              Any nudge that makes a model prefer simpler explanations, most
+              often a charge added to the loss for large knob values. It trades
+              a little training error for better generalisation.
+              <a href="overfitting-lab.html"
+                >Apply a penalty in the Overfitting Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="rlhf">
+            <h2>Reinforcement learning from human feedback (RLHF)</h2>
+            <p>
+              A later training stage in which people compare pairs of answers, a
+              second model learns to predict their preferences, and the chatbot
+              is nudged towards answers that score well. It makes models more
+              helpful, and more eager to please.
+            </p>
+          </article>
+          <article class="glossary-entry" id="sampling">
+            <h2>Sampling</h2>
+            <p>
+              Choosing one token from a language model's odds. It is a separate
+              step from the model, with its own settings, and it is where the
+              randomness in a chatbot's replies comes from.
+            </p>
+          </article>
+          <article class="glossary-entry" id="scaling-laws">
+            <h2>Scaling laws</h2>
+            <p>
+              The observation that a language model's loss falls smoothly and
+              predictably as its size, its training text and its training
+              arithmetic grow together. It is why labs can plan enormous
+              training runs in advance.
+              <a href="scale-ladder.html"
+                >See the curve in the Scale Ladder →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="sigmoid">
+            <h2>Sigmoid</h2>
+            <p>
+              An S-shaped curve that squashes any number into the range 0 to 1,
+              so it can be read as a probability. Large positive inputs give
+              nearly 1, large negative nearly 0, and zero gives 0.5.
+            </p>
+          </article>
+          <article class="glossary-entry" id="softmax">
+            <h2>Softmax</h2>
+            <p>
+              A squashing step that turns any list of scores into positive
+              shares adding up to 100%, with higher scores getting
+              disproportionately more. Used to turn attention scores into
+              attention weights, and a model's raw outputs into odds.
+            </p>
+          </article>
+          <article class="glossary-entry" id="squared-error">
+            <h2>Squared error</h2>
+            <p>
+              A way of scoring a guess: the difference from the right answer,
+              squared. It is always positive and it punishes large misses far
+              more than small ones.
+            </p>
+          </article>
+          <article class="glossary-entry" id="sgd">
+            <h2>Stochastic gradient descent (SGD)</h2>
+            <p>
+              Gradient descent using a small random batch of examples for each
+              step instead of all of them. The slope is only roughly right, but
+              steps are so much cheaper that it wins easily.
+            </p>
+          </article>
+          <article class="glossary-entry" id="temperature">
+            <h2>Temperature</h2>
+            <p>
+              A sampling setting that reshapes the odds before a pick is made.
+              Low values favour the likeliest token and make output repetitive;
+              high values give long shots a real chance and make it erratic.
+              <a href="next-token-lab.html"
+                >Turn it up in the Next-Token Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="test-set">
+            <h2>Test set</h2>
+            <p>
+              Held-out examples scored exactly once, at the very end. If you
+              tune against a held-out set repeatedly you begin to fit it too, so
+              the final exam must stay unseen.
+            </p>
+          </article>
+          <article class="glossary-entry" id="threshold">
+            <h2>Threshold (cut-off)</h2>
+            <p>
+              How confident a classifier must be before it says yes. It is a
+              policy choice, set by the cost of each kind of mistake, and no
+              amount of training chooses it for you.
+              <a href="neuron-lab.html">Move it in the Neuron Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="token">
+            <h2>Token</h2>
+            <p>
+              The unit of text a language model reads and writes: a piece from a
+              fixed vocabulary, often a whole common word, often a fragment of a
+              rarer one. Models never see letters or words as such.
+              <a href="embedding-lab.html"
+                >Tokenise your own text in the Embedding Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="tokeniser">
+            <h2>Tokeniser</h2>
+            <p>
+              The rule that cuts text into tokens. It is built once, before
+              training, by repeatedly merging the most frequent neighbouring
+              pieces in a large body of text.
+            </p>
+          </article>
+          <article class="glossary-entry" id="top-k">
+            <h2>Top-k</h2>
+            <p>
+              A sampling setting that discards all but the k likeliest tokens
+              before picking. At k = 1 the model always takes its favourite,
+              which tends to trap it in loops.
+              <a href="next-token-lab.html"
+                >Set it to 1 in the Next-Token Lab →</a
+              >
+            </p>
+          </article>
+          <article class="glossary-entry" id="training">
+            <h2>Training</h2>
+            <p>
+              Turning the knobs until the loss on the examples is small. The
+              model's recipe does not change during training; only the numbers
+              inside it do.
+            </p>
+          </article>
+          <article class="glossary-entry" id="transformer">
+            <h2>Transformer</h2>
+            <p>
+              The architecture behind modern language models: embeddings, then
+              many layers that each apply attention followed by a small neural
+              network to every token, all trained together to predict the next
+              token.
+            </p>
+          </article>
+          <article class="glossary-entry" id="underfitting">
+            <h2>Underfitting</h2>
+            <p>
+              A model too stiff to follow the pattern. Both its scores are poor,
+              and close together. More training will not help; more capacity
+              will.
+            </p>
+          </article>
+          <article class="glossary-entry" id="validation-set">
+            <h2>Validation set</h2>
+            <p>
+              Examples kept out of training and consulted while making choices,
+              such as the learning rate or when to stop. Because it influences
+              decisions, its score slowly becomes optimistic, which is why a
+              separate test set is kept back.
+              <a href="names-guide.html">Decode the three piles →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="weight">
+            <h2>Weight</h2>
+            <p>
+              A knob that scales one input to a neuron. A large weight means the
+              neuron listens closely to that input; a negative one means the
+              input counts against. Weights and biases together are the
+              parameters.
+            </p>
+          </article>
+        </div>
       </div>
     </main>
     <footer class="lesson-next">

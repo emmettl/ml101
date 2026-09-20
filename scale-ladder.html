@@ -13,26 +13,28 @@
   </head>
   <body class="lab">
     <!-- include: lab-head lesson-href="lesson-08-scale.html" lesson-label="Read the lesson" -->
-    <div class="hero">
-      <p class="eyebrow">Lab 09 · Scale</p>
-      <h1>Scale Ladder</h1>
-      <p class="lede">
-        Pick a size for a model and the lab works out what follows: how much
-        text it should read, how much arithmetic that takes, how long on how
-        many chips, and how much memory just to hold it. These are the rules of
-        thumb used to plan real training runs, and they fit on a postcard.
-      </p>
-    </div>
-    <p class="scope-note">
-      <b>Scope:</b> three standard approximations. Training arithmetic ≈ 6 ×
-      knobs × tokens. A well-fed model reads about 20 tokens per knob (Hoffmann
-      et al., 2022). One modern accelerator does about 4 × 10<sup>14</sup>
-      useful operations a second once real-world inefficiency is allowed for.
-      Figures for real models are those their makers published. Electricity,
-      failed runs, data preparation, fine-tuning, the cost of answering
-      questions afterwards and everything about closed models are left out.
-    </p>
     <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 09 · Scale</p>
+        <h1>Scale Ladder</h1>
+        <p class="lede">
+          Pick a size for a model and the lab works out what follows: how much
+          text it should read, how much arithmetic that takes, how long on how
+          many chips, and how much memory just to hold it. These are the rules
+          of thumb used to plan real training runs, and they fit on a postcard.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> three standard approximations. Training arithmetic ≈ 6 ×
+        knobs × tokens. A well-fed model reads about 20 tokens per knob
+        (Hoffmann et al., 2022). One modern accelerator does about 4 × 10<sup
+          >14</sup
+        >
+        useful operations a second once real-world inefficiency is allowed for.
+        Figures for real models are those their makers published. Electricity,
+        failed runs, data preparation, fine-tuning, the cost of answering
+        questions afterwards and everything about closed models are left out.
+      </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="ladder-name">1 billion knobs</strong>
         <p id="ladder-description"></p>
