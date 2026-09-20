@@ -361,3 +361,82 @@ test("every page type offers a skip link to its main content", async ({ page }) 
     await expect(page.locator("main#content")).toHaveCount(1);
   }
 });
+
+test.describe("on a phone", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("lab settings dock to the bottom so the chart stays in view while a knob moves", async ({
+    page,
+  }) => {
+    const errors = monitorRuntimeErrors(page);
+    await page.goto("/descent-lab.html");
+    const dock = page.locator(".controls.is-dock");
+    await expect(dock).toBeVisible();
+    await expect(page.locator(".control-block:visible")).toHaveCount(1);
+    await expect(page.locator(".dock-position")).toHaveText("1 of 3");
+
+    await page.locator("#descent-map-chart").scrollIntoViewIfNeeded();
+    await page.evaluate(() => window.scrollBy(0, 120));
+    const geometry = await page.evaluate(() => {
+      const box = (selector: string) => document.querySelector(selector)!.getBoundingClientRect();
+      return { dock: box(".controls"), chart: box("#descent-map-chart"), height: innerHeight };
+    });
+    expect(Math.round(geometry.dock.bottom)).toBe(geometry.height);
+    expect(geometry.dock.height).toBeLessThan(200);
+    expect(geometry.chart.bottom).toBeLessThanOrEqual(geometry.dock.top + 1);
+
+    await page.locator("#descent-learningRate").fill("-0.52");
+    await expect(page.locator("#descent-stats")).toContainText("Runs away");
+
+    await page.getByRole("button", { name: "Next setting" }).click();
+    await expect(page.locator(".dock-position")).toHaveText("2 of 3");
+    await expect(page.locator("#descent-batch")).toBeVisible();
+    await expect(page.locator("#descent-learningRate")).toBeHidden();
+    await expect(page.getByRole("button", { name: "Previous setting" })).toBeEnabled();
+
+    await page.locator(".section-toggle").click();
+    await expect(page.locator(".control-block:visible")).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test("a prediction brings the control it moves to the front of the dock", async ({ page }) => {
+    await page.goto("/overfitting-lab.html");
+    await expect(page.locator("#overfit-simulation-status")).toContainText("Current");
+    await page.getByRole("button", { name: "Next setting" }).click();
+    await expect(page.locator("#overfit-degree")).toBeHidden();
+    const card = page.locator("#predict");
+    await card.locator('.predict-choices button[data-choice="big"]').click();
+    await card.locator(".predict-reveal").click();
+    await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+    await expect(page.locator("#overfit-degree")).toBeVisible();
+    await expect(page.locator(".dock-position")).toHaveText("1 of 4");
+  });
+
+  test("every lab with settings docks them, without horizontal overflow", async ({ page }) => {
+    for (const path of [
+      "/line-fitter.html",
+      "/neuron-lab.html",
+      "/network-playground.html",
+      "/embedding-lab.html",
+      "/attention-lab.html",
+      "/next-token-lab.html",
+      "/scale-ladder.html",
+      "/capstone.html",
+    ]) {
+      await page.goto(path);
+      await expect(page.locator(".controls.is-dock"), path).toBeVisible();
+      await expect(page.locator(".control-block:visible"), path).toHaveCount(1);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      );
+      expect(overflow, path).toBeLessThanOrEqual(0);
+    }
+  });
+});
+
+test("on a desktop the settings stay a sidebar with every control showing", async ({ page }) => {
+  await page.goto("/descent-lab.html");
+  await expect(page.locator(".controls.is-dock")).toHaveCount(0);
+  await expect(page.locator(".dock-pager")).toBeHidden();
+  await expect(page.locator(".control-block:visible")).toHaveCount(3);
+});
