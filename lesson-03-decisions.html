@@ -17,14 +17,16 @@
           <p class="eyebrow">Lesson 03 · Classification</p>
           <h1>From numbers to decisions</h1>
           <p class="lede">
-            So far the machine has guessed a number. Most useful questions want a verdict instead:
-            spam or not, tumour or not, approve or decline. One small addition turns the straight
-            line into a decision-maker, and it has a name you have heard: a neuron.
+            So far the machine has guessed a number. Most useful questions want
+            a verdict instead: spam or not, tumour or not, approve or decline.
+            One small addition turns the straight line into a decision-maker,
+            and it has a name you have heard: a neuron.
           </p>
         </div>
         <aside class="lesson-meta">
           <span>Estimated reading time</span><strong>10 minutes</strong
-          ><span>Builds on</span><strong>Lessons 00–01 · Knobs and descent</strong
+          ><span>Builds on</span
+          ><strong>Lessons 00–01 · Knobs and descent</strong
           ><a href="neuron-lab.html">Open the Neuron Lab →</a>
         </aside>
       </div>
@@ -36,35 +38,40 @@
           <p class="section-label">The one idea</p>
           <h2>Draw a line, then say how sure you are</h2>
           <p>
-            Take two measurements of something, say an email's length and how many links it
-            contains, and plot every email as a dot. If spam tends to sit in one region, a
-            straight line between the regions is a usable spam filter: everything on one side is
-            flagged.
+            Take two measurements of something, say an email's length and how
+            many links it contains, and plot every email as a dot. If spam tends
+            to sit in one region, a straight line between the regions is a
+            usable spam filter: everything on one side is flagged.
           </p>
           <p>
-            A hard line is a crude answer, though. A dot just over the line is not as clearly spam
-            as one far beyond it. So the machine does two things. It computes how far the dot is
-            from the line, exactly as in lesson 00: multiply each input by a knob, add them up,
-            add one more knob. Then it passes that distance through a squashing curve that turns
-            any number into a value between 0 and 1. Far on one side gives nearly 1, far on the
-            other gives nearly 0, and on the line itself gives 0.5. Read it as a probability.
+            A hard line is a crude answer, though. A dot just over the line is
+            not as clearly spam as one far beyond it. So the machine does two
+            things. It computes how far the dot is from the line, exactly as in
+            lesson 00: multiply each input by a knob, add them up, add one more
+            knob. Then it passes that distance through a squashing curve that
+            turns any number into a value between 0 and 1. Far on one side gives
+            nearly 1, far on the other gives nearly 0, and on the line itself
+            gives 0.5. Read it as a probability.
           </p>
           <div class="callout">
-            A neuron is a weighted sum followed by a squish. The weights place the line. The
-            squish turns distance from the line into confidence.
+            A neuron is a weighted sum followed by a squish. The weights place
+            the line. The squish turns distance from the line into confidence.
           </div>
           <div class="concept-grid">
             <div class="concept">
               <strong>Classification</strong>
               <p>
                 Predicting a category, not a quantity. See
-                <a class="term" href="glossary.html#classification">classification</a>.
+                <a class="term" href="glossary.html#classification"
+                  >classification</a
+                >.
               </p>
             </div>
             <div class="concept">
               <strong>Weights and bias</strong>
               <p>
-                The knobs. One <a class="term" href="glossary.html#weight">weight</a> per input
+                The knobs. One
+                <a class="term" href="glossary.html#weight">weight</a> per input
                 tilts the line; the bias slides it.
               </p>
             </div>
@@ -77,7 +84,10 @@
             </div>
             <div class="concept">
               <strong>Decision boundary</strong>
-              <p>The places where the neuron is exactly undecided. For one neuron, a straight line.</p>
+              <p>
+                The places where the neuron is exactly undecided. For one
+                neuron, a straight line.
+              </p>
             </div>
           </div>
         </section>
@@ -85,10 +95,11 @@
           <p class="section-label">One neuron at work</p>
           <h2>It can place a line anywhere. It cannot place two.</h2>
           <p>
-            Circles are one class and triangles the other. The shading is the neuron's opinion of
-            every spot on the plane: strongly coloured where it is confident, blank where it is
-            unsure. Move the three knobs yourself, or press the button and let gradient descent
-            from lesson 01 do it. Then switch to the second pattern.
+            Circles are one class and triangles the other. The shading is the
+            neuron's opinion of every spot on the plane: strongly coloured where
+            it is confident, blank where it is unsure. Move the three knobs
+            yourself, or press the button and let gradient descent from lesson
+            01 do it. Then switch to the second pattern.
           </p>
           <div class="interactive" aria-labelledby="interactive-title">
             <div class="interactive-head">
@@ -107,20 +118,48 @@
                 </select>
               </div>
               <div class="control">
-                <label for="neuron-wx">Weight on input 1 · <span id="neuron-wx-value">1.0</span></label
-                ><input id="neuron-wx" type="range" min="-10" max="10" step="0.1" value="1" />
+                <label for="neuron-wx"
+                  >Weight on input 1 ·
+                  <span id="neuron-wx-value">1.0</span></label
+                ><input
+                  id="neuron-wx"
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="0.1"
+                  value="1"
+                />
               </div>
               <div class="control">
-                <label for="neuron-wy">Weight on input 2 · <span id="neuron-wy-value">-3.0</span></label
-                ><input id="neuron-wy" type="range" min="-10" max="10" step="0.1" value="-3" />
+                <label for="neuron-wy"
+                  >Weight on input 2 ·
+                  <span id="neuron-wy-value">-3.0</span></label
+                ><input
+                  id="neuron-wy"
+                  type="range"
+                  min="-10"
+                  max="10"
+                  step="0.1"
+                  value="-3"
+                />
               </div>
               <div class="control">
-                <label for="neuron-bias">Bias · <span id="neuron-bias-value">0.0</span></label
-                ><input id="neuron-bias" type="range" min="-6" max="6" step="0.1" value="0" />
+                <label for="neuron-bias"
+                  >Bias · <span id="neuron-bias-value">0.0</span></label
+                ><input
+                  id="neuron-bias"
+                  type="range"
+                  min="-6"
+                  max="6"
+                  step="0.1"
+                  value="0"
+                />
               </div>
             </div>
             <div class="interactive-actions">
-              <button type="button" class="primary" id="neuron-train">Train it for me</button>
+              <button type="button" class="primary" id="neuron-train">
+                Train it for me
+              </button>
             </div>
             <div class="chart-wrap">
               <div class="plot-host" id="lesson-host">
@@ -150,25 +189,32 @@
                 <dd id="stat-4">–</dd>
               </div>
             </dl>
-            <p class="interactive-prose" id="neuron-prose" aria-live="polite"></p>
+            <p
+              class="interactive-prose"
+              id="neuron-prose"
+              aria-live="polite"
+            ></p>
           </div>
           <p>
-            On the opposite-corners pattern no setting works, and training does no better than you
-            did. This is not a shortage of effort or data. One neuron draws one straight line, and
-            no single straight line separates opposite corners. The pattern is called XOR, and in
-            1969 this observation helped stall neural-network research for a decade. The fix turned
-            out to be simple. It is the next lesson.
+            On the opposite-corners pattern no setting works, and training does
+            no better than you did. This is not a shortage of effort or data.
+            One neuron draws one straight line, and no single straight line
+            separates opposite corners. The pattern is called XOR, and in 1969
+            this observation helped stall neural-network research for a decade.
+            The fix turned out to be simple. It is the next lesson.
           </p>
         </section>
         <section id="arithmetic">
           <p class="section-label">The arithmetic</p>
           <h2>Scoring a probability</h2>
           <p>
-            Squared misses suit quantities. For probabilities there is a better score. If the
-            right answer was “spam” and the neuron said 0.9, it was barely surprised; if it said
-            0.01, it was very surprised. The loss is the average surprise, measured as the
-            negative logarithm of the probability given to the right answer. Its proper name is
-            <a class="term" href="glossary.html#cross-entropy">cross-entropy</a>.
+            Squared misses suit quantities. For probabilities there is a better
+            score. If the right answer was “spam” and the neuron said 0.9, it
+            was barely surprised; if it said 0.01, it was very surprised. The
+            loss is the average surprise, measured as the negative logarithm of
+            the probability given to the right answer. Its proper name is
+            <a class="term" href="glossary.html#cross-entropy">cross-entropy</a
+            >.
           </p>
           <div class="concept-grid">
             <div class="concept">
@@ -181,13 +227,16 @@
             </div>
             <div class="concept">
               <strong>Said 0.01, was right</strong>
-              <p>Surprise 4.6. Confident and wrong is punished hardest of all.</p>
+              <p>
+                Surprise 4.6. Confident and wrong is punished hardest of all.
+              </p>
             </div>
             <div class="concept">
               <strong>Why not just count mistakes?</strong>
               <p>
-                A count has no slope: nudging a knob slightly usually changes no verdicts, so
-                descent has nothing to follow. Surprise changes smoothly.
+                A count has no slope: nudging a knob slightly usually changes no
+                verdicts, so descent has nothing to follow. Surprise changes
+                smoothly.
               </p>
             </div>
           </div>
@@ -220,7 +269,9 @@
             <p class="quiz-feedback" aria-live="polite"></p>
           </div>
           <div class="quiz">
-            <h3>Why can a single neuron not learn the opposite-corners pattern?</h3>
+            <h3>
+              Why can a single neuron not learn the opposite-corners pattern?
+            </h3>
             <p>Think about the shape of the boundary it is able to draw.</p>
             <div class="quiz-options">
               <button
@@ -250,19 +301,28 @@
           <div class="takeaway-grid">
             <div>
               <strong>A neuron is lesson 00 plus a squish</strong>
-              <p>Weighted sum, then a curve that turns it into a probability.</p>
+              <p>
+                Weighted sum, then a curve that turns it into a probability.
+              </p>
             </div>
             <div>
               <strong>The output is confidence, not a verdict</strong>
-              <p>Where to cut it into yes and no is a separate decision, made by a person.</p>
+              <p>
+                Where to cut it into yes and no is a separate decision, made by
+                a person.
+              </p>
             </div>
             <div>
               <strong>Train on surprise, not on mistakes</strong>
-              <p>Cross-entropy has a slope everywhere, so descent can follow it.</p>
+              <p>
+                Cross-entropy has a slope everywhere, so descent can follow it.
+              </p>
             </div>
             <div>
               <strong>One neuron, one line</strong>
-              <p>Anything that needs a bent boundary needs more than one neuron.</p>
+              <p>
+                Anything that needs a bent boundary needs more than one neuron.
+              </p>
             </div>
           </div>
         </section>
@@ -281,8 +341,8 @@
         <div class="aside-card">
           <h2>Go deeper</h2>
           <p>
-            Move the cut-off between yes and no, and watch false alarms trade against misses in a
-            live tally.
+            Move the cut-off between yes and no, and watch false alarms trade
+            against misses in a live tally.
           </p>
           <a href="neuron-lab.html">Open the Neuron Lab →</a>
         </div>
@@ -290,9 +350,13 @@
     </main>
     <footer class="lesson-next">
       <div>
-        <span>Previous lesson</span><a href="lesson-02-overfitting.html">← Too clever by half</a>
+        <span>Previous lesson</span
+        ><a href="lesson-02-overfitting.html">← Too clever by half</a>
       </div>
-      <div><span>Next lesson</span><a href="lesson-04-networks.html">Stacking neurons →</a></div>
+      <div>
+        <span>Next lesson</span
+        ><a href="lesson-04-networks.html">Stacking neurons →</a>
+      </div>
     </footer>
     <script type="module" src="/src/lessons/decisions.ts"></script>
   </body>

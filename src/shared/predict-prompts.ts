@@ -152,6 +152,40 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#neuron-simulation-status",
     },
   ],
+  "network-playground": [
+    {
+      id: "units-down",
+      question:
+        "Eight hidden neurons learn the ring comfortably. You cut the layer down to one neuron and train again from the same start. What happens to the share it gets right on held-out examples?",
+      readout: { selector: "#play-stats", match: "Right on held-out", label: "right on held-out" },
+      change: {
+        selector: "#play-units",
+        value: "1",
+        describe: "The lab will set neurons per hidden layer to 1 and retrain.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. One hidden neuron is one straight line, and no straight line encloses a centre. Look at the table below: the score jumps at three neurons, the fewest lines that can surround anything.`,
+      settle: "#play-simulation-status",
+    },
+    {
+      id: "second-layer",
+      question:
+        "Back at eight neurons, you add a second hidden layer of eight, roughly tripling the number of knobs. More capacity, same pattern, same 1,500 steps. What happens to the held-out score?",
+      readout: { selector: "#play-stats", match: "Right on held-out", label: "right on held-out" },
+      change: {
+        selector: "#play-layers",
+        value: "2",
+        describe: "The lab will add a second hidden layer and retrain.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: () =>
+        "Nothing much. One layer of eight had already captured the ring, and you cannot do better than right. Capacity beyond what the pattern needs buys nothing on clean data, and on noisy data it buys the trouble from lesson 02. Bigger is not a free improvement.",
+      settle: "#play-simulation-status",
+    },
+  ],
   "overfitting-lab": [
     {
       id: "degree-up",

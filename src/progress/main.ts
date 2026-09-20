@@ -20,6 +20,7 @@ function renderProgress(): void {
   element("progress-lessons").textContent = `${completed} of ${COURSE_LESSONS.length}`;
   element("progress-bar").style.width = `${(completed / COURSE_LESSONS.length) * 100}%`;
   element("progress-track").setAttribute("aria-valuenow", String(completed));
+  element("progress-track").setAttribute("aria-valuemax", String(COURSE_LESSONS.length));
   element("progress-quizzes").textContent = String(progress.correctQuizCount);
   element("progress-predictions").textContent = String(progress.predictionAttemptCount);
   element("progress-next").textContent = resume.label;

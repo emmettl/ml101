@@ -57,7 +57,8 @@ export function drawDecision(
   const threshold = options.threshold ?? 0.5;
   const mark = (point: LabelledPoint, radius: number, extra: string) => {
     const wrong =
-      options.markWrong && probability(network, point.x, point.y) >= threshold !== (point.label === 1);
+      options.markWrong &&
+      probability(network, point.x, point.y) >= threshold !== (point.label === 1);
     const picked = options.picked === point;
     const classes = `${point.label ? "class-b" : "class-a"} ${extra} ${wrong ? "wrong" : ""} ${picked ? "picked" : ""}`;
     if (point.label) plot.triangle(point.x, point.y, radius, classes);
@@ -127,7 +128,11 @@ export function drawDiagram(
       }
       svg.append(node);
     }
-  const labels = ["inputs", ...layers.slice(1, -1).map((_, index) => `hidden ${index + 1}`), "output"];
+  const labels = [
+    "inputs",
+    ...layers.slice(1, -1).map((_, index) => `hidden ${index + 1}`),
+    "output",
+  ];
   labels.forEach((text, layer) =>
     svg.append(
       svgElement(

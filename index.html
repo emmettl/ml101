@@ -65,7 +65,7 @@
               role="progressbar"
               aria-label="Lessons complete"
               aria-valuemin="0"
-              aria-valuemax="3"
+              aria-valuemax="5"
               aria-valuenow="0"
             >
               <span id="progress-bar"></span>
@@ -83,10 +83,11 @@
           </div>
           <p class="card-label">Course at a glance</p>
           <div class="metric">
-            <strong>3</strong><span>lessons live, six more in preparation</span>
+            <strong>5</strong
+            ><span>lessons live, four more in preparation</span>
           </div>
           <div class="metric">
-            <strong>3</strong><span>interactive labs</span>
+            <strong>5</strong><span>interactive labs</span>
           </div>
           <div class="metric">
             <strong>0</strong><span>equations you need to know first</span>
@@ -115,10 +116,12 @@
           <div class="lab-nav-group">
             <p class="lab-nav-label">Learn</p>
             <a href="descent-lab.html">Descent Lab</a>
+            <a href="network-playground.html">Network Playground</a>
           </div>
           <div class="lab-nav-group">
             <p class="lab-nav-label">Generalise</p>
             <a href="overfitting-lab.html">Overfitting Lab</a>
+            <a href="neuron-lab.html">Neuron Lab</a>
           </div>
         </div>
       </nav>
@@ -176,7 +179,7 @@
               <a href="overfitting-lab.html">Overfitting Lab →</a>
             </div>
           </li>
-          <li class="lesson-card planned">
+          <li class="lesson-card" data-lesson-id="decisions">
             <span class="lesson-number" aria-hidden="true">03</span>
             <p class="lesson-kicker">Classification</p>
             <h3>From numbers to decisions</h3>
@@ -184,9 +187,12 @@
               One neuron: a line, a squish, and a probability. And the puzzle it
               cannot solve.
             </p>
-            <div class="lesson-links"><span>In preparation</span></div>
+            <div class="lesson-links">
+              <a href="lesson-03-decisions.html">Read lesson</a>
+              <a href="neuron-lab.html">Neuron Lab →</a>
+            </div>
           </li>
-          <li class="lesson-card planned">
+          <li class="lesson-card" data-lesson-id="networks">
             <span class="lesson-number" aria-hidden="true">04</span>
             <p class="lesson-kicker">Neural networks</p>
             <h3>Stacking neurons</h3>
@@ -194,7 +200,10 @@
               Layers, and how blame flows backwards through them to reach every
               knob.
             </p>
-            <div class="lesson-links"><span>In preparation</span></div>
+            <div class="lesson-links">
+              <a href="lesson-04-networks.html">Read lesson</a>
+              <a href="network-playground.html">Network Playground →</a>
+            </div>
           </li>
           <li class="lesson-card planned">
             <span class="lesson-number" aria-hidden="true">05</span>

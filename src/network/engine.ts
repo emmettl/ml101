@@ -94,14 +94,19 @@ export function createNetwork(hidden: readonly number[], activation: Activation,
     const last = layer === sizes.length - 2;
     // Spread chosen so signals neither die nor explode on the way through.
     const spread = Math.sqrt((activation === "relu" && !last ? 2 : 1) / fanIn);
-    weights.push(Float64Array.from({ length: fanIn * fanOut }, () => spread * normalRandom(random)));
+    weights.push(
+      Float64Array.from({ length: fanIn * fanOut }, () => spread * normalRandom(random)),
+    );
     biases.push(new Float64Array(fanOut).fill(activation === "relu" && !last ? 0.1 : 0));
   }
   return { sizes, activation, weights, biases } satisfies Network;
 }
 
 export function parameterCount(network: Network): number {
-  return network.weights.reduce((sum, layer, index) => sum + layer.length + network.biases[index].length, 0);
+  return network.weights.reduce(
+    (sum, layer, index) => sum + layer.length + network.biases[index].length,
+    0,
+  );
 }
 
 function activate(kind: Activation, z: number): number {
@@ -195,8 +200,12 @@ export function backpropagate(network: Network, batch: readonly LabelledPoint[])
 /** The same update as the straight line: every knob moves a little way downhill. */
 export function trainStep(network: Network, batch: readonly LabelledPoint[], rate: number): void {
   const slopes = backpropagate(network, batch);
-  network.weights.forEach((layer, l) => layer.forEach((_, k) => (layer[k] -= rate * slopes.weights[l][k])));
-  network.biases.forEach((layer, l) => layer.forEach((_, k) => (layer[k] -= rate * slopes.biases[l][k])));
+  network.weights.forEach((layer, l) =>
+    layer.forEach((_, k) => (layer[k] -= rate * slopes.weights[l][k])),
+  );
+  network.biases.forEach((layer, l) =>
+    layer.forEach((_, k) => (layer[k] -= rate * slopes.biases[l][k])),
+  );
 }
 // peek:end
 
@@ -222,7 +231,8 @@ export function train(
   let reached: number | undefined;
   for (let step = 1; step <= steps; step += 1) {
     trainStep(network, sampleBatch(points, batchSize, random), rate);
-    if (reached === undefined && step % 25 === 0 && accuracy(network, points) >= goal) reached = step;
+    if (reached === undefined && step % 25 === 0 && accuracy(network, points) >= goal)
+      reached = step;
   }
   return reached;
 }

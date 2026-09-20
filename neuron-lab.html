@@ -18,17 +18,19 @@
       <p class="eyebrow">Lab 04 · Classification</p>
       <h1>Neuron Lab</h1>
       <p class="lede">
-        A neuron does not say yes or no. It says how sure it is. Somebody still has to decide how
-        sure is sure enough, and that choice moves errors from one kind to the other without
-        removing any. The lower chart lines every example up by the neuron's confidence so you can
-        see exactly which ones change sides.
+        A neuron does not say yes or no. It says how sure it is. Somebody still
+        has to decide how sure is sure enough, and that choice moves errors from
+        one kind to the other without removing any. The lower chart lines every
+        example up by the neuron's confidence so you can see exactly which ones
+        change sides.
       </p>
     </div>
     <p class="scope-note">
-      <b>Scope:</b> a single sigmoid neuron with two inputs and three knobs, trained by mini-batch
-      gradient descent on cross-entropy, scored on the 160 examples it trained on. Triangles are
-      the class being looked for. Held-out scoring, class imbalance, calibration and the cost of
-      each kind of error are left out; the last of those is what decides the cut-off in practice.
+      <b>Scope:</b> a single sigmoid neuron with two inputs and three knobs,
+      trained by mini-batch gradient descent on cross-entropy, scored on the 160
+      examples it trained on. Triangles are the class being looked for. Held-out
+      scoring, class imbalance, calibration and the cost of each kind of error
+      are left out; the last of those is what decides the cut-off in practice.
     </p>
     <main>
       <section class="variant-summary" aria-live="polite">
@@ -36,7 +38,11 @@
         <p id="neuron-description"></p>
       </section>
       <div class="lab-grid">
-        <aside class="controls" data-collapsible="open" aria-labelledby="controls-title">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
           <div class="controls-head" data-collapsible-keep>
             <h2 id="controls-title">Neuron</h2>
             <div>
@@ -49,7 +55,9 @@
               >
                 Hide knobs
               </button>
-              <button type="button" class="reset-button" id="neuron-reset">Reset</button>
+              <button type="button" class="reset-button" id="neuron-reset">
+                Reset
+              </button>
             </div>
           </div>
           <div id="neuron-controls"></div>
@@ -59,17 +67,26 @@
             <div class="panel-head">
               <div>
                 <p class="eyebrow">The neuron's opinion of everywhere</p>
-                <h2 id="map-title">Where is it sure, and where is it guessing?</h2>
+                <h2 id="map-title">
+                  Where is it sure, and where is it guessing?
+                </h2>
                 <p>
-                  Shading is confidence: strong colour where the neuron is sure, blank where it is
-                  undecided. Ringed examples are on the wrong side of the current cut-off. The
-                  pattern retrains the neuron whenever you change it.
+                  Shading is confidence: strong colour where the neuron is sure,
+                  blank where it is undecided. Ringed examples are on the wrong
+                  side of the current cut-off. The pattern retrains the neuron
+                  whenever you change it.
                 </p>
               </div>
               <div class="path-actions">
                 <div class="transport">
-                  <button type="button" id="neuron-train" class="resample">Train it for me</button>
-                  <button type="button" id="neuron-resample" class="resample quiet">
+                  <button type="button" id="neuron-train" class="resample">
+                    Train it for me
+                  </button>
+                  <button
+                    type="button"
+                    id="neuron-resample"
+                    class="resample quiet"
+                  >
                     New examples
                   </button>
                 </div>
@@ -95,9 +112,9 @@
                 <p class="eyebrow">Every example, lined up by confidence</p>
                 <h2 id="strip-title">Where would you cut?</h2>
                 <p>
-                  Left is “surely a circle”, right is “surely a triangle”. Drag across the chart,
-                  or use the arrow keys, to move the cut-off. Everything right of it is called a
-                  triangle.
+                  Left is “surely a circle”, right is “surely a triangle”. Drag
+                  across the chart, or use the arrow keys, to move the cut-off.
+                  Everything right of it is called a triangle.
                 </p>
               </div>
             </div>
@@ -107,17 +124,26 @@
                 <svg id="neuron-strip-chart"></svg>
               </div>
             </div>
-            <p class="simulation-status" id="neuron-simulation-status">Calculating…</p>
+            <p class="simulation-status" id="neuron-simulation-status">
+              Calculating…
+            </p>
           </section>
-          <section id="predict" class="panel" aria-label="Predict before you move it"></section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
           <section class="panel" aria-labelledby="ledger-title">
             <div class="panel-head">
               <div>
                 <p class="eyebrow">The same neuron at nine cut-offs</p>
-                <h2 id="ledger-title">Which row would a spam filter choose? A cancer screen?</h2>
+                <h2 id="ledger-title">
+                  Which row would a spam filter choose? A cancer screen?
+                </h2>
                 <p>
-                  The neuron is identical in every row. Only the cut-off changes. A false alarm is
-                  a circle called a triangle; a miss is a triangle let through.
+                  The neuron is identical in every row. Only the cut-off
+                  changes. A false alarm is a circle called a triangle; a miss
+                  is a triangle let through.
                 </p>
               </div>
             </div>
@@ -144,23 +170,25 @@
         <article>
           <h3>The cut-off is a policy, not a fact</h3>
           <p>
-            Training places the line. It does not tell you how cautious to be. A missed tumour and
-            a needless biopsy do not cost the same, and no loss function knows that unless someone
-            says so.
+            Training places the line. It does not tell you how cautious to be. A
+            missed tumour and a needless biopsy do not cost the same, and no
+            loss function knows that unless someone says so.
           </p>
         </article>
         <article>
           <h3>Accuracy hides the trade</h3>
           <p>
-            Several rows in the table have nearly the same accuracy and very different errors.
-            Always ask which kind of mistake a reported accuracy is made of.
+            Several rows in the table have nearly the same accuracy and very
+            different errors. Always ask which kind of mistake a reported
+            accuracy is made of.
           </p>
         </article>
         <article>
           <h3>Some overlap cannot be trained away</h3>
           <p>
-            Where circles and triangles genuinely mix, no line and no cut-off separates them. That
-            is lesson 00's error floor, in a classification problem.
+            Where circles and triangles genuinely mix, no line and no cut-off
+            separates them. That is lesson 00's error floor, in a classification
+            problem.
           </p>
         </article>
       </section>
@@ -168,13 +196,14 @@
       <section class="sources">
         <h2>Going further</h2>
         <p>
-          A single sigmoid neuron trained on cross-entropy is logistic regression; see James et
-          al.,
+          A single sigmoid neuron trained on cross-entropy is logistic
+          regression; see James et al.,
           <a href="https://www.statlearning.com/"
             ><em>An Introduction to Statistical Learning</em></a
-          >, chapter 4. The last two columns of the table are precision and recall; sweeping the
-          cut-off across all values traces the ROC curve. The limit on what one such unit can
-          represent is from Minsky and Papert, <em>Perceptrons</em> (1969).
+          >, chapter 4. The last two columns of the table are precision and
+          recall; sweeping the cut-off across all values traces the ROC curve.
+          The limit on what one such unit can represent is from Minsky and
+          Papert, <em>Perceptrons</em> (1969).
         </p>
       </section>
     </main>

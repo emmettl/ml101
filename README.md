@@ -21,8 +21,8 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 | 00 | A machine with knobs | Line Fitter | live |
 | 01 | Rolling downhill | Descent Lab | live |
 | 02 | Too clever by half | Overfitting Lab | live |
-| 03 | From numbers to decisions | Neuron Lab | in preparation |
-| 04 | Stacking neurons | Network Playground | in preparation |
+| 03 | From numbers to decisions | Neuron Lab | live |
+| 04 | Stacking neurons | Network Playground | live |
 | 05 | Text becomes numbers | Token & Embedding Lab | in preparation |
 | 06 | Attention | Attention Lab | in preparation |
 | 07 | Predict the next token | Next-Token Lab | in preparation |
@@ -40,6 +40,7 @@ Run `npm install` once. Use `npm run dev` for local development and `npm run bui
 
 - `src/fit/` is the straight-line engine: data, loss, the loss landscape, exact best fits, gradients, gradient descent and the largest safe learning rate. It drives lessons 00–01, the Line Fitter and the Descent Lab.
 - `src/overfit/` is the curve-fitting engine: Chebyshev features, a Cholesky least-squares solve with a wiggliness penalty, held-out scoring and the degree sweep. It drives lesson 02 and the Overfitting Lab.
+- `src/network/` is the classification engine: four two-class puzzles, a single sigmoid neuron, small fully connected networks, cross-entropy, backpropagation (checked against finite differences) and mini-batch training. `view.ts` beside it draws the decision map and wiring diagram. It drives lessons 03–04, the Neuron Lab and the Network Playground.
 - `src/lessons/` holds one small entry module per lesson widget, plus the glossary filter. `src/labs/` holds one controller per lab. Lessons and labs import the same engines, so a lesson chart and its lab cannot drift apart.
 - `src/progress/` renders learner progress on the home page.
 - `src/shared/` contains everything reusable:
