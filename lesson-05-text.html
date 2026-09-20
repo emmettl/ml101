@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="How text gets into a neural network: tokens cut words into reusable pieces, and embeddings turn each piece into a position where similar meanings sit close together."
+    />
+    <title>Text becomes numbers — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="text">
+    <!-- include: lesson-topbar -->
+    <header class="lesson-hero">
+      <div class="lesson-hero-grid">
+        <div>
+          <p class="eyebrow">Lesson 05 · Representation</p>
+          <h1>Text becomes numbers</h1>
+          <p class="lede">
+            Every model so far has eaten numbers: a flat's size, a dot's
+            position. Language is not numbers. Two steps fix that. First, cut
+            the text into pieces from a fixed list. Then give each piece a
+            position in space, and let training move the positions until words
+            used alike end up close together.
+          </p>
+        </div>
+        <aside class="lesson-meta">
+          <span>Estimated reading time</span><strong>12 minutes</strong
+          ><span>Builds on</span
+          ><strong>Lesson 04 · Roles nobody assigned</strong
+          ><a href="embedding-lab.html">Open the Token &amp; Embedding Lab →</a>
+        </aside>
+      </div>
+    </header>
+    <!-- include: lesson-sequence -->
+    <main class="lesson-layout">
+      <article class="lesson-copy">
+        <section id="idea">
+          <p class="section-label">The one idea</p>
+          <h2>Cut text into pieces, then give every piece a place</h2>
+          <p>
+            A network needs a fixed menu of inputs. Whole words make a poor
+            menu: there are millions, new ones appear daily, and “run”, “runs”
+            and “running” would be unrelated entries. Single letters make a tiny
+            menu but force the model to relearn spelling before it can learn
+            anything else. The working compromise is pieces of words, chosen by
+            counting. Frequent words become one piece. Rare words are spelled
+            out of smaller ones. These pieces are
+            <a class="term" href="glossary.html#token">tokens</a>, and a model
+            never sees anything else.
+          </p>
+          <p>
+            A token is still only an entry number, and entry 4,117 is not “more”
+            than entry 52. So each token is given a list of numbers, its
+            coordinates, which start random and are trained like any other
+            knobs. The pressure that shapes them is simple: tokens that turn up
+            in similar company are pushed towards similar coordinates. The
+            result is an
+            <a class="term" href="glossary.html#embedding">embedding</a>: a map
+            on which distance means difference in use.
+          </p>
+          <div class="callout">
+            Nobody tells the model what any word means. It learns where each
+            word belongs from the company that word keeps, and position does the
+            work that a definition would.
+          </div>
+          <div class="concept-grid">
+            <div class="concept">
+              <strong>Token</strong>
+              <p>
+                A piece of text from a fixed list of tens of thousands. Often a
+                word, often less.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Tokeniser</strong>
+              <p>
+                The rule that cuts text into tokens. Built once, by counting,
+                before training begins.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Embedding</strong>
+              <p>
+                A token's coordinates. Hundreds or thousands of trained numbers
+                per token.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Dimension</strong>
+              <p>
+                One coordinate. More dimensions give meaning more independent
+                directions to vary in.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section id="tokens">
+          <p class="section-label">Step one</p>
+          <h2>Build a vocabulary by gluing together whatever is common</h2>
+          <p>
+            Start with single characters. Find the pair of neighbours that
+            occurs most often in a large body of text and glue them into one new
+            piece. Do it again, counting the new piece like any other. After a
+            few hundred rounds “the” is one piece, “ing” is one piece, and
+            “Alice” is one piece if your text is <em>Alice in Wonderland</em>,
+            which here it is. Move the slider to replay the process.
+          </p>
+          <div class="interactive" aria-labelledby="interactive-title">
+            <div class="interactive-head">
+              <div>
+                <h3 id="interactive-title">Watch letters fuse into tokens</h3>
+                <p>
+                  Each chip is one token. A bar on the left marks the start of a
+                  word.
+                </p>
+              </div>
+              <span class="engine-badge">Live tokeniser engine</span>
+            </div>
+            <div class="interactive-controls">
+              <div class="control">
+                <label for="bpe-merges"
+                  >Merges learned · <span id="bpe-merges-value">0</span></label
+                ><input
+                  id="bpe-merges"
+                  type="range"
+                  min="0"
+                  max="400"
+                  step="1"
+                  value="0"
+                />
+              </div>
+              <div class="control">
+                <label for="bpe-sentence">Text to cut up</label
+                ><select id="bpe-sentence">
+                  <option
+                    value="alice thought it very curious that the rabbit said nothing"
+                    selected
+                  >
+                    A sentence in the book's own words
+                  </option>
+                  <option
+                    value="the transformer tokenizer was unexpectedly expensive"
+                  >
+                    Words the book never uses
+                  </option>
+                  <option
+                    value="twas brillig and the slithy toves did gyre and gimble"
+                  >
+                    Nonsense from another book
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-wrap" style="padding: 14px">
+              <ol class="token-chips" id="bpe-chips" aria-label="Tokens"></ol>
+            </div>
+            <dl class="interactive-readout">
+              <div>
+                <dt>Merges learned</dt>
+                <dd id="stat-1">–</dd>
+              </div>
+              <div>
+                <dt>Tokens in this text</dt>
+                <dd id="stat-2">–</dd>
+              </div>
+              <div>
+                <dt>Characters per token</dt>
+                <dd id="stat-3">–</dd>
+              </div>
+              <div>
+                <dt>Latest merge</dt>
+                <dd id="stat-4">–</dd>
+              </div>
+            </dl>
+            <p class="interactive-prose" id="bpe-prose" aria-live="polite"></p>
+          </div>
+          <p>
+            Try the other two texts. Words the book never used stay in fragments
+            however many merges you allow, because the tokeniser was built from
+            what it saw. This is why language models are clumsy with spelling,
+            counting letters and unusual names: they never see letters, only
+            pieces, and an unfamiliar word arrives pre-shredded.
+          </p>
+        </section>
+        <section id="arithmetic">
+          <p class="section-label">Step two, and the arithmetic</p>
+          <h2>Meaning turns out to have directions</h2>
+          <p>
+            The figure below was trained on an invented mini-language of 900
+            three- and four-word sentences, in which kings and queens appear
+            near “crown” and “throne”, women and girls near “she” and “her”, and
+            so on. Every word began at a random point in eight dimensions.
+            Nothing in training mentions royalty or gender. Yet afterwards one
+            direction in the space separates male from female, and another, at
+            right angles to it, separates royal from common. The picture shows
+            the eight people placed by those two directions.
+          </p>
+          <figure class="lesson-figure">
+            <svg
+              id="embedding-figure"
+              role="img"
+              aria-label="Eight words placed by two directions found in their trained vectors: gender across, rank up. The arithmetic king minus man plus woman lands on queen."
+            ></svg>
+            <figcaption id="embedding-caption"></figcaption>
+          </figure>
+          <p>
+            Because meaning has become geometry, you can do arithmetic with it.
+            Take the step from “man” to “king”, which is whatever royalty adds,
+            and apply the same step starting at “woman”. You land beside
+            “queen”. Nobody programmed that. It falls out of positions learned
+            from neighbours, and it is the clearest evidence that these
+            coordinates encode something real about how words are used.
+          </p>
+          <div class="concept-grid">
+            <div class="concept">
+              <strong>The numbers at scale</strong>
+              <p>
+                A large model has around 100,000 tokens and several thousand
+                dimensions: hundreds of millions of knobs spent on the map
+                alone, before any thinking happens.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Why so many dimensions?</strong>
+              <p>
+                Two dimensions cannot keep gender, rank, age, animal and food
+                all independent. In the lab this same arithmetic fails about
+                half the time in 2-D and never in 8-D.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section id="check">
+          <p class="section-label">Check your understanding</p>
+          <h2>Pieces and places</h2>
+          <div class="quiz">
+            <h3>
+              A chatbot confidently miscounts the letter “r” in “strawberry”.
+              Which fact from this lesson best explains it?
+            </h3>
+            <p>Think about what the model actually receives as input.</p>
+            <div class="quiz-options">
+              <button
+                type="button"
+                data-correct="true"
+                data-feedback="Correct. The model receives two or three token numbers, not ten letters. The letters inside a token are not visible to it; at best it has memorised spellings as facts about tokens."
+              >
+                It never sees letters, only tokens, and the letters inside a
+                token are hidden from it</button
+              ><button
+                type="button"
+                data-feedback="Arithmetic is a separate weakness. Here the trouble comes earlier: the letters are not in the input at all."
+              >
+                Neural networks cannot count</button
+              ><button
+                type="button"
+                data-feedback="The word is common and well represented. Familiarity is not the issue; visibility of its letters is."
+              >
+                The word is too rare to have been learned
+              </button>
+            </div>
+            <p class="quiz-feedback" aria-live="polite"></p>
+          </div>
+          <div class="quiz">
+            <h3>How does the model come to place “queen” near “king”?</h3>
+            <p>Recall lesson 04: who assigns roles inside a network?</p>
+            <div class="quiz-options">
+              <button
+                type="button"
+                data-feedback="No dictionary or labelled list of meanings is involved at any point. The only input is text."
+              >
+                It was given a dictionary that says both are monarchs</button
+              ><button
+                type="button"
+                data-correct="true"
+                data-feedback="Correct. Both words keep the company of “crown”, “throne” and “rules”, so descent pulls them the same way. Meaning, to the model, is nothing more than the pattern of company a word keeps."
+              >
+                The two words appear in similar company, so training pulls them
+                to similar positions</button
+              ><button
+                type="button"
+                data-feedback="Spelling plays no part. “queen” and “queue” look alike and end up far apart; “queen” and “king” share almost no letters."
+              >
+                They are spelled similarly
+              </button>
+            </div>
+            <p class="quiz-feedback" aria-live="polite"></p>
+          </div>
+        </section>
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>What to remember</h2>
+          <div class="takeaway-grid">
+            <div>
+              <strong>Models read tokens, not letters or words</strong>
+              <p>
+                The vocabulary is fixed in advance by counting what is common.
+              </p>
+            </div>
+            <div>
+              <strong>An embedding is a learned position</strong>
+              <p>More knobs, trained by the same descent as everything else.</p>
+            </div>
+            <div>
+              <strong>Meaning is company kept</strong>
+              <p>
+                Words used alike land close together. That is all
+                “understanding” starts from.
+              </p>
+            </div>
+            <div>
+              <strong>Directions carry meaning</strong>
+              <p>
+                Which is why the space needs many dimensions, and why biases in
+                text become geometry too.
+              </p>
+            </div>
+          </div>
+        </section>
+      </article>
+      <aside class="lesson-aside">
+        <nav aria-label="On this page">
+          <h2>On this page</h2>
+          <ul>
+            <li><a href="#idea">The one idea</a></li>
+            <li><a href="#tokens">Building a vocabulary</a></li>
+            <li><a href="#arithmetic">Meaning has directions</a></li>
+            <li><a href="#check">Knowledge check</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+          </ul>
+        </nav>
+        <div class="aside-card">
+          <h2>Go deeper</h2>
+          <p>
+            Watch word positions organise themselves from random, then try the
+            arithmetic in two dimensions and in eight.
+          </p>
+          <a href="embedding-lab.html">Open the Token &amp; Embedding Lab →</a>
+        </div>
+      </aside>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-04-networks.html">← Stacking neurons</a>
+      </div>
+      <div>
+        <span>Next lesson</span
+        ><a href="lesson-06-attention.html">Attention →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/text.ts"></script>
+  </body>
+</html>

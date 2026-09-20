@@ -926,3 +926,19 @@ a.hub-card:hover {
   top: auto;
   bottom: 8px;
 }
+
+.text-entry {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 15px;
+}
+
+label.chart-caption {
+  display: block;
+}

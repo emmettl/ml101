@@ -29,6 +29,48 @@ const times = (before: number, after: number): string =>
   before > 0 ? `${(after / before).toFixed(after / before >= 10 ? 0 : 1)} times` : "many times";
 
 const prompts: Record<string, PredictPrompt[]> = {
+  "embedding-lab": [
+    {
+      id: "dimensions-analogies",
+      question:
+        "With eight numbers per word, all six analogies come out right. You squeeze every word down to two numbers, so the whole space fits on a page, and retrain. How many analogies does it solve now?",
+      readout: { selector: "#embed-stats", match: "Analogies solved", label: "analogies solved" },
+      change: {
+        selector: "#embed-dimensions",
+        value: "2",
+        describe: "The lab will retrain with 2 dimensions.",
+      },
+      choices: [
+        { id: "same", label: "Still all, or all but one" },
+        { id: "some", label: "About half" },
+        { id: "few", label: "Two or fewer" },
+      ],
+      judge: (_before, after) => (after >= 5 ? "same" : after >= 3 ? "some" : "few"),
+      explain: (_before, after) =>
+        `${after} of 6. Rank, gender and age each need a direction of their own, and animals and food need somewhere to be as well. Two coordinates cannot keep five things independent, so the directions bend into each other and a step borrowed from one pair of words lands in the wrong place for another. Real models use thousands of dimensions for the same reason.`,
+      settle: "#embed-simulation-status",
+    },
+    {
+      id: "dimensions-families",
+      question:
+        "Now a gentler squeeze, from eight numbers per word to four. At eight, every word's nearest neighbour is one of its own family: 100% kept apart. What happens to that figure at four?",
+      readout: {
+        selector: "#embed-stats",
+        match: "Families kept apart",
+        label: "families kept apart",
+      },
+      change: {
+        selector: "#embed-dimensions",
+        value: "4",
+        describe: "The lab will retrain with 4 dimensions.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: () =>
+        "It holds. Telling animals from food from people is a coarse job and survives the squeeze. Now look at the analogies: one has already failed. Fine-grained structure, the kind that supports arithmetic, is the first thing lost when a model is given too little room, long before the coarse groupings go.",
+      settle: "#embed-simulation-status",
+    },
+  ],
   "line-fitter": [
     {
       id: "outlier-tilt",

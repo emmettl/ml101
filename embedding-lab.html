@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Cut your own text into tokens, watch word positions organise themselves from random, and do arithmetic with meaning in two dimensions and in eight."
+    />
+    <title>ML 101 — Token &amp; Embedding Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-05-text.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 06 · Representation</p>
+      <h1>Token &amp; Embedding Lab</h1>
+      <p class="lede">
+        Two machines that sit in front of every language model. The first cuts
+        text into pieces from a fixed list. The second gives each piece a
+        position, learned from nothing but which words appear together. Watch
+        both being built, then ask the second one a question in arithmetic.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> a byte-pair tokeniser learned from seven chapters of
+      <em>Alice's Adventures in Wonderland</em> (up to 400 merges; real ones use
+      tens of thousands), and skip-gram embeddings with negative sampling
+      trained on an invented mini-language of 900 short sentences about 40
+      words. The mini-language is built so that rank, gender and age are
+      genuinely present; real text is far messier, and real embeddings also
+      absorb its prejudices. Subword embeddings, positional information and
+      contextual embeddings are omitted.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="embed-name">8 dimensions</strong>
+        <p id="embed-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="embed-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="embed-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="token-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Machine one: the tokeniser</p>
+                <h2 id="token-title">What does the model actually receive?</h2>
+                <p>
+                  Type anything. Each chip is one token; a bar on the left marks
+                  the start of a word. Try your own name, a long technical word,
+                  or a word with a typo.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <label class="chart-caption" for="embed-text">Your text</label>
+              <input
+                id="embed-text"
+                class="text-entry"
+                type="text"
+                maxlength="120"
+                value="Alice thought the tokenizer was curiouser and curiouser"
+                autocomplete="off"
+                spellcheck="false"
+              />
+            </div>
+            <div class="chart-wrap" style="margin-top: 12px">
+              <ol class="token-chips" id="embed-chips" aria-label="Tokens"></ol>
+            </div>
+            <div class="outcome">
+              <strong>Reading the chips</strong>
+              <p id="embed-token-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="map-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Machine two: the embedding, learning live</p>
+                <h2 id="map-title">Can position stand in for meaning?</h2>
+                <p>
+                  Sixteen words, each given two coordinates, all starting at
+                  random. Press Play. Every step takes one word and one of its
+                  neighbours from a sentence, pulls them together, and pushes a
+                  few random words away.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="embed-play" class="resample">
+                    Play
+                  </button>
+                  <button
+                    type="button"
+                    id="embed-restart"
+                    class="resample quiet"
+                  >
+                    New start
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-pair">
+              <div class="chart-wrap">
+                <p class="chart-caption">Two dimensions, exactly as learned</p>
+                <div class="plot-host">
+                  <svg
+                    id="embed-family-chart"
+                    role="img"
+                    aria-label="Sixteen words positioned by their two learned coordinates"
+                  ></svg>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <p class="chart-caption" id="embed-meaning-caption">
+                  The people, by two directions found in the vectors
+                </p>
+                <div class="plot-host">
+                  <svg
+                    id="embed-meaning-chart"
+                    role="img"
+                    aria-label="Eight people placed by a gender direction and a rank direction, with the chosen analogy drawn as arrows"
+                  ></svg>
+                </div>
+              </div>
+            </div>
+            <div class="legend">
+              <span
+                ><i class="train" style="border-color: var(--class-a)"></i
+                >royal</span
+              >
+              <span><i class="train"></i>common</span>
+              <span
+                ><i class="train" style="border-color: var(--class-b)"></i
+                >animals</span
+              >
+              <span><i></i>food</span>
+              <span><i class="path"></i>the analogy's step</span>
+            </div>
+            <div class="outcome">
+              <strong>What the maps show</strong>
+              <p id="embed-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="stats-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The arithmetic of meaning</p>
+                <h2 id="stats-title">Does king − man + woman land on queen?</h2>
+                <p>
+                  The right-hand map and these figures use a model trained
+                  instantly at the number of dimensions you choose. Six
+                  analogies are tried. In each, the three words in the question
+                  are excluded from the answer.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="embed-stats"></div>
+            <p class="simulation-status" id="embed-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">All six questions</p>
+                <h2 id="ledger-title">
+                  Which ones does it get, and how nearly?
+                </h2>
+                <p>
+                  Similarity runs from −1 (opposite direction) to 1 (identical).
+                  The runner-up shows how close the call was.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Question</th>
+                    <th>Expected</th>
+                    <th>Lands nearest</th>
+                    <th>Similarity</th>
+                    <th>Runner-up</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="embed-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The model never sees your words</h3>
+          <p>
+            It sees whatever the tokeniser hands it. An unusual name or a typo
+            arrives as a heap of fragments, which is why models handle them
+            worse than common words.
+          </p>
+        </article>
+        <article>
+          <h3>Meaning needs room</h3>
+          <p>
+            Rank, gender, age, animal and food are five independent things to
+            keep apart. Two coordinates cannot hold them all, so something
+            gives. Eight can.
+          </p>
+        </article>
+        <article>
+          <h3>The map inherits the text</h3>
+          <p>
+            Positions come only from which words keep company. If the text pairs
+            “nurse” with “she”, so will the geometry. Embeddings are a mirror,
+            including of things you would prefer they were not.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Byte-pair encoding for text is from Sennrich, Haddow and Birch,
+          <a href="https://arxiv.org/abs/1508.07909"
+            >“Neural Machine Translation of Rare Words with Subword Units”</a
+          >
+          (2016). The embedding method is word2vec: Mikolov et al.,
+          <a href="https://arxiv.org/abs/1310.4546"
+            >“Distributed Representations of Words and Phrases and their
+            Compositionality”</a
+          >
+          (2013), which also introduced the king − man + woman example. On bias,
+          see Bolukbasi et al.,
+          <a href="https://arxiv.org/abs/1607.06520"
+            >“Man is to Computer Programmer as Woman is to Homemaker?”</a
+          >
+          (2016). Analogy arithmetic is more fragile on real text than on this
+          tidy mini-language.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/embedding-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

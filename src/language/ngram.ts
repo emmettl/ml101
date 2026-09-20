@@ -35,7 +35,26 @@ export function normalise(text: string): string {
     .trim();
 }
 
+/** Short contexts occur thousands of times, so their counts are worth remembering. */
+const CACHEABLE = 3;
+let cachedFor = "";
+const cache = new Map<string, Map<string, number>>();
+
 function countNext(text: string, context: string): Map<string, number> {
+  if (context.length > CACHEABLE) return scan(text, context);
+  if (cachedFor !== text) {
+    cachedFor = text;
+    cache.clear();
+  }
+  let counts = cache.get(context);
+  if (!counts) {
+    counts = scan(text, context);
+    cache.set(context, counts);
+  }
+  return counts;
+}
+
+function scan(text: string, context: string): Map<string, number> {
   const counts = new Map<string, number>();
   if (context === "") {
     for (const character of text) counts.set(character, (counts.get(character) ?? 0) + 1);
