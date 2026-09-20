@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="How a language model answers from documents it was never trained on: search first, paste what you find into the prompt, and let the model read. Retrieval-augmented generation, without the jargon."
+    />
+    <title>Open-book answers — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="open-book">
+    <!-- include: lesson-topbar -->
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 09 · Using a model</p>
+            <h1>Open-book answers</h1>
+            <p class="lede">
+              Lesson 08 ended with a model whose knobs froze on the day training
+              stopped, and which would sooner invent an answer than admit it has
+              none. The most widely used remedy involves no training at all.
+              Look the answer up first, and put what you find in front of the
+              model.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>10 minutes</strong
+            ><span>Builds on</span><strong>Lessons 05, 06 and 08</strong
+            ><a href="open-book-lab.html">Open the Open-Book Lab →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>
+              A model can use what is in its knobs, or what is on its desk
+            </h2>
+            <p>
+              Everything a language model knows is in one of two places. The
+              first is its knobs, set during training: vast, blurry, impossible
+              to edit, and out of date from the day training ended. The second
+              is its context window, the text it is reading right now: small,
+              exact, and entirely up to you. Lesson 06 showed that attention
+              lets every token consult every other token in that window. So
+              anything you place there, the model can read and quote.
+            </p>
+            <p>
+              An exam taken from memory and an exam taken with the textbook open
+              are different exams. The second one depends far less on what you
+              happened to memorise and far more on whether you can find the
+              right page. That is the whole idea.
+            </p>
+            <div class="callout">
+              <a class="term" href="glossary.html#retrieval"
+                >Retrieval-augmented generation</a
+              >: search your documents for the passages most likely to hold the
+              answer, paste them into the prompt above the question, and ask the
+              model to answer from them. No knob moves.
+            </div>
+            <ol class="pipeline" aria-label="The three steps of retrieval">
+              <li>
+                <strong>Cut and index</strong>
+                <p>
+                  Ahead of time, cut every document into
+                  <a class="term" href="glossary.html#chunk">passages</a> and
+                  turn each passage into a list of numbers, as lesson 05 did for
+                  words.
+                </p>
+                <em>Done once, redone when a document changes.</em>
+              </li>
+              <li>
+                <strong>Search</strong>
+                <p>
+                  Turn the question into numbers the same way. Keep the few
+                  passages whose numbers point most nearly the same direction.
+                </p>
+                <em>Milliseconds, and no language model involved.</em>
+              </li>
+              <li>
+                <strong>Hand over</strong>
+                <p>
+                  Build a prompt: an instruction, the passages, the question.
+                  The model reads and answers, and can say which passage it
+                  used.
+                </p>
+                <em>The only step that needs the model.</em>
+              </li>
+            </ol>
+          </section>
+          <section id="search">
+            <p class="section-label">The mechanism</p>
+            <h2>The search decides what the model gets to know</h2>
+            <p>
+              The book below is the one from lesson 07, cut into 350 overlapping
+              passages of 60 words. Each passage has been turned into a list of
+              numbers with one slot per word in the book: a slot is large if the
+              word is frequent in this passage and rare in the book as a whole.
+              The question gets the same treatment, and passages are ranked by
+              how closely their list lines up with the question's, which is the
+              arrow-alignment score from lesson 06. This is the simplest
+              embedding there is. It knows nothing about meaning, and that is
+              about to matter.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">Find the page</h3>
+                  <p>
+                    Bold words matched the question. A green edge means the
+                    passage holds the answer.
+                  </p>
+                </div>
+                <span class="engine-badge">Live search of the book</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control" style="grid-column: 1 / -1">
+                  <label for="ob-question">Question</label
+                  ><select id="ob-question">
+                    <option value="bottle">
+                      What words were printed on the paper label round the neck
+                      of the bottle?
+                    </option>
+                    <option value="key">
+                      What was on the three-legged glass table?
+                    </option>
+                    <option value="butter-own">
+                      What did the March Hare use to try to repair the Hatter's
+                      watch?
+                    </option>
+                    <option value="watch-own">
+                      What timepiece was the hurrying bunny carrying?
+                    </option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="ob-keep"
+                    >Passages handed over ·
+                    <span id="ob-keep-value">1</span></label
+                  ><input
+                    id="ob-keep"
+                    type="range"
+                    min="1"
+                    max="8"
+                    step="1"
+                    value="1"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap" style="padding: 14px">
+                <ol
+                  class="passages"
+                  id="ob-passages"
+                  aria-label="Passages retrieved, best match first"
+                ></ol>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Passages in the book</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Best similarity</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Words handed over</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Answer among them?</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p class="interactive-prose" id="ob-prose" aria-live="polite"></p>
+            </div>
+            <p>
+              Try all four questions. The first is found at once, because it
+              uses the book's own words. The second needs two passages. The
+              third needs six: the Hatter and the March Hare appear on many
+              pages, and five of those outrank the one with the answer. The
+              fourth is a perfectly good question that fails outright: the book
+              says “Rabbit” and “watch”, never “bunny” or “timepiece”, and a
+              search that matches words has nothing to go on. Production systems
+              replace the word-weights with a learned embedding, trained as in
+              lesson 05 on a great deal of text, in which “bunny” and “rabbit”
+              sit side by side. The rest of the pipeline stays exactly as you
+              see it.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">
+              The arithmetic, and what it does not buy
+            </p>
+            <h2>
+              Every setting is a trade, and grounded is not the same as true
+            </h2>
+            <p>
+              The words you hand over are passage length times the number of
+              passages. Raise either and more answers get through. But every
+              word is read by the model on every question, which costs money and
+              time, and an answer that is one sentence in three thousand words
+              is easier to overlook than one in a hundred and fifty. Why not
+              paste in the whole library? Because a context window is finite,
+              the bill is per word, and models attend unevenly to very long
+              prompts.
+            </p>
+            <p>
+              Why not train the documents into the knobs instead? Because
+              fine-tuning is slow, costly, has to be redone whenever a document
+              changes, and blurs facts as readily as it stores them. As a rule
+              of thumb, fine-tuning changes how a model behaves, and retrieval
+              changes what it knows today.
+            </p>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Cut in two</strong>
+                <p>
+                  A passage boundary falls in the middle of the answer, so no
+                  passage holds it. The usual fix is to let passages overlap.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Different words</strong>
+                <p>
+                  The question and the document describe the same thing in
+                  different vocabulary. This is what learned embeddings are for,
+                  and they do not remove the problem entirely.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Nothing to find</strong>
+                <p>
+                  The answer is not in the library. Search still returns its
+                  best matches, and a model may build a confident reply from
+                  irrelevant text unless told it may say “I cannot tell”.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Faithful to a bad source</strong>
+                <p>
+                  Retrieval makes the model repeat your documents. If the
+                  document is out of date or wrong, so is the answer, now with a
+                  citation.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Knobs, or desk?</h2>
+            <div class="quiz">
+              <h3>
+                A support assistant built this way tells customers the refund
+                window is 30 days. The company changed it to 14 days last month.
+                What needs to change?
+              </h3>
+              <p>Ask where the number 30 is coming from.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="The model's knobs never held the policy. It read “30 days” in a passage it was handed, and repeated it. Retraining would cost a great deal and leave the stale document in place."
+                >
+                  The model must be retrained on the new policy</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. The assistant is faithfully repeating a document that is out of date. Replace the document, rebuild its passages in the index, and the next answer is right. This is the main practical attraction of retrieval: knowledge becomes something you can edit."
+                >
+                  The policy document in the index must be replaced</button
+                ><button
+                  type="button"
+                  data-feedback="Temperature reshapes the odds of the next token. It cannot tell the model about a policy that is not in its prompt."
+                >
+                  The temperature should be lowered so it stops making things up
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                The same assistant replies “I can't find anything about that” to
+                “How do I get my money back?”. The refund policy is in the
+                index. Where do you look first?
+              </h3>
+              <p>
+                The model can only be as good as the passages it was handed.
+              </p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="A larger model reads the same passages. If the refund policy was not among them, it has no more to go on than the small one did."
+                >
+                  At the model: it is probably too small to understand the
+                  question</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. Print the passages that were retrieved for that exact question. The likeliest finding is that “money back” did not match a page that says “refund”, so the right passage never reached the model, which then did the honest thing. Fix the search, and keep a list of questions like this one with known answers so you can measure whether your fix worked."
+                >
+                  At the search: which passages were retrieved for that
+                  question?</button
+                ><button
+                  type="button"
+                  data-feedback="The instruction may be worth tuning later, but the model said it could not find the answer, which suggests it was following its instructions with the wrong passages in front of it."
+                >
+                  At the instruction: it should be told to try harder
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
+              <div>
+                <strong>Knobs or desk</strong>
+                <p>
+                  A model knows what it was trained on and what you put in front
+                  of it. Only the second can be edited.
+                </p>
+              </div>
+              <div>
+                <strong>Search sets the ceiling</strong>
+                <p>
+                  If the right passage is not handed over, no model can answer.
+                  Debug the search before blaming the model.
+                </p>
+              </div>
+              <div>
+                <strong>Tune it like any other model</strong>
+                <p>
+                  Passage length, overlap and count are hyperparameters. Keep a
+                  set of questions with known answers and measure.
+                </p>
+              </div>
+              <div>
+                <strong>Grounded is not the same as true</strong>
+                <p>
+                  The answer is as good as the document behind it, and the model
+                  may still read it wrongly. Ask for the source, and check it.
+                </p>
+              </div>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">Knobs, or desk</a></li>
+              <li><a href="#search">The search decides</a></li>
+              <li><a href="#arithmetic">Trades and failures</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Choose the passage length, overlap and count yourself, and score
+              the search on 24 questions with known answers.
+            </p>
+            <a href="open-book-lab.html">Open the Open-Book Lab →</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-08-scale.html">← From toy to ChatGPT</a>
+      </div>
+      <div>
+        <span>Course complete</span><a href="./">Back to the course home →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/open-book.ts"></script>
+  </body>
+</html>

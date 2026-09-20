@@ -179,6 +179,60 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#duel-simulation-status",
     },
   ],
+  "open-book-lab": [
+    {
+      id: "shorter-passages",
+      question:
+        "The book is cut into 60-word passages and the best three are handed over. You cut it into 15-word passages instead: four times as many, each far more focused on one thing. What happens to the number of answers found?",
+      readout: { selector: "#book-stats", match: /^Answers found/, label: "answers found" },
+      change: {
+        selector: "#book-size",
+        value: "0",
+        describe: "The lab will set the passage length to 15 words and search again.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. A 15-word passage is often too short to hold both the words of the question and the answer to it: the question's words land in one passage and the answer in the next. Look at the tile beside it, too. Many answers are now cut in two by a boundary, and no search can find a passage that does not exist.`,
+      settle: "#book-simulation-status",
+    },
+    {
+      id: "longer-passages",
+      question:
+        "Back at 60 words, few of the questions asked in a reader's own words are found. You make the passages 250 words long. What happens to the number of those questions that are found?",
+      readout: {
+        selector: "#book-stats",
+        match: /^Asked in a reader's words/,
+        label: "reader's-words answers found",
+      },
+      change: {
+        selector: "#book-size",
+        value: "6",
+        describe: "The lab will set the passage length to 250 words and search again.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. A loosely worded question shares only a word or two with the sentence that answers it. A long passage gives it the whole scene to match against. Now look at the price: the words handed over per question have quadrupled, and the answer is one sentence somewhere inside them. A learned embedding gets most of this gain without the bulk, because it can match “infant” to “baby” in a short passage.`,
+      settle: "#book-simulation-status",
+    },
+    {
+      id: "overlap",
+      question:
+        "At 60 words with no overlap, some answers are cut in two by a passage boundary. You set the overlap to a half, so every passage starts in the middle of the one before. What happens to the number of answers found?",
+      readout: { selector: "#book-stats", match: /^Answers found/, label: "answers found" },
+      change: {
+        selector: "#book-overlap",
+        value: "0.5",
+        describe: "The lab will set the overlap to a half and rebuild the passages.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. Every sentence is now whole in at least one passage, so nothing is lost to a boundary. The cost is an index twice the size, and near-duplicate passages competing for the same few places: two of your three may now be the same scene, shifted by 30 words.`,
+      settle: "#book-simulation-status",
+    },
+  ],
   "line-fitter": [
     {
       id: "outlier-tilt",

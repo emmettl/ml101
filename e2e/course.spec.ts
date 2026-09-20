@@ -476,3 +476,63 @@ test("an unseen context makes the table fall back while the network still reads 
   await page.locator("#duel-prompt").selectOption("alice looked at the jabberw");
   await expect(page.locator("#duel-table-caption")).toContainText("never seen these characters");
 });
+
+test("retrieval finds the book's wording, misses a reader's, and more passages reach a buried answer", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-09-open-book.html");
+  await expect(page.locator("#stat-1")).toHaveText("350");
+  await expect(page.locator("#stat-4")).toHaveText("Yes, ranked 1");
+  await expect(page.locator("#ob-passages li.has-answer mark")).toContainText("DRINK ME");
+
+  await page.locator("#ob-question").selectOption("butter-own");
+  await expect(page.locator("#stat-4")).toHaveText("No");
+  await page.locator("#ob-keep").fill("6");
+  await expect(page.locator("#stat-4")).toHaveText("Yes, ranked 6");
+  await expect(page.locator("#stat-3")).toHaveText("360");
+
+  await page.locator("#ob-question").selectOption("watch-own");
+  await expect(page.locator("#stat-4")).toHaveText("No");
+  await expect(page.locator("#ob-prose")).toContainText("“timepiece” and “bunny”");
+  expect(errors).toEqual([]);
+});
+
+test("the open-book lab scores the search, explains a cut answer, and takes a question of your own", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/open-book-lab.html");
+  const status = page.locator("#book-simulation-status");
+  await expect(status).toContainText("Current · 263 passages of 60 words");
+  const figure = async (label: string) =>
+    Number(
+      await page.locator("#book-stats .stat", { hasText: label }).locator("strong").innerText(),
+    );
+  expect(await figure("Answers found")).toBe(12);
+  expect(await figure("book's words")).toBeGreaterThan(await figure("reader's words"));
+  await expect(page.locator("#book-ledger tr")).toHaveCount(24);
+  await expect(page.locator("#book-prompt")).toContainText("Question: What words were printed");
+
+  await page.locator("#book-question").selectOption("jar");
+  await expect(page.locator("#book-outcome")).toContainText("a boundary falls in the middle");
+  await page.locator("#book-overlap").selectOption("0.5");
+  await expect(status).toContainText("50% overlap");
+  await expect(page.locator("#book-outcome")).toContainText("underlined in green");
+  expect(await figure("cut in two")).toBe(0);
+
+  await page.locator("#book-own").fill("Who stole the tarts?");
+  await page.locator("#book-own").press("Enter");
+  await expect(page.locator("#book-asked")).toHaveText("Who stole the tarts?");
+  await expect(page.locator("#book-outcome")).toContainText("no answer key");
+  await expect(page.locator("#book-outcome")).toContainText("“stole”");
+
+  await page.locator("#book-reset").click();
+  await expect(status).toContainText("no overlap");
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="down"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(status).toContainText("passages of 15 words");
+  expect(errors).toEqual([]);
+});
