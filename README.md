@@ -28,7 +28,7 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 | 07 | Predict the next token | Next-Token Lab | live |
 | 08 | From toy to ChatGPT | Scale Ladder | live |
 
-A prose-first deep-dive guide (training / validation / test, parameter / hyperparameter) and a self-grading capstone (“Ship a model you'd trust”) follow the lessons.
+Two further pages follow the lessons. `names-guide.html` is a prose-first deep dive that decodes the confusable names (parameter / hyperparameter; training / validation / test) with two questions, and simulates how peeking at a test set inflates a score. `capstone.html` (“Ship a model you'd trust”) has no answer key: the learner makes five decisions on a synthetic dataset with a planted leak and class imbalance, seven checks are computed from what their model actually does on 4,000 fresh customers, and the result is a model card they can copy.
 
 ## Website
 
@@ -43,6 +43,7 @@ Run `npm install` once. Use `npm run dev` for local development and `npm run bui
 - `src/network/` is the classification engine: four two-class puzzles, a single sigmoid neuron, small fully connected networks, cross-entropy, backpropagation (checked against finite differences) and mini-batch training. `view.ts` beside it draws the decision map and wiring diagram. It drives lessons 03–04, the Neuron Lab and the Network Playground.
 - `src/language/` holds the text engines: a byte-pair tokeniser (`bpe.ts`), skip-gram word embeddings on an invented mini-language with analogy arithmetic (`embeddings.ts`), hand-set two-dimensional attention (`attention.ts`) and a character n-gram language model with temperature, top-k and a verbatim-copy detector (`ngram.ts`), plus their views. `src/data/alice.txt` is the first seven chapters of *Alice's Adventures in Wonderland* (public domain, distribution boilerplate removed), imported with `?raw`. They drive lessons 05–07 and their labs.
 - `src/scale/` is the planning arithmetic for lesson 08 and the Scale Ladder: a ladder of model sizes (published figures only), training operations, tokens per parameter, memory and time. Its tests check the course's own model sizes against the engines that build them, and the rule of thumb against GPT-3's published compute.
+- `src/capstone/` trains a logistic model the learner's way, scores it the way they chose, then deploys it on fresh leak-free data and derives the readiness checks and model card. `src/guide/` holds the name decoder and the test-set selection-bias simulation.
 - `src/lessons/` holds one small entry module per lesson widget, plus the glossary filter. `src/labs/` holds one controller per lab. Lessons and labs import the same engines, so a lesson chart and its lab cannot drift apart.
 - `src/progress/` renders learner progress on the home page.
 - `src/shared/` contains everything reusable:

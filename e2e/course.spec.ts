@@ -313,3 +313,51 @@ test("the ladder climbs from two knobs to hundreds of billions, and cost grows w
   await expect(page.locator("#ladder-name")).toHaveText("10 billion knobs");
   expect(errors).toEqual([]);
 });
+
+test("the capstone starts unready, exposes the leak, and can be earned", async ({ page }) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/capstone.html");
+  await expect(page.locator("#cap-simulation-status")).toContainText("Current");
+  await expect(page.locator("#cap-status")).toHaveText("Not ready");
+  await expect(page.locator("#cap-stats")).toContainText("0 of 7");
+  await expect(page.locator("#cap-outcome")).toContainText("The archive contained the answer");
+
+  await page.locator("#cap-leak").selectOption("out");
+  await expect(page.locator('#cap-checks tr[data-check="leak"] td').nth(1)).toHaveText("Passed");
+  await page.locator("#cap-split").selectOption("three-way");
+  await page.locator("#cap-capacity").selectOption("lean");
+  await page.locator("#cap-metric").selectOption("cancellers");
+  await page.locator("#cap-threshold").fill("0.3");
+  await expect(page.locator("#cap-status")).toHaveText("Ready to ship", { timeout: 15_000 });
+  await expect(page.locator("#cap-stats")).toContainText("7 of 7");
+  await expect(page.locator("#cap-card")).toContainText("Checks passed: 7 of 7");
+  expect(errors).toEqual([]);
+});
+
+test("the guide decodes a number and shows what peeking at the test set costs", async ({
+  page,
+}) => {
+  await page.goto("/names-guide.html");
+  await expect(page.locator("#guide-item-kind")).toHaveText("parameter");
+  await page.locator("#guide-items button", { hasText: "The learning rate" }).click();
+  await expect(page.locator("#guide-item-kind")).toHaveText("hyperparameter");
+  await expect(page.locator("#guide-use-inflation")).toHaveText("none");
+  await page.locator("#guide-uses button", { hasText: "Scored 20 models" }).click();
+  await expect(page.locator("#guide-use-inflation")).toContainText("points");
+  await expect(page.locator("#guide-use-note")).toContainText("Nothing got better");
+});
+
+test("every page type offers a skip link to its main content", async ({ page }) => {
+  for (const path of [
+    "/",
+    "/lesson-03-decisions.html",
+    "/attention-lab.html",
+    "/names-guide.html",
+  ]) {
+    await page.goto(path);
+    await page.keyboard.press("Tab");
+    const focused = page.locator(":focus");
+    await expect(focused).toHaveText("Skip to content");
+    await expect(page.locator("main#content")).toHaveCount(1);
+  }
+});

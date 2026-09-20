@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="The ML 101 capstone: make the decisions an engineer would, report your score, and then see what happens when the model meets new customers."
+    />
+    <title>ML 101 — Capstone: ship a model you'd trust</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="./#learning-path" lesson-label="Lessons" -->
+    <div class="hero">
+      <p class="eyebrow">
+        Capstone · From a good score to a model you would trust
+      </p>
+      <h1>Ship a model you'd trust</h1>
+      <p class="lede">
+        A subscription business asks you to predict which customers are about to
+        cancel, so that someone can ring them first. You have an archive of 600
+        past customers. Make the decisions on the left. The lab trains the model
+        your way and shows the score you would have reported, and then what it
+        does on 4,000 customers it has never seen.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Case study:</b> entirely fictional and synthetic. Three honest signals
+      (tenure, support tickets, recent logins), forty columns of noise, and one
+      column that should worry you. The model is the single neuron from lesson
+      03 with more inputs. About one customer in six cancels. There is no answer
+      key: every check below is computed from what your model actually does.
+    </p>
+    <main id="content">
+      <section class="variant-summary" aria-live="polite">
+        <strong id="cap-status">Not ready</strong>
+        <p id="cap-summary"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Your decisions</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show decisions"
+                data-hide-label="Hide decisions"
+              >
+                Hide decisions
+              </button>
+              <button type="button" class="reset-button" id="cap-reset">
+                Start over
+              </button>
+            </div>
+          </div>
+          <div id="cap-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="gap-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">
+                  The number in your report, and the number in real life
+                </p>
+                <h2 id="gap-title">
+                  Does your score survive contact with new customers?
+                </h2>
+                <p>
+                  Left of each pair is what you would have reported from the
+                  archive. Right is what the same model does on 4,000 new
+                  customers, where nothing recorded after the fact is available.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="cap-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="cap-chart"
+                  role="img"
+                  aria-label="Reported and deployed accuracy, cancellers caught and flags that were right"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>what you reported</span>
+              <span><i class="path"></i>what happened in deployment</span>
+              <span><i class="best"></i>doing nothing</span>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="cap-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="cap-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="checks-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Definition of ready</p>
+                <h2 id="checks-title">Would you put your name to it?</h2>
+                <p>
+                  A good score is not the same as a trustworthy model. Each row
+                  is a question a careful reviewer would ask, answered from what
+                  your model actually did.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Question</th>
+                    <th>Status</th>
+                    <th>Evidence</th>
+                  </tr>
+                </thead>
+                <tbody id="cap-checks"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="card-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">What leaves your desk</p>
+                <h2 id="card-title">The model card</h2>
+                <p>
+                  One page that says what the model is for, what went into it,
+                  how it was scored and what it cannot do. Writing it honestly
+                  is most of the discipline.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="cap-copy" class="resample">
+                    Copy model card
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap" style="margin-bottom: 18px">
+              <pre class="generated" id="cap-card" tabindex="0"></pre>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What the capstone assesses">
+        <article>
+          <h3>Honest scoring</h3>
+          <p>
+            Lesson 02 at work: score on customers the model never saw, and keep
+            a final set that no choice was tuned against.
+          </p>
+        </article>
+        <article>
+          <h3>Honest inputs</h3>
+          <p>
+            Every input must exist at the moment of prediction. A column filled
+            in afterwards is the answer in disguise, and the most common way
+            real projects fool themselves.
+          </p>
+        </article>
+        <article>
+          <h3>Honest measures</h3>
+          <p>
+            Lesson 03 at work: when one outcome is rare, accuracy flatters.
+            Measure what the business needs, and compare it with doing nothing.
+          </p>
+        </article>
+      </section>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          On inputs that would not exist at prediction time, see Kaufman et al.,
+          <a href="https://dl.acm.org/doi/10.1145/2382577.2382579"
+            >“Leakage in Data Mining: Formulation, Detection, and Avoidance”</a
+          >
+          (2012), and Kapoor and Narayanan,
+          <a href="https://arxiv.org/abs/2207.07048"
+            >“Leakage and the Reproducibility Crisis in ML-based Science”</a
+          >
+          (2022). The one-page summary follows Mitchell et al.,
+          <a href="https://arxiv.org/abs/1810.03993"
+            >“Model Cards for Model Reporting”</a
+          >
+          (2019). This capstone turns those concerns into a simplified exercise;
+          it is not a complete review process.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/capstone.ts"></script>
+  </body>
+</html>
