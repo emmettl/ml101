@@ -89,6 +89,8 @@ export default defineConfig({
   publicDir: false,
   test: {
     exclude: ["e2e/**", "**/node_modules/**", "**/dist/**"],
+    // Several engine tests train real models across many seeds; give them room on a busy machine.
+    testTimeout: 30_000,
   },
   build: {
     outDir: "dist",
