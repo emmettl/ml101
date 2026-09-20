@@ -291,3 +291,25 @@ test("a longer context turns composing into reciting, and greedy picking into a 
   await expect(page.locator("#lm-description")).toContainText("Stuck in a loop");
   expect(errors).toEqual([]);
 });
+
+test("the ladder climbs from two knobs to hundreds of billions, and cost grows with the square", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-08-scale.html");
+  await expect(page.locator("#stat-1")).toHaveText("2");
+  await page.locator("#scale-rung").fill("11");
+  await expect(page.locator("#stat-1")).toHaveText("405 billion");
+  await expect(page.locator("#stat-3")).toHaveText("15 trillion tokens");
+  await expect(page.locator("#scale-prose")).toContainText("thousand years");
+
+  await page.goto("/scale-ladder.html");
+  await expect(page.locator("#ladder-simulation-status")).toContainText("Current");
+  await expect(page.locator("#ladder-ledger tr")).toHaveCount(12);
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="hundred"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(page.locator("#ladder-name")).toHaveText("10 billion knobs");
+  expect(errors).toEqual([]);
+});

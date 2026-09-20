@@ -25,6 +25,12 @@ const plainNumber = (text: string): number | undefined => {
   return digits && Number.isFinite(value) ? value : undefined;
 };
 
+/** Reads "5.9 × 10^23 operations" as a number. */
+const scientific = (text: string): number | undefined => {
+  const match = /([\d.]+)\s*×\s*10\^(\d+)/.exec(text);
+  return match ? Number(match[1]) * 10 ** Number(match[2]) : undefined;
+};
+
 const times = (before: number, after: number): string =>
   before > 0 ? `${(after / before).toFixed(after / before >= 10 ? 0 : 1)} times` : "many times";
 
@@ -322,6 +328,60 @@ const prompts: Record<string, PredictPrompt[]> = {
       explain: (before, after) =>
         `From ${before} different words to ${after}. Always taking the favourite leads back to a phrase it has already written, and from an identical context it makes identical choices, for ever. Read the sample. The safest pick at every step produces the worst text overall, which is why real systems keep some randomness in.`,
       settle: "#lm-simulation-status",
+    },
+  ],
+  "scale-ladder": [
+    {
+      id: "ten-times-bigger",
+      question:
+        "Your model has a billion knobs and reads twenty tokens per knob. You make it ten times bigger and keep feeding it at the same rate per knob. What happens to the arithmetic needed to train it?",
+      readout: {
+        selector: "#ladder-stats",
+        match: "Training arithmetic",
+        label: "training arithmetic",
+        parse: scientific,
+      },
+      change: {
+        selector: "#ladder-parameters",
+        value: "10",
+        describe: "The lab will set the size to 10 billion knobs.",
+      },
+      choices: [
+        { id: "same", label: "About the same" },
+        { id: "ten", label: "About ten times as much" },
+        { id: "hundred", label: "About a hundred times as much" },
+      ],
+      judge: (before, after) =>
+        after / before >= 50 ? "hundred" : after / before >= 5 ? "ten" : "same",
+      explain: () =>
+        "A hundred times. Ten times as many knobs to update, and ten times as many tokens to update them on, multiply. This is why every generation of frontier model costs so much more than the last, and why only a handful of organisations can build them.",
+      settle: "#ladder-simulation-status",
+    },
+    {
+      id: "more-chips",
+      question:
+        "Training would take far too long, so you rent ten times as many accelerators: 10,000 instead of 1,000. What happens to the total arithmetic the training run needs?",
+      readout: {
+        selector: "#ladder-stats",
+        match: "Training arithmetic",
+        label: "training arithmetic",
+        parse: scientific,
+      },
+      change: {
+        selector: "#ladder-accelerators",
+        value: "4",
+        describe: "The lab will set the number of accelerators to 10,000.",
+      },
+      choices: [
+        { id: "down", label: "It falls to about a tenth" },
+        { id: "same", label: "It stays the same" },
+        { id: "up", label: "It rises" },
+      ],
+      judge: (before, after) =>
+        after / before > 1.2 ? "up" : after / before < 0.8 ? "down" : "same",
+      explain: () =>
+        "Not a single operation is saved. The work is set by the model and its text; chips only decide how quickly it gets done. Look at the time to train: that is what fell. In practice ten times the chips also wastes more effort on coordination, so the real bill goes up a little.",
+      settle: "#ladder-simulation-status",
     },
   ],
   "overfitting-lab": [

@@ -685,6 +685,80 @@ h3 {
   fill: var(--steel);
 }
 
+.plot-bar {
+  fill: var(--steel);
+}
+
+.plot-bar.course {
+  fill: var(--jade);
+}
+
+.plot-bar.chosen {
+  fill: var(--amber);
+}
+
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+
+.pipeline li {
+  position: relative;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--amber);
+  border-radius: 9px;
+  background: var(--surface);
+  counter-increment: stage;
+}
+
+.pipeline li::before {
+  content: "Stage " counter(stage);
+  display: block;
+  margin-bottom: 6px;
+  color: var(--amber-dark);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pipeline strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--deep);
+  font:
+    700 19px/1.2 Cambria,
+    Georgia,
+    serif;
+}
+
+.pipeline p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.pipeline em {
+  display: block;
+  margin-top: 10px;
+  color: var(--deep);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 700;
+}
+
+@media (width <= 700px) {
+  .pipeline {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
