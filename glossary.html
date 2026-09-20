@@ -332,6 +332,19 @@
               numbers inside it. A straight line is a model. So is a chatbot.
             </p>
           </article>
+          <article class="glossary-entry" id="neural-language-model">
+            <h2>Neural language model</h2>
+            <p>
+              A language model whose odds come from a trained network instead of
+              a table of counts. It has far too few knobs to store its training
+              text, so it must capture regularities, and it handles contexts it
+              has never seen. On very small texts a well-made count table can
+              still beat it.
+              <a href="table-vs-network.html"
+                >Train one in Table vs Network →</a
+              >
+            </p>
+          </article>
           <article class="glossary-entry" id="neural-network">
             <h2>Neural network</h2>
             <p>
@@ -460,6 +473,15 @@
               An S-shaped curve that squashes any number into the range 0 to 1,
               so it can be read as a probability. Large positive inputs give
               nearly 1, large negative nearly 0, and zero gives 0.5.
+            </p>
+          </article>
+          <article class="glossary-entry" id="smoothing">
+            <h2>Smoothing</h2>
+            <p>
+              Adjusting a count-based model so that things it never saw are
+              treated as unlikely instead of impossible, usually by blending in
+              a shorter context. Without it, one unseen word gives an infinite
+              loss.
             </p>
           </article>
           <article class="glossary-entry" id="softmax">

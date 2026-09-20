@@ -14,6 +14,8 @@ export interface CodePeek {
   /** Marker name inside the source. */
   marker: string;
   python: string;
+  /** Heading for the second panel; defaults to NumPy. */
+  pythonCaption?: string;
 }
 
 export function extractPeek(source: string, marker: string): string {
@@ -55,7 +57,7 @@ export function mountCodePeek(host: HTMLElement, peek: CodePeek): void {
   body.className = "code-peek-body";
   body.append(
     block("What this lab runs (TypeScript)", extractPeek(peek.source, peek.marker)),
-    block("The same idea in NumPy", peek.python),
+    block(peek.pythonCaption ?? "The same idea in NumPy", peek.python),
   );
   details.append(summary, body);
   try {
