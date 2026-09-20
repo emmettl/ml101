@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="One neuron turning two inputs into a probability, and the trade between false alarms and misses as you move the cut-off."
+    />
+    <title>ML 101 — Neuron Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="chart-interactions.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-03-decisions.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 04 · Classification</p>
+      <h1>Neuron Lab</h1>
+      <p class="lede">
+        A neuron does not say yes or no. It says how sure it is. Somebody still
+        has to decide how sure is sure enough, and that choice moves errors from
+        one kind to the other without removing any. The lower chart lines every
+        example up by the neuron's confidence so you can see exactly which ones
+        change sides.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> a single sigmoid neuron with two inputs and three knobs,
+      trained by mini-batch gradient descent on cross-entropy, scored on the 160
+      examples it trained on. Triangles are the class being looked for. Held-out
+      scoring, class imbalance, calibration and the cost of each kind of error
+      are left out; the last of those is what decides the cut-off in practice.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="neuron-name">Overlapping clusters</strong>
+        <p id="neuron-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Neuron</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show knobs"
+                data-hide-label="Hide knobs"
+              >
+                Hide knobs
+              </button>
+              <button type="button" class="reset-button" id="neuron-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="neuron-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="map-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The neuron's opinion of everywhere</p>
+                <h2 id="map-title">
+                  Where is it sure, and where is it guessing?
+                </h2>
+                <p>
+                  Shading is confidence: strong colour where the neuron is sure,
+                  blank where it is undecided. Ringed examples are on the wrong
+                  side of the current cut-off. The pattern retrains the neuron
+                  whenever you change it.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="neuron-train" class="resample">
+                    Train it for me
+                  </button>
+                  <button
+                    type="button"
+                    id="neuron-resample"
+                    class="resample quiet"
+                  >
+                    New examples
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host" id="neuron-map-host">
+                <svg
+                  id="neuron-map-chart"
+                  role="img"
+                  aria-label="Two classes of examples on a plane, shaded by the neuron's confidence"
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>Reading the map</strong>
+              <p id="neuron-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="strip-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Every example, lined up by confidence</p>
+                <h2 id="strip-title">Where would you cut?</h2>
+                <p>
+                  Left is “surely a circle”, right is “surely a triangle”. Drag
+                  across the chart, or use the arrow keys, to move the cut-off.
+                  Everything right of it is called a triangle.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="neuron-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg id="neuron-strip-chart"></svg>
+              </div>
+            </div>
+            <p class="simulation-status" id="neuron-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The same neuron at nine cut-offs</p>
+                <h2 id="ledger-title">
+                  Which row would a spam filter choose? A cancer screen?
+                </h2>
+                <p>
+                  The neuron is identical in every row. Only the cut-off
+                  changes. A false alarm is a circle called a triangle; a miss
+                  is a triangle let through.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Cut-off</th>
+                    <th>Called triangle</th>
+                    <th>False alarms</th>
+                    <th>Misses</th>
+                    <th>Right overall</th>
+                    <th>Of those flagged, truly triangles</th>
+                    <th>Of all triangles, caught</th>
+                  </tr>
+                </thead>
+                <tbody id="neuron-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The cut-off is a policy, not a fact</h3>
+          <p>
+            Training places the line. It does not tell you how cautious to be. A
+            missed tumour and a needless biopsy do not cost the same, and no
+            loss function knows that unless someone says so.
+          </p>
+        </article>
+        <article>
+          <h3>Accuracy hides the trade</h3>
+          <p>
+            Several rows in the table have nearly the same accuracy and very
+            different errors. Always ask which kind of mistake a reported
+            accuracy is made of.
+          </p>
+        </article>
+        <article>
+          <h3>Some overlap cannot be trained away</h3>
+          <p>
+            Where circles and triangles genuinely mix, no line and no cut-off
+            separates them. That is lesson 00's error floor, in a classification
+            problem.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          A single sigmoid neuron trained on cross-entropy is logistic
+          regression; see James et al.,
+          <a href="https://www.statlearning.com/"
+            ><em>An Introduction to Statistical Learning</em></a
+          >, chapter 4. The last two columns of the table are precision and
+          recall; sweeping the cut-off across all values traces the ROC curve.
+          The limit on what one such unit can represent is from Minsky and
+          Papert, <em>Perceptrons</em> (1969).
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/neuron-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

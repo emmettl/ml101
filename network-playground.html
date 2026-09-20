@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Train a small neural network live in your browser: watch its decision map form, its wiring thicken, and blame flow backwards from any example."
+    />
+    <title>ML 101 — Network Playground</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-04-networks.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 05 · Neural networks</p>
+      <h1>Network Playground</h1>
+      <p class="lede">
+        A real neural network, trained from random knobs while you watch. The
+        map shows what it currently believes about every spot on the plane. The
+        wiring shows the knobs themselves. Nothing here is pre-computed: press
+        Play and it learns, in your browser, by the same downhill rule as the
+        straight line in lab 02.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> a fully connected network with two inputs, one or two hidden
+      layers of up to eight neurons, and one sigmoid output, trained by
+      mini-batch gradient descent (16 examples a step) on cross-entropy. 160
+      examples train it and 40 are held out. Adam and other adaptive optimisers,
+      dropout, normalisation layers and anything involving images or text are
+      omitted. Different random starts give different runs; “New start” shows
+      how much.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="play-name">2 → 8 → 1</strong>
+        <p id="play-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Network</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="play-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="play-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="map-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Learning, live</p>
+                <h2 id="map-title">What does it believe right now?</h2>
+                <p>
+                  Large markers train the network; small faint ones are held
+                  out. Click or tap any example to select it, and the wiring on
+                  the right shows where its blame goes.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="play-play" class="resample">
+                    Play
+                  </button>
+                  <button type="button" id="play-step" class="resample quiet">
+                    +25 steps
+                  </button>
+                  <button
+                    type="button"
+                    id="play-restart"
+                    class="resample quiet"
+                  >
+                    New start
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-pair">
+              <div class="chart-wrap">
+                <p class="chart-caption">Its opinion of everywhere</p>
+                <div class="plot-host" id="play-map-host">
+                  <svg
+                    id="play-map-chart"
+                    role="img"
+                    aria-label="Two classes of examples on a plane, shaded by the network's current confidence"
+                  ></svg>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <p class="chart-caption" id="play-diagram-caption">
+                  The knobs: thicker means larger
+                </p>
+                <div class="plot-host">
+                  <svg
+                    id="play-diagram"
+                    role="img"
+                    aria-label="Wiring diagram of the network; line thickness shows the size of each weight"
+                  ></svg>
+                </div>
+                <div class="transport" style="margin-top: 8px">
+                  <button
+                    type="button"
+                    id="play-mode"
+                    class="resample quiet"
+                    aria-pressed="false"
+                  >
+                    Show blame for the selected example
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>Training so far</strong>
+              <p id="play-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="curve-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">This network, given 1,500 steps</p>
+                <h2 id="curve-title">Is it big enough for the pattern?</h2>
+                <p>
+                  Whenever a setting changes, the lab also trains a copy to
+                  1,500 steps instantly and reports how it ends up. The chart
+                  below follows the live run above.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="play-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="play-curve-chart"
+                  role="img"
+                  aria-label="Average surprise on training and held-out examples as the live run proceeds"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>training surprise</span>
+              <span><i class="held"></i>held-out surprise</span>
+            </div>
+            <p class="simulation-status" id="play-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">One to eight neurons, same pattern</p>
+                <h2 id="ledger-title">
+                  How much network does this pattern need?
+                </h2>
+                <p>
+                  Each row trains a fresh single-hidden-layer network for 1,500
+                  steps from the same random start. Find the row where the score
+                  stops improving: everything below it is spare capacity.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Hidden neurons</th>
+                    <th>Knobs</th>
+                    <th>Right on training</th>
+                    <th>Right on held-out</th>
+                    <th>Held-out surprise</th>
+                    <th>Reading</th>
+                  </tr>
+                </thead>
+                <tbody id="play-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>It starts as noise</h3>
+          <p>
+            At step zero the map is a meaningless smear, because the knobs are
+            random. Every trained network you have ever used began like this.
+          </p>
+        </article>
+        <article>
+          <h3>Structure appears on its own</h3>
+          <p>
+            Watch the wiring: a few connections thicken and the rest stay thin.
+            Nobody assigned those roles. They emerged because they lowered the
+            loss.
+          </p>
+        </article>
+        <article>
+          <h3>Luck of the start is real</h3>
+          <p>
+            Press “New start” a few times on a small network. Some starts
+            succeed and some stall. Larger networks are more forgiving, which is
+            one reason people build them bigger than strictly necessary.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Backpropagation in its modern form is due to Rumelhart, Hinton and
+          Williams,
+          <a href="https://www.nature.com/articles/323533a0"
+            >“Learning representations by back-propagating errors”</a
+          >, Nature 1986. For a fuller treatment see Goodfellow, Bengio and
+          Courville,
+          <a href="https://www.deeplearningbook.org/"><em>Deep Learning</em></a
+          >, chapter 6. This lab's design owes an obvious debt to the
+          <a href="https://playground.tensorflow.org/">TensorFlow Playground</a
+          >, which is worth a visit next.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/network-playground.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

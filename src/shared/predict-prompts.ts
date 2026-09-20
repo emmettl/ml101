@@ -114,6 +114,78 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#descent-simulation-status",
     },
   ],
+  "neuron-lab": [
+    {
+      id: "cutoff-false-alarms",
+      question:
+        "The neuron calls an example a triangle when it is at least 50% sure. You make it more cautious: it must now be 80% sure. The neuron itself does not change. What happens to the number of false alarms?",
+      readout: { selector: "#neuron-stats", match: "False alarms", label: "false alarms" },
+      change: {
+        selector: "#neuron-threshold",
+        value: "0.8",
+        describe: "The lab will move the cut-off to 0.80.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(0.5),
+      explain: (before, after) =>
+        `From ${before} to ${after}. Demanding more confidence means fewer circles get called triangles. Now look at the misses: they went the other way. The cut-off never removes errors, it converts one kind into the other, and which kind is cheaper is not something the neuron can know.`,
+      settle: "#neuron-simulation-status",
+    },
+    {
+      id: "xor-accuracy",
+      question:
+        "On overlapping clusters one neuron gets about nine in ten right. You switch to the opposite-corners pattern and let it retrain from scratch on 160 fresh examples. How well does it do?",
+      readout: { selector: "#neuron-stats", match: "Right overall", label: "right overall" },
+      change: {
+        selector: "#neuron-pattern",
+        value: "xor",
+        describe: "The lab will switch the pattern to opposite corners and retrain.",
+      },
+      choices: [
+        { id: "high", label: "About as well: above 85%" },
+        { id: "middle", label: "Noticeably worse: somewhere from 65% to 85%" },
+        { id: "chance", label: "Little better than a coin flip: under 65%" },
+      ],
+      judge: (_before, after) => (after >= 85 ? "high" : after >= 65 ? "middle" : "chance"),
+      explain: () =>
+        "One neuron draws one straight line, and any straight line leaves one pair of opposite corners on the same side. Training harder, or on more examples, cannot add a second line. The machine is too simple for the pattern, which is the cue for the next lesson.",
+      settle: "#neuron-simulation-status",
+    },
+  ],
+  "network-playground": [
+    {
+      id: "units-down",
+      question:
+        "Eight hidden neurons learn the ring comfortably. You cut the layer down to one neuron and train again from the same start. What happens to the share it gets right on held-out examples?",
+      readout: { selector: "#play-stats", match: "Right on held-out", label: "right on held-out" },
+      change: {
+        selector: "#play-units",
+        value: "1",
+        describe: "The lab will set neurons per hidden layer to 1 and retrain.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. One hidden neuron is one straight line, and no straight line encloses a centre. Look at the table below: the score jumps at three neurons, the fewest lines that can surround anything.`,
+      settle: "#play-simulation-status",
+    },
+    {
+      id: "second-layer",
+      question:
+        "Back at eight neurons, you add a second hidden layer of eight, roughly tripling the number of knobs. More capacity, same pattern, same 1,500 steps. What happens to the held-out score?",
+      readout: { selector: "#play-stats", match: "Right on held-out", label: "right on held-out" },
+      change: {
+        selector: "#play-layers",
+        value: "2",
+        describe: "The lab will add a second hidden layer and retrain.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: () =>
+        "Nothing much. One layer of eight had already captured the ring, and you cannot do better than right. Capacity beyond what the pattern needs buys nothing on clean data, and on noisy data it buys the trouble from lesson 02. Bigger is not a free improvement.",
+      settle: "#play-simulation-status",
+    },
+  ],
   "overfitting-lab": [
     {
       id: "degree-up",

@@ -44,6 +44,8 @@ export interface Plot {
   locate(event: { clientX: number; clientY: number }): { x: number; y: number };
   line(points: readonly Point[], className?: string): SVGPathElement;
   circle(x: number, y: number, radius: number, className?: string): SVGCircleElement;
+  /** An upward triangle: the second class marker, distinguishable without colour. */
+  triangle(x: number, y: number, radius: number, className?: string): SVGPathElement;
   /** A rectangle given by two opposite corners in data coordinates. */
   box(x0: number, y0: number, x1: number, y1: number, className?: string): SVGRectElement;
   segment(x0: number, y0: number, x1: number, y1: number, className?: string): SVGLineElement;
@@ -276,6 +278,15 @@ export function createPlot(svg: SVGSVGElement, options: PlotOptions): Plot {
         r: radius,
         class: `plot-point ${className}`.trim(),
       });
+      clipped.append(element);
+      return element;
+    },
+    triangle(cx, cy, radius, className = "") {
+      const px = bound(x(cx));
+      const py = bound(y(cy));
+      const r = radius * 1.25;
+      const d = `M${px.toFixed(1)},${(py - r).toFixed(1)} L${(px + r * 0.95).toFixed(1)},${(py + r * 0.75).toFixed(1)} L${(px - r * 0.95).toFixed(1)},${(py + r * 0.75).toFixed(1)} Z`;
+      const element = svgElement("path", { d, class: `plot-point ${className}`.trim() });
       clipped.append(element);
       return element;
     },

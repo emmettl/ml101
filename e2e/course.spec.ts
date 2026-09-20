@@ -29,7 +29,8 @@ test("a lesson completes when both checks are right, and the home page resumes f
 
   await page.goto("/");
   await expect(page.locator("#learner-progress")).toBeVisible();
-  await expect(page.locator("#progress-lessons")).toHaveText("1 of 3");
+  const lessonCount = await page.locator("[data-lesson-id]").count();
+  await expect(page.locator("#progress-lessons")).toHaveText(`1 of ${lessonCount}`);
   await expect(page.locator("#progress-quizzes")).toHaveText("2");
   await expect(page.locator("#resume-link")).toHaveText("Continue with Rolling downhill");
   await expect(page.locator('[data-lesson-id="knobs"] .lesson-status')).toHaveText("Completed");
@@ -154,4 +155,60 @@ test("the glossary filters as you type", async ({ page }) => {
   await expect(page.locator(".glossary-entry:visible").first()).toBeVisible();
   await expect(page.locator("#learning-rate")).toBeVisible();
   await expect(page.locator("#outlier")).toBeHidden();
+});
+
+test("one neuron separates clusters, fails opposite corners, and the cut-off trades errors", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/neuron-lab.html");
+  const stats = page.locator("#neuron-stats");
+  await expect(page.locator("#neuron-simulation-status")).toContainText("Current");
+  const falseAlarms = async () =>
+    Number(await stats.locator(".stat", { hasText: "False alarms" }).locator("strong").innerText());
+  const misses = async () =>
+    Number(await stats.locator(".stat", { hasText: "Misses" }).locator("strong").innerText());
+  const before = { alarms: await falseAlarms(), misses: await misses() };
+  await page.locator("#neuron-threshold").fill("0.85");
+  expect(await falseAlarms()).toBeLessThanOrEqual(before.alarms);
+  expect(await misses()).toBeGreaterThan(before.misses);
+
+  const card = page.locator("#predict");
+  await card.locator(".predict-step", { hasText: "Next prediction" }).click();
+  await card.locator('.predict-choices button[data-choice="chance"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(page.locator("#neuron-outcome")).toContainText("coin flip");
+  expect(errors).toEqual([]);
+});
+
+test("the lesson network needs three hidden neurons to enclose the ring", async ({ page }) => {
+  await page.goto("/lesson-04-networks.html");
+  await page.locator("#net-pattern").selectOption("circle");
+  await expect(page.locator("#stat-4")).toHaveText("Too simple");
+  await page.locator("#net-units").fill("3");
+  await expect(page.locator("#stat-4")).toHaveText("Captured");
+  await expect(page.locator("#stat-2")).toHaveText("13");
+});
+
+test("the playground learns the ring live, then shows blame for a chosen example", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/network-playground.html");
+  await expect(page.locator("#play-outcome")).toContainText("Step 0.");
+  await page.locator("#play-speed").selectOption("500");
+  await page.locator("#play-play").click();
+  await expect(page.locator("#play-play")).toHaveText("Pause");
+  await expect(page.locator("#play-outcome")).toContainText("It has the pattern", {
+    timeout: 25_000,
+  });
+  await page.locator("#play-play").click();
+  await expect(page.locator("#play-play")).toHaveText("Play");
+
+  await page.locator("#play-mode").click();
+  await expect(page.locator("#play-diagram-caption")).toContainText("Blame");
+  await expect(page.locator("#play-map-chart .plot-point.picked")).toHaveCount(1);
+  await expect(page.locator("#play-ledger tr")).toHaveCount(8);
+  expect(errors).toEqual([]);
 });

@@ -41,6 +41,28 @@
         ></span>
       </div>
       <div class="glossary-list">
+        <article class="glossary-entry" id="activation">
+          <h2>Activation</h2>
+          <p>
+            The bend applied to a neuron's weighted sum before it is passed on.
+            Without it, any stack of layers collapses into a single straight
+            line.
+            <a href="network-playground.html"
+              >Swap activations in the Network Playground →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="backpropagation">
+          <h2>Backpropagation</h2>
+          <p>
+            How a network finds the slope for every knob: one sweep forwards to
+            make a guess, one sweep backwards sharing out the blame along the
+            wires in proportion to the weights.
+            <a href="network-playground.html"
+              >See blame flow in the Network Playground →</a
+            >
+          </p>
+        </article>
         <article class="glossary-entry" id="batch">
           <h2>Batch</h2>
           <p>
@@ -61,11 +83,36 @@
             >
           </p>
         </article>
+        <article class="glossary-entry" id="classification">
+          <h2>Classification</h2>
+          <p>
+            Predicting a category (spam or not) instead of a quantity. The model
+            outputs a probability for each category; turning that into a verdict
+            is a separate decision.
+            <a href="neuron-lab.html">Try it in the Neuron Lab →</a>
+          </p>
+        </article>
         <article class="glossary-entry" id="convergence">
           <h2>Convergence</h2>
           <p>
             The point at which further training steps stop changing anything
             much, because the slope underfoot has flattened out.
+          </p>
+        </article>
+        <article class="glossary-entry" id="cross-entropy">
+          <h2>Cross-entropy</h2>
+          <p>
+            The usual loss for classification: the average surprise at the right
+            answer, measured as the negative logarithm of the probability the
+            model gave it. Confident mistakes cost the most.
+          </p>
+        </article>
+        <article class="glossary-entry" id="decision-boundary">
+          <h2>Decision boundary</h2>
+          <p>
+            The places where a classifier is exactly undecided between two
+            categories. For one neuron it is a straight line; for a network it
+            can be any shape.
           </p>
         </article>
         <article class="glossary-entry" id="divergence">
@@ -124,6 +171,14 @@
             about the knobs.
           </p>
         </article>
+        <article class="glossary-entry" id="layer">
+          <h2>Layer</h2>
+          <p>
+            A row of neurons that all read the same inputs. Hidden layers sit
+            between input and output, and what each of their neurons comes to
+            detect is discovered during training, not assigned.
+          </p>
+        </article>
         <article class="glossary-entry" id="learning-rate">
           <h2>Learning rate</h2>
           <p>
@@ -161,6 +216,25 @@
             numbers inside it. A straight line is a model. So is a chatbot.
           </p>
         </article>
+        <article class="glossary-entry" id="neural-network">
+          <h2>Neural network</h2>
+          <p>
+            Neurons feeding neurons. Early layers carve the input into simple
+            pieces and later layers combine the pieces, all trained together by
+            gradient descent.
+            <a href="network-playground.html"
+              >Train one in the Network Playground →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="neuron">
+          <h2>Neuron</h2>
+          <p>
+            A weighted sum of inputs plus a bias, passed through a bend. On its
+            own it can draw exactly one straight boundary.
+            <a href="neuron-lab.html">Meet one in the Neuron Lab →</a>
+          </p>
+        </article>
         <article class="glossary-entry" id="noise">
           <h2>Noise</h2>
           <p>
@@ -196,6 +270,16 @@
             weight.
           </p>
         </article>
+        <article class="glossary-entry" id="precision-and-recall">
+          <h2>Precision and recall</h2>
+          <p>
+            Two ways of scoring a classifier's positive calls. Precision: of
+            those it flagged, how many were right. Recall: of those it should
+            have flagged, how many it caught. Moving the cut-off trades one for
+            the other.
+            <a href="neuron-lab.html">Watch the trade in the Neuron Lab →</a>
+          </p>
+        </article>
         <article class="glossary-entry" id="regularisation">
           <h2>Regularisation</h2>
           <p>
@@ -207,12 +291,12 @@
             >
           </p>
         </article>
-        <article class="glossary-entry" id="sgd">
-          <h2>Stochastic gradient descent (SGD)</h2>
+        <article class="glossary-entry" id="sigmoid">
+          <h2>Sigmoid</h2>
           <p>
-            Gradient descent using a small random batch of examples for each
-            step instead of all of them. The slope is only roughly right, but
-            steps are so much cheaper that it wins easily.
+            An S-shaped curve that squashes any number into the range 0 to 1, so
+            it can be read as a probability. Large positive inputs give nearly
+            1, large negative nearly 0, and zero gives 0.5.
           </p>
         </article>
         <article class="glossary-entry" id="squared-error">
@@ -223,12 +307,29 @@
             than small ones.
           </p>
         </article>
+        <article class="glossary-entry" id="sgd">
+          <h2>Stochastic gradient descent (SGD)</h2>
+          <p>
+            Gradient descent using a small random batch of examples for each
+            step instead of all of them. The slope is only roughly right, but
+            steps are so much cheaper that it wins easily.
+          </p>
+        </article>
         <article class="glossary-entry" id="test-set">
           <h2>Test set</h2>
           <p>
             Held-out examples scored exactly once, at the very end. If you tune
             against a held-out set repeatedly you begin to fit it too, so the
             final exam must stay unseen.
+          </p>
+        </article>
+        <article class="glossary-entry" id="threshold">
+          <h2>Threshold (cut-off)</h2>
+          <p>
+            How confident a classifier must be before it says yes. It is a
+            policy choice, set by the cost of each kind of mistake, and no
+            amount of training chooses it for you.
+            <a href="neuron-lab.html">Move it in the Neuron Lab →</a>
           </p>
         </article>
         <article class="glossary-entry" id="training">
@@ -244,6 +345,14 @@
           <p>
             A model too stiff to follow the pattern. Both its scores are poor,
             and close together. More training will not help; more capacity will.
+          </p>
+        </article>
+        <article class="glossary-entry" id="weight">
+          <h2>Weight</h2>
+          <p>
+            A knob that scales one input to a neuron. A large weight means the
+            neuron listens closely to that input; a negative one means the input
+            counts against. Weights and biases together are the parameters.
           </p>
         </article>
       </div>
