@@ -30,11 +30,14 @@
         <em>Alice's Adventures in Wonderland</em>. There is no language model on
         this page: the lab does the retrieval half for real, shows exactly what
         would be sent, and checks against an answer key whether the answer is in
-        it. Passages and questions are turned into numbers by weighting words (a
-        word counts for more if it is rare in the book), which can be inspected
-        and runs instantly. Real systems use a learned embedding in its place,
-        which also matches words that merely mean the same. Every other step,
-        and every failure you can produce here, is the same in production.
+        it. By default passages and questions are turned into numbers by
+        weighting words (a word counts for more if it is rare in the book). Two
+        further settings bring in a learned embedding of words: GloVe, 50
+        numbers per word, trained on six billion words of Wikipedia and news.
+        Production systems go one step further and embed whole passages with a
+        transformer trained for the purpose, which is too large to run here; the
+        lab lets you measure why they had to. Every other step, and every
+        failure you can produce here, is the same in production.
       </p>
       <section class="variant-summary" aria-live="polite">
         <strong id="book-name">60-word passages, 3 passages handed over</strong>
@@ -226,7 +229,18 @@
           merge the two rankings. On how models use long contexts unevenly, see
           Liu et al.,
           <a href="https://arxiv.org/abs/2307.03172">“Lost in the Middle”</a>
-          (2023).
+          (2023). The word vectors are GloVe, from Pennington, Socher and
+          Manning,
+          <a href="https://nlp.stanford.edu/projects/glove/"
+            >“Global Vectors for Word Representation”</a
+          >
+          (2014), released into the public domain; the lab ships the 12,000 or
+          so words it can need, at one byte per number. The passage encoders
+          that did overtake word matching began with Karpukhin et al.,
+          <a href="https://arxiv.org/abs/2004.04906"
+            >“Dense Passage Retrieval”</a
+          >
+          (2020).
         </p>
       </section>
     </main>

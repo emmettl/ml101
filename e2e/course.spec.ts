@@ -504,7 +504,7 @@ test("the open-book lab scores the search, explains a cut answer, and takes a qu
   const errors = monitorRuntimeErrors(page);
   await page.goto("/open-book-lab.html");
   const status = page.locator("#book-simulation-status");
-  await expect(status).toContainText("Current · 263 passages of 60 words");
+  await expect(status).toContainText("Current · shared words · 263 passages of 60 words");
   const figure = async (label: string) =>
     Number(
       await page.locator("#book-stats .stat", { hasText: label }).locator("strong").innerText(),
@@ -534,5 +534,38 @@ test("the open-book lab scores the search, explains a cut answer, and takes a qu
   await card.locator(".predict-reveal").click();
   await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
   await expect(status).toContainText("passages of 15 words");
+  expect(errors).toEqual([]);
+});
+
+test("learned word vectors find “tall ≈ height”, and averaging them loses to plain word matching", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/open-book-lab.html");
+  const status = page.locator("#book-simulation-status");
+  const found = async () =>
+    Number(
+      await page
+        .locator("#book-stats .stat", { hasText: "Answers found" })
+        .locator("strong")
+        .innerText(),
+    );
+  await expect(status).toContainText("Current · shared words");
+  const plain = await found();
+
+  await page.locator("#book-question").selectOption("height-own");
+  await expect(page.locator("#book-outcome")).toContainText("is not in the 3 passages");
+  await page.locator("#book-method").selectOption("neighbours");
+  await expect(status).toContainText("shared words plus near-meanings", { timeout: 20_000 });
+  await expect(page.locator("#book-outcome")).toContainText("“tall” sits nearest");
+  await expect(page.locator("#book-passages li.has-answer .why")).toContainText("tall ≈ ");
+  await expect(page.locator("#book-description")).toContainText(
+    `Matching shared words alone finds ${plain}`,
+  );
+
+  await page.locator("#book-method").selectOption("average");
+  await expect(status).toContainText("one learned vector per passage");
+  expect(await found()).toBeLessThan(plain - 2);
+  await expect(page.locator("#book-description")).toContainText("Averaging blurs");
   expect(errors).toEqual([]);
 });

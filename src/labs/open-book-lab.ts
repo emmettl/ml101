@@ -11,7 +11,20 @@ import {
   wordsOf,
   type Exam,
   type Index,
+  type Match,
 } from "../retrieval/engine";
+import {
+  buildDenseIndex,
+  buildLexicon,
+  decodeVectors,
+  neighboursOf,
+  retrieveByMeaning,
+  retrieveWithNeighbours,
+  unknownToVectors,
+  type DenseIndex,
+  type Lexicon,
+  type WordVectors,
+} from "../retrieval/dense";
 import source from "../retrieval/engine.ts?raw";
 import { QUESTIONS } from "../retrieval/questions";
 import { holds, list, promptFor, renderPassages } from "../retrieval/view";
@@ -27,14 +40,18 @@ const DEEPEST = 10;
 const BOOK = QUESTIONS.filter((question) => question.wording === "book").length;
 const OWN = QUESTIONS.length - BOOK;
 
+const VECTOR_SIZE = 50;
+type Method = "words" | "neighbours" | "average";
+
 interface Params extends Record<string, number | string> {
   question: string;
+  method: string;
   size: number;
   overlap: number;
   keep: number;
 }
 
-const defaults: Params = { question: "bottle", size: 60, overlap: 0, keep: 3 };
+const defaults: Params = { question: "bottle", method: "words", size: 60, overlap: 0, keep: 3 };
 const params: Params = { ...defaults };
 
 const controls: ControlSpec<Params>[] = [
@@ -47,6 +64,17 @@ const controls: ControlSpec<Params>[] = [
       label: `${question.wording === "book" ? "Book's words" : "Reader's words"}: ${question.ask}`,
     })),
     help: "Twelve are asked in the book's own words, twelve the way a reader without the book would ask.",
+  },
+  {
+    type: "select",
+    key: "method",
+    label: "How passages are matched",
+    options: [
+      { value: "words", label: "Shared words" },
+      { value: "neighbours", label: "Shared words, plus near-meanings for words the book lacks" },
+      { value: "average", label: "One learned vector per passage (the average of its words)" },
+    ],
+    help: "The second and third use word vectors learned from six billion words of other text (0.6 MB, fetched when first chosen).",
   },
   {
     type: "range",
@@ -85,6 +113,13 @@ const chart = byId<SVGSVGElement>("book-chart");
 const ownInput = byId<HTMLInputElement>("book-own");
 let index: Index = buildIndex(words, chunkWords(words, params.size, params.overlap));
 let exam: Exam = sitExam(index, text, QUESTIONS, DEEPEST);
+/** The same exam sat by plain word matching, for comparison when another method is chosen. */
+let wordExam: Exam = exam;
+let vectors: WordVectors | undefined;
+let lexicon: Lexicon | undefined;
+let dense: DenseIndex | undefined;
+let loading: Promise<void> | undefined;
+let loadFailed = false;
 /** A question typed by the learner. It has no answer key. */
 let custom = "";
 let frame = 0;
@@ -93,16 +128,53 @@ const isBook = (at: number): boolean => QUESTIONS[at].wording === "book";
 const isOwn = (at: number): boolean => !isBook(at);
 const plural = (count: number, noun: string): string => `${count} ${noun}${count === 1 ? "" : "s"}`;
 
+/** The method in force: a learned method falls back to words until its vectors have arrived. */
+function method(): Method {
+  return vectors && (params.method === "neighbours" || params.method === "average")
+    ? params.method
+    : "words";
+}
+
+function search(asked: string, keep: number): Match[] {
+  if (method() === "neighbours" && lexicon)
+    return retrieveWithNeighbours(index, lexicon, asked, keep);
+  if (method() === "average" && dense) return retrieveByMeaning(dense, asked, keep);
+  return retrieve(index, asked, keep);
+}
+
 function rebuild(): void {
-  index = buildIndex(words, chunkWords(words, params.size, params.overlap));
-  exam = sitExam(index, text, QUESTIONS, DEEPEST);
+  const chunks = chunkWords(words, params.size, params.overlap);
+  index = buildIndex(words, chunks);
+  dense =
+    vectors && method() === "average" ? buildDenseIndex(text, words, chunks, vectors) : undefined;
+  wordExam = sitExam(index, text, QUESTIONS, DEEPEST);
+  exam = method() === "words" ? wordExam : sitExam(index, text, QUESTIONS, DEEPEST, search);
+}
+
+/** Fetch the word vectors the first time a learned method is chosen. */
+function loadVectors(): Promise<void> {
+  loading ??= (async () => {
+    const [{ default: url }, { default: list }] = await Promise.all([
+      import("../data/glove.bin?url"),
+      import("../data/glove-words.txt?raw"),
+    ]);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Could not fetch the word vectors (${response.status})`);
+    vectors = decodeVectors(
+      list.trim().split("\n"),
+      new Int8Array(await response.arrayBuffer()),
+      VECTOR_SIZE,
+    );
+    lexicon = buildLexicon(text, words, vectors);
+  })();
+  return loading;
 }
 
 function drawSearch(): void {
   const question = QUESTIONS.find((entry) => entry.id === params.question) ?? QUESTIONS[0];
   const asked = custom || question.ask;
   const span = custom ? undefined : locate(text, question);
-  const matches = retrieve(index, asked, params.keep);
+  const matches = search(asked, params.keep);
   byId("book-asked").textContent = asked;
   renderPassages(byId("book-passages"), text, words, index, matches, span);
   byId("book-prompt").textContent = promptFor(text, index, matches, asked);
@@ -115,10 +187,7 @@ function drawSearch(): void {
     `What the model receives: ${handed.toLocaleString("en-GB")} words of the book (clipped here for display), and your question`;
 
   const unknown = unknownWords(index, asked);
-  const blind =
-    unknown.length === 0
-      ? ""
-      : ` The book never uses ${list(unknown)}, so ${unknown.length === 1 ? "that word" : "those words"} matched nothing and the search ran on what was left. A learned embedding, trained on far more than one book, would know what ${unknown.length === 1 ? "it means" : "they mean"}; word weights cannot.`;
+  const blind = unknown.length === 0 ? "" : ` ${aboutUnknown(unknown, asked)}`;
   const outcome = byId("book-outcome");
   if (custom) {
     outcome.textContent = `This is your own question, so there is no answer key to check against. Read the ${plural(matches.length, "passage")} and judge: would a careful reader be able to answer from these alone?${blind}`;
@@ -133,6 +202,34 @@ function drawSearch(): void {
     outcome.textContent = `No passage can hold this answer. At ${params.size} words with ${params.overlap === 0 ? "no overlap" : "this overlap"}, a boundary falls in the middle of the sentence that answers the question, so each neighbour has half of it. Overlap is the usual fix: the next passage starts before this one ends, and one of them gets the sentence whole.`;
   else
     outcome.textContent = `The answer (“${question.answer}”) is not in the ${plural(params.keep, "passage")} handed over. ${deeper > 0 ? `It is in the book's passage ranked ${deeper}, so handing over more would reach it, at the price of more to read.` : `It is not in the top ${DEEPEST} either.`} A model given these must either say it cannot tell, or make something up and cite a passage that does not support it.${blind}`;
+}
+
+/** What became of the question's words that the book never uses, under the method in force. */
+function aboutUnknown(unknown: readonly string[], asked: string): string {
+  const those = unknown.length === 1 ? "that word" : "those words";
+  if (method() === "neighbours" && lexicon) {
+    const book = lexicon;
+    const helped = unknown
+      .map((word) => ({ word, near: neighboursOf(book, word) }))
+      .filter((entry) => entry.near.length > 0)
+      .map(
+        (entry) =>
+          `“${entry.word}” sits nearest ${entry.near.map((near) => `${near.spelling} (${near.similarity.toFixed(2)})`).join(", ")}`,
+      );
+    const lost = unknown.filter((word) => neighboursOf(book, word).length === 0);
+    return (
+      `The book never uses ${list(unknown)}. ` +
+      (helped.length > 0
+        ? `Among the book's words, the embedding says ${helped.join("; ")}, so the search looked for those too, each discounted by its distance. `
+        : "") +
+      (lost.length > 0
+        ? `Nothing in the book sits near ${list(lost)}${vectors && unknownToVectors(vectors, asked).length > 0 ? ", or the embedding does not know the word" : ""}, so ${lost.length === 1 ? "it" : "they"} still matched nothing.`
+        : "")
+    );
+  }
+  if (method() === "average")
+    return `The book never uses ${list(unknown)}, which does not matter to this method: no word has to match, only the averages have to point the same way. Whether an average of ${params.size} words still points anywhere useful is what the score below measures.`;
+  return `The book never uses ${list(unknown)}, so ${those} matched nothing and the search ran on what was left. Switch the matching to use near-meanings and see what a learned embedding makes of ${unknown.length === 1 ? "it" : "them"}.`;
 }
 
 function drawCurve(): void {
@@ -206,18 +303,29 @@ function drawScores(): void {
   const share = (handed / words.length) * 100;
   byId("book-name").textContent =
     `${params.size}-word passages, ${plural(params.keep, "passage")} handed over`;
+  const plain = found(wordExam, params.keep);
+  const compared =
+    method() === "words"
+      ? ""
+      : method() === "neighbours"
+        ? `Matching shared words alone finds ${plain} at these settings. The embedding knows that “bunny” sits beside “rabbit”; that knowledge rescues some questions and sends others after near-misses such as “sooner” for “disappear”. `
+        : `Matching shared words alone finds ${plain} at these settings. Averaging blurs: by the time ${params.size} word vectors have been averaged, the one word that mattered has been outvoted. The embeddings that do beat word matching are transformers (lesson 06) that read a passage in context and are trained for this very job. They are far too large to run on this page. `;
   byId("book-description").textContent =
+    (loadFailed && params.method !== "words"
+      ? "The word vectors could not be fetched, so this is plain word matching. "
+      : "") +
     `${all} of ${QUESTIONS.length} answers reach the model: ${book} of the ${BOOK} asked in the book's words and ${own} of the ${OWN} asked in a reader's. ` +
+    compared +
     (cut > 0
       ? `${plural(cut, "answer")} cannot be found at any depth, because a passage boundary runs through the sentence. `
       : "") +
     (share >= 10
       ? `Each question now carries ${share.toFixed(0)}% of the whole book along with it. The answer is in there, and so is a great deal that is not the answer; the model has to find it, and you pay for every word.`
-      : own < book - 2
+      : own < book - 2 && method() === "words"
         ? "The gap between the two kinds of question is the gap between matching words and matching meaning."
         : "");
   byId("book-simulation-status").textContent =
-    `Current · ${index.chunks.length.toLocaleString("en-GB")} passages of ${params.size} words · ${params.overlap === 0 ? "no overlap" : `${params.overlap * 100}% overlap`} · ${plural(params.keep, "passage")} handed over · ${QUESTIONS.length} questions with known answers`;
+    `Current · ${method() === "words" ? "shared words" : method() === "neighbours" ? "shared words plus near-meanings" : "one learned vector per passage"} · ${index.chunks.length.toLocaleString("en-GB")} passages of ${params.size} words · ${params.overlap === 0 ? "no overlap" : `${params.overlap * 100}% overlap`} · ${plural(params.keep, "passage")} handed over · ${QUESTIONS.length} questions with known answers`;
 }
 
 function drawAll(): void {
@@ -233,7 +341,19 @@ function schedule(): void {
 }
 
 const panel = renderControls(byId("book-controls"), "book", controls, params, (key) => {
-  if (key === "size" || key === "overlap") rebuild();
+  if (key === "method" && params.method !== "words" && !vectors) {
+    byId("book-simulation-status").textContent = "Fetching the word vectors (0.6 MB)…";
+    loadVectors()
+      .catch(() => {
+        loadFailed = true;
+      })
+      .finally(() => {
+        rebuild();
+        schedule();
+      });
+    return;
+  }
+  if (key === "size" || key === "overlap" || key === "method") rebuild();
   if (key === "question") {
     custom = "";
     ownInput.value = "";

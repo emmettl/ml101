@@ -186,10 +186,13 @@
               fourth is a perfectly good question that fails outright: the book
               says “Rabbit” and “watch”, never “bunny” or “timepiece”, and a
               search that matches words has nothing to go on. Production systems
-              replace the word-weights with a learned embedding, trained as in
-              lesson 05 on a great deal of text, in which “bunny” and “rabbit”
-              sit side by side. The rest of the pipeline stays exactly as you
-              see it.
+              replace the word-weights with a learned embedding of whole
+              passages: a transformer (lesson 06) that reads the words in
+              context and is trained to place a question beside the passage that
+              answers it. The rest of the pipeline stays exactly as you see it.
+              Word vectors of the kind you trained in lesson 05 are not enough
+              by themselves. They do know that “bunny” sits beside “rabbit”, and
+              the lab lets you measure how little that turns out to be worth.
             </p>
           </section>
           <section id="arithmetic">
@@ -228,8 +231,8 @@
                 <strong>Different words</strong>
                 <p>
                   The question and the document describe the same thing in
-                  different vocabulary. This is what learned embeddings are for,
-                  and they do not remove the problem entirely.
+                  different vocabulary. This is what learned passage embeddings
+                  are for, and they do not remove the problem entirely.
                 </p>
               </div>
               <div class="concept">

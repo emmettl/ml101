@@ -109,10 +109,14 @@ export function renderPassages(
       track.append(fill);
       const why = document.createElement("span");
       why.className = "why";
-      why.textContent = `similarity ${match.score.toFixed(2)} · matched on ${match.shared
+      const reasons = match.shared
         .slice(0, 4)
-        .map((entry) => surfaceOf(text, words, index, match.chunk, entry.stem))
-        .join(", ")}`;
+        .map((entry) => {
+          const surface = surfaceOf(text, words, index, match.chunk, entry.stem);
+          return entry.via ? `${entry.via} ≈ ${surface}` : surface;
+        })
+        .join(", ");
+      why.textContent = `similarity ${match.score.toFixed(2)} · ${reasons ? `matched on ${reasons}` : "no one word accounts for it"}`;
       summary.append(rank, track, why);
       if (answer) {
         const badge = document.createElement("span");
