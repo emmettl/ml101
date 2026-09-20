@@ -463,6 +463,228 @@ h3 {
   font-weight: 700;
 }
 
+.generated {
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  font:
+    15px/1.7 ui-monospace,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.generated .prompt {
+  color: var(--muted);
+}
+
+.generated mark {
+  border-bottom: 2px solid var(--brick);
+  background: var(--brick-wash);
+  color: inherit;
+}
+
+.generated .cursor {
+  border-right: 2px solid var(--amber-dark);
+}
+
+.next-bars {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.next-bars li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 118px;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.next-bars .token {
+  padding: 2px 0;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--tint);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-weight: 700;
+  text-align: center;
+}
+
+.next-bars .track {
+  height: 14px;
+  border-radius: 3px;
+  background: var(--tint-2);
+}
+
+.next-bars .fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: 3px;
+  background: var(--jade);
+}
+
+.next-bars li.cut .fill {
+  background: var(--muted);
+  opacity: 0.35;
+}
+
+.next-bars .odds {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.token-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px 4px;
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  list-style: none;
+}
+
+.token-chips li {
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--tint);
+  color: var(--ink);
+  font:
+    14px/1.4 ui-monospace,
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+}
+
+.token-chips li:nth-child(even) {
+  background: var(--amber-wash);
+}
+
+.token-chips li.word-start {
+  margin-left: 8px;
+  border-left: 3px solid var(--amber-dark);
+}
+
+.plot-word {
+  fill: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: var(--surface);
+  stroke-width: 3px;
+}
+
+.plot-word.faint {
+  fill: var(--muted);
+  font-weight: 600;
+}
+
+.plot-point.group-royal {
+  fill: var(--class-a);
+}
+
+.plot-point.group-common {
+  fill: var(--steel);
+}
+
+.plot-point.group-animal {
+  fill: var(--class-b);
+}
+
+.plot-point.group-food {
+  fill: var(--jade);
+}
+
+.plot-line.arrow {
+  stroke: var(--amber-dark);
+  stroke-width: 2.4;
+}
+
+.plot-line.arrow.ghost {
+  stroke: var(--muted);
+  stroke-dasharray: 5 4;
+  stroke-width: 1.8;
+}
+
+.plot-point.target {
+  fill: none;
+  stroke: var(--amber-dark);
+  stroke-width: 2.4;
+}
+
+.lesson-figure {
+  margin: 28px 0 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.lesson-figure figcaption {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.attn-arc {
+  fill: none;
+  stroke: var(--amber-dark);
+  stroke-linecap: round;
+}
+
+.attn-word {
+  fill: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.attn-word.focus {
+  fill: var(--amber-dark);
+  font-weight: 800;
+}
+
+.attn-word.hidden-word {
+  fill: var(--muted);
+  opacity: 0.45;
+}
+
+.attn-share {
+  fill: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.attn-bar {
+  fill: var(--amber);
+}
+
+.plot-line.query {
+  stroke: var(--amber-dark);
+  stroke-width: 3;
+}
+
+.plot-point.key-dot {
+  fill: var(--steel);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -29,6 +29,98 @@ const times = (before: number, after: number): string =>
   before > 0 ? `${(after / before).toFixed(after / before >= 10 ? 0 : 1)} times` : "many times";
 
 const prompts: Record<string, PredictPrompt[]> = {
+  "attention-lab": [
+    {
+      id: "ending-wide",
+      question:
+        "The sentence ends “…because it was too tired”, and “it” gives most of its attention to “animal”. You change one word, the last: “…too wide”. What happens to the share of attention on “animal”?",
+      readout: { selector: "#attn-stats", match: "Share on “animal”", label: "share on “animal”" },
+      change: {
+        selector: "#attn-ending",
+        value: "wide",
+        describe: "The lab will change the last word to “wide”.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Streets are wide and animals get tired, so the question “it” asks swings from “who here is a living thing?” to “who here is a place?”, and the attention follows. One token, two meanings, settled by context. A fixed embedding could never do this.`,
+      settle: "#attn-simulation-status",
+    },
+    {
+      id: "focus-zero",
+      question:
+        "Back to “tired”. You turn the focus down to zero, so every score becomes zero. About four words currently share the attention in effect. What happens to that number?",
+      readout: { selector: "#attn-stats", match: "Words that matter", label: "words that matter" },
+      change: {
+        selector: "#attn-sharpness",
+        value: "0",
+        describe: "The lab will set the focus to 0.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(0.5),
+      explain: (_before, after) =>
+        `It rose to ${after}: all eleven other words, equally. With every score at zero, softmax has nothing to prefer, so “it” becomes a plain average of the sentence. The words are all there and the structure is gone. Attention earns its keep by being uneven.`,
+      settle: "#attn-simulation-status",
+    },
+    {
+      id: "backwards-only",
+      question:
+        "Chatbots may only look backwards. You forbid “it” from seeing the three words after it, including “tired”, and leave its question unchanged. What happens to the share on “animal”?",
+      readout: { selector: "#attn-stats", match: "Share on “animal”", label: "share on “animal”" },
+      change: {
+        selector: "#attn-direction",
+        value: "backwards",
+        describe: "The lab will restrict “it” to looking backwards only.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `It went up, from ${before}% to ${after}%. Shares must add to 100%, so hiding three words hands their share to everyone else. But notice what was cheated here: the question stayed pointed at living things, and in a real model that question could only have been formed by seeing “tired”. Looking backwards only, “it” genuinely cannot know yet. The matter is settled later, when “tired” arrives and looks back.`,
+      settle: "#attn-simulation-status",
+    },
+  ],
+  "embedding-lab": [
+    {
+      id: "dimensions-analogies",
+      question:
+        "With eight numbers per word, all six analogies come out right. You squeeze every word down to two numbers, so the whole space fits on a page, and retrain. How many analogies does it solve now?",
+      readout: { selector: "#embed-stats", match: "Analogies solved", label: "analogies solved" },
+      change: {
+        selector: "#embed-dimensions",
+        value: "2",
+        describe: "The lab will retrain with 2 dimensions.",
+      },
+      choices: [
+        { id: "same", label: "Still all, or all but one" },
+        { id: "some", label: "About half" },
+        { id: "few", label: "Two or fewer" },
+      ],
+      judge: (_before, after) => (after >= 5 ? "same" : after >= 3 ? "some" : "few"),
+      explain: (_before, after) =>
+        `${after} of 6. Rank, gender and age each need a direction of their own, and animals and food need somewhere to be as well. Two coordinates cannot keep five things independent, so the directions bend into each other and a step borrowed from one pair of words lands in the wrong place for another. Real models use thousands of dimensions for the same reason.`,
+      settle: "#embed-simulation-status",
+    },
+    {
+      id: "dimensions-families",
+      question:
+        "Now a gentler squeeze, from eight numbers per word to four. At eight, every word's nearest neighbour is one of its own family: 100% kept apart. What happens to that figure at four?",
+      readout: {
+        selector: "#embed-stats",
+        match: "Families kept apart",
+        label: "families kept apart",
+      },
+      change: {
+        selector: "#embed-dimensions",
+        value: "4",
+        describe: "The lab will retrain with 4 dimensions.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: () =>
+        "It holds. Telling animals from food from people is a coarse job and survives the squeeze. Now look at the analogies: one has already failed. Fine-grained structure, the kind that supports arithmetic, is the first thing lost when a model is given too little room, long before the coarse groupings go.",
+      settle: "#embed-simulation-status",
+    },
+  ],
   "line-fitter": [
     {
       id: "outlier-tilt",
@@ -184,6 +276,52 @@ const prompts: Record<string, PredictPrompt[]> = {
       explain: () =>
         "Nothing much. One layer of eight had already captured the ring, and you cannot do better than right. Capacity beyond what the pattern needs buys nothing on clean data, and on noisy data it buys the trouble from lesson 02. Bigger is not a free improvement.",
       settle: "#play-simulation-status",
+    },
+  ],
+  "next-token-lab": [
+    {
+      id: "context-copied",
+      question:
+        "With 5 characters of context the model writes real words and copies nothing. You let it see 12 characters instead, which should make it better informed. What happens to the share of its output copied word for word from the book?",
+      readout: {
+        selector: "#lm-stats",
+        match: "Copied from the book",
+        label: "copied from the book",
+      },
+      change: {
+        selector: "#lm-context",
+        value: "12",
+        describe: "The lab will set the context to 12 characters.",
+      },
+      choices: [
+        { id: "same", label: "It stays near zero" },
+        { id: "small", label: "It rises a little: under half is copied" },
+        { id: "big", label: "Most of the output is now copied" },
+      ],
+      judge: (_before, after) => (after >= 50 ? "big" : after >= 8 ? "small" : "same"),
+      explain: (_before, after) =>
+        `${after}% is lifted straight from the book. A twelve-character run almost never occurs twice in 81,000 characters, so at each step exactly one continuation is on offer and the model can only recite. Better informed, with nothing left to decide. It is lesson 02 again: too much capacity for the data.`,
+      settle: "#lm-simulation-status",
+    },
+    {
+      id: "greedy-variety",
+      question:
+        "Back at 5 characters. To make the output as sensible as possible you set top-k to 1, so the model always takes the single most likely character and never gambles. What happens to the number of different words it uses in 600 characters?",
+      readout: { selector: "#lm-stats", match: "Different words", label: "different words" },
+      change: {
+        selector: "#lm-topK",
+        value: "1",
+        describe: "The lab will set top-k to 1.",
+      },
+      choices: [
+        { id: "up", label: "More: it picks better words" },
+        { id: "same", label: "About the same" },
+        { id: "down", label: "Far fewer" },
+      ],
+      judge: judges.direction(10),
+      explain: (before, after) =>
+        `From ${before} different words to ${after}. Always taking the favourite leads back to a phrase it has already written, and from an identical context it makes identical choices, for ever. Read the sample. The safest pick at every step produces the worst text overall, which is why real systems keep some randomness in.`,
+      settle: "#lm-simulation-status",
     },
   ],
   "overfitting-lab": [

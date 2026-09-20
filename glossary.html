@@ -52,6 +52,16 @@
             >
           </p>
         </article>
+        <article class="glossary-entry" id="attention">
+          <h2>Attention</h2>
+          <p>
+            How a word adjusts its meaning to its context: it scores every other
+            word for relevance, turns the scores into shares that add up to
+            100%, and becomes the share-weighted blend of what those words
+            offer.
+            <a href="attention-lab.html">Steer it in the Attention Lab →</a>
+          </p>
+        </article>
         <article class="glossary-entry" id="backpropagation">
           <h2>Backpropagation</h2>
           <p>
@@ -92,6 +102,14 @@
             <a href="neuron-lab.html">Try it in the Neuron Lab →</a>
           </p>
         </article>
+        <article class="glossary-entry" id="context-window">
+          <h2>Context window</h2>
+          <p>
+            How much preceding text a language model can take into account at
+            once, measured in tokens. Attention compares every token with every
+            other, so doubling the window roughly quadruples the work.
+          </p>
+        </article>
         <article class="glossary-entry" id="convergence">
           <h2>Convergence</h2>
           <p>
@@ -115,6 +133,17 @@
             can be any shape.
           </p>
         </article>
+        <article class="glossary-entry" id="dimension">
+          <h2>Dimension</h2>
+          <p>
+            One of the coordinates in an embedding. More dimensions give meaning
+            more independent directions to vary along; too few and different
+            kinds of meaning interfere.
+            <a href="embedding-lab.html"
+              >Compare 2 and 8 in the Embedding Lab →</a
+            >
+          </p>
+        </article>
         <article class="glossary-entry" id="divergence">
           <h2>Divergence</h2>
           <p>
@@ -122,6 +151,17 @@
             learning rate is too large and every step overshoots. It often ends
             with the numbers overflowing.
             <a href="descent-lab.html">Find the edge in the Descent Lab →</a>
+          </p>
+        </article>
+        <article class="glossary-entry" id="embedding">
+          <h2>Embedding</h2>
+          <p>
+            A token's learned position in space: a list of numbers, trained like
+            any other knobs, such that tokens used in similar company end up
+            close together.
+            <a href="embedding-lab.html"
+              >Watch one form in the Embedding Lab →</a
+            >
           </p>
         </article>
         <article class="glossary-entry" id="example">
@@ -169,6 +209,17 @@
             A setting chosen by a person rather than learned from examples: the
             learning rate, the batch size, the capacity of the model. Knobs
             about the knobs.
+          </p>
+        </article>
+        <article class="glossary-entry" id="language-model">
+          <h2>Language model</h2>
+          <p>
+            A model that, given some text, produces odds for what comes next.
+            Generating text is a loop around it: pick from the odds, append the
+            pick, ask again.
+            <a href="next-token-lab.html"
+              >Build one from a book in the Next-Token Lab →</a
+            >
           </p>
         </article>
         <article class="glossary-entry" id="layer">
@@ -280,6 +331,15 @@
             <a href="neuron-lab.html">Watch the trade in the Neuron Lab →</a>
           </p>
         </article>
+        <article class="glossary-entry" id="query-key-value">
+          <h2>Query, key and value</h2>
+          <p>
+            The three roles a word plays in attention. Its query is the question
+            it asks, its key is what it advertises to other words' questions,
+            and its value is what it hands over when listened to. All three are
+            computed by learned weights.
+          </p>
+        </article>
         <article class="glossary-entry" id="regularisation">
           <h2>Regularisation</h2>
           <p>
@@ -291,12 +351,29 @@
             >
           </p>
         </article>
+        <article class="glossary-entry" id="sampling">
+          <h2>Sampling</h2>
+          <p>
+            Choosing one token from a language model's odds. It is a separate
+            step from the model, with its own settings, and it is where the
+            randomness in a chatbot's replies comes from.
+          </p>
+        </article>
         <article class="glossary-entry" id="sigmoid">
           <h2>Sigmoid</h2>
           <p>
             An S-shaped curve that squashes any number into the range 0 to 1, so
             it can be read as a probability. Large positive inputs give nearly
             1, large negative nearly 0, and zero gives 0.5.
+          </p>
+        </article>
+        <article class="glossary-entry" id="softmax">
+          <h2>Softmax</h2>
+          <p>
+            A squashing step that turns any list of scores into positive shares
+            adding up to 100%, with higher scores getting disproportionately
+            more. Used to turn attention scores into attention weights, and a
+            model's raw outputs into odds.
           </p>
         </article>
         <article class="glossary-entry" id="squared-error">
@@ -313,6 +390,15 @@
             Gradient descent using a small random batch of examples for each
             step instead of all of them. The slope is only roughly right, but
             steps are so much cheaper that it wins easily.
+          </p>
+        </article>
+        <article class="glossary-entry" id="temperature">
+          <h2>Temperature</h2>
+          <p>
+            A sampling setting that reshapes the odds before a pick is made. Low
+            values favour the likeliest token and make output repetitive; high
+            values give long shots a real chance and make it erratic.
+            <a href="next-token-lab.html">Turn it up in the Next-Token Lab →</a>
           </p>
         </article>
         <article class="glossary-entry" id="test-set">
@@ -332,12 +418,51 @@
             <a href="neuron-lab.html">Move it in the Neuron Lab →</a>
           </p>
         </article>
+        <article class="glossary-entry" id="token">
+          <h2>Token</h2>
+          <p>
+            The unit of text a language model reads and writes: a piece from a
+            fixed vocabulary, often a whole common word, often a fragment of a
+            rarer one. Models never see letters or words as such.
+            <a href="embedding-lab.html"
+              >Tokenise your own text in the Embedding Lab →</a
+            >
+          </p>
+        </article>
+        <article class="glossary-entry" id="tokeniser">
+          <h2>Tokeniser</h2>
+          <p>
+            The rule that cuts text into tokens. It is built once, before
+            training, by repeatedly merging the most frequent neighbouring
+            pieces in a large body of text.
+          </p>
+        </article>
+        <article class="glossary-entry" id="top-k">
+          <h2>Top-k</h2>
+          <p>
+            A sampling setting that discards all but the k likeliest tokens
+            before picking. At k = 1 the model always takes its favourite, which
+            tends to trap it in loops.
+            <a href="next-token-lab.html"
+              >Set it to 1 in the Next-Token Lab →</a
+            >
+          </p>
+        </article>
         <article class="glossary-entry" id="training">
           <h2>Training</h2>
           <p>
             Turning the knobs until the loss on the examples is small. The
             model's recipe does not change during training; only the numbers
             inside it do.
+          </p>
+        </article>
+        <article class="glossary-entry" id="transformer">
+          <h2>Transformer</h2>
+          <p>
+            The architecture behind modern language models: embeddings, then
+            many layers that each apply attention followed by a small neural
+            network to every token, all trained together to predict the next
+            token.
           </p>
         </article>
         <article class="glossary-entry" id="underfitting">

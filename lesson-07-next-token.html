@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="What a language model actually does: give odds for what comes next, pick one, and repeat. Built from a single book so you can see every moving part."
+    />
+    <title>Predict the next token — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="next-token">
+    <!-- include: lesson-topbar -->
+    <header class="lesson-hero">
+      <div class="lesson-hero-grid">
+        <div>
+          <p class="eyebrow">Lesson 07 · Language models</p>
+          <h1>Predict the next token</h1>
+          <p class="lede">
+            A chatbot does one thing. Given the text so far, it produces odds
+            for what comes next. Something picks from those odds, the pick is
+            added to the text, and it goes round again. Every essay, poem and
+            program a language model has written came out one piece at a time
+            from that loop.
+          </p>
+        </div>
+        <aside class="lesson-meta">
+          <span>Estimated reading time</span><strong>11 minutes</strong
+          ><span>Builds on</span
+          ><strong>Lesson 02 · Memorising is not learning</strong
+          ><a href="next-token-lab.html">Open the Next-Token Lab →</a>
+        </aside>
+      </div>
+    </header>
+    <!-- include: lesson-sequence -->
+    <main class="lesson-layout">
+      <article class="lesson-copy">
+        <section id="idea">
+          <p class="section-label">The one idea</p>
+          <h2>Guess what comes next. Add it. Go again.</h2>
+          <p>
+            Here is the simplest machine that can do it. Take a book. To
+            continue some text, look at its last few characters, find every
+            place in the book where those same characters occur, and count what
+            followed. If “rabb” was followed by “i” every single time, then
+            after “rabb” the odds are: i, 100%. If “alice th” was followed by
+            “o” about half the time and “a”, “i” or “e” otherwise, those are the
+            odds. Roll a die weighted that way, write down the result, and
+            repeat.
+          </p>
+          <p>
+            That is a complete
+            <a class="term" href="glossary.html#language-model"
+              >language model</a
+            >. It has no grammar, no dictionary and no idea what a rabbit is.
+            Its only skill is knowing what tends to follow what. The surprise is
+            how far that one skill goes.
+          </p>
+          <div class="callout">
+            A language model does not look anything up and does not plan a
+            sentence. It produces odds for the next piece, one piece at a time,
+            from patterns in text it has seen.
+          </div>
+          <div class="concept-grid">
+            <div class="concept">
+              <strong>Token</strong>
+              <p>
+                The piece being predicted. Here a single character; in real
+                models a chunk of a word. See
+                <a class="term" href="glossary.html#token">token</a>.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Context</strong>
+              <p>
+                How much of the preceding text the model can see when it
+                guesses.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Sampling</strong>
+              <p>
+                Picking one token from the odds. The model supplies odds;
+                choosing is a separate step with its own settings.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Temperature</strong>
+              <p>
+                How adventurous the picking is. Low always takes the favourite.
+                High gives long shots a real chance. See
+                <a class="term" href="glossary.html#temperature">temperature</a
+                >.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section id="context">
+          <p class="section-label">Why context is everything</p>
+          <h2>From noise, to spelling, to sentences, to plagiarism</h2>
+          <p>
+            The machine below has read the first seven chapters of
+            <em>Alice's Adventures in Wonderland</em>, about 81,000 characters,
+            and nothing else. Give it no context and it knows only which letters
+            are common. Let it see more of what came before, a character at a
+            time, and watch what appears. Then keep going past the point where
+            it starts to look clever.
+          </p>
+          <div class="interactive" aria-labelledby="interactive-title">
+            <div class="interactive-head">
+              <div>
+                <h3 id="interactive-title">One book, one rule</h3>
+                <p>Text underlined in red appears word for word in the book.</p>
+              </div>
+              <span class="engine-badge">Live next-character engine</span>
+            </div>
+            <div class="interactive-controls">
+              <div class="control">
+                <label for="lm-context"
+                  >Characters of context ·
+                  <span id="lm-context-value">0</span></label
+                ><input
+                  id="lm-context"
+                  type="range"
+                  min="0"
+                  max="12"
+                  step="1"
+                  value="0"
+                />
+              </div>
+              <div class="control">
+                <label for="lm-temperature"
+                  >Temperature ·
+                  <span id="lm-temperature-value">1.0</span></label
+                ><input
+                  id="lm-temperature"
+                  type="range"
+                  min="0.2"
+                  max="2.5"
+                  step="0.1"
+                  value="1"
+                />
+              </div>
+            </div>
+            <div class="interactive-actions">
+              <button type="button" class="primary" id="lm-again">
+                Write something else
+              </button>
+            </div>
+            <div class="chart-wrap" style="padding: 14px">
+              <p class="generated" id="lm-output" aria-live="polite"></p>
+            </div>
+            <dl class="interactive-readout">
+              <div>
+                <dt>It can see</dt>
+                <dd id="stat-1">–</dd>
+              </div>
+              <div>
+                <dt>Real words</dt>
+                <dd id="stat-2">–</dd>
+              </div>
+              <div>
+                <dt>Copied from the book</dt>
+                <dd id="stat-3">–</dd>
+              </div>
+              <div>
+                <dt>Verdict</dt>
+                <dd id="stat-4">–</dd>
+              </div>
+            </dl>
+            <p class="interactive-prose" id="lm-prose" aria-live="polite"></p>
+          </div>
+          <p>
+            Around five characters of context, every word is a real word and
+            none of the text is copied: the machine is composing, in a small
+            way. By twelve, almost everything is lifted straight from the book.
+            Nothing about the rule changed. With that much context each run of
+            characters occurs only once in the book, so there is only ever one
+            continuation on offer, and “predicting” becomes reciting. This is
+            the curve from lesson 02 that threaded every point, met again in
+            text.
+          </p>
+        </section>
+        <section id="arithmetic">
+          <p class="section-label">The arithmetic</p>
+          <h2>Why a lookup table cannot be the answer</h2>
+          <p>
+            This machine uses 33 symbols. The number of different contexts it
+            could be asked about grows as 33 multiplied by itself once per
+            character: about 39 million at five characters, and more than a
+            million million million at twelve. The book supplies 81,000
+            examples. Beyond a handful of characters almost every context is
+            either unseen, or seen exactly once.
+          </p>
+          <p>
+            To use a long context without reciting, a model must treat contexts
+            it has never seen as similar to ones it has. A table cannot do that.
+            A neural network can: it is the machine from lesson 04, with knobs
+            instead of counts, trained by descent to lower its surprise at the
+            next token. The two lessons before this one supply what it needs to
+            read text: a way to turn words into numbers so that similar words
+            sit close together, and a way to let each word consult the others
+            around it.
+          </p>
+          <div class="concept-grid">
+            <div class="concept">
+              <strong>Same job</strong>
+              <p>
+                Odds for the next token, sample, append, repeat. Exactly this
+                loop.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Same loss</strong>
+              <p>
+                Average surprise at what actually came next: cross-entropy from
+                lesson 03.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Different memory</strong>
+              <p>
+                Billions of knobs that generalise, in place of a table that can
+                only match.
+              </p>
+            </div>
+            <div class="concept">
+              <strong>Same failure, rarer</strong>
+              <p>
+                Large models also recite text they saw many times. It is
+                memorisation, and it is why training data matters legally as
+                well as technically.
+              </p>
+            </div>
+          </div>
+        </section>
+        <section id="check">
+          <p class="section-label">Check your understanding</p>
+          <h2>Odds, then a pick</h2>
+          <div class="quiz">
+            <h3>
+              You ask a chatbot the same question twice and get two different
+              answers. What is the most likely reason?
+            </h3>
+            <p>Think about which part of the loop involves chance.</p>
+            <div class="quiz-options">
+              <button
+                type="button"
+                data-feedback="The knobs are frozen once training ends. Nothing about the model changed between your two questions."
+              >
+                The model learned something between the two attempts</button
+              ><button
+                type="button"
+                data-correct="true"
+                data-feedback="Correct. The model gave the same odds both times. The sampler rolled the dice differently, and one different early pick sends the rest of the text down a different path. Turn the temperature right down and the answers converge."
+              >
+                The odds were the same, but the pick from them is random</button
+              ><button
+                type="button"
+                data-feedback="It does not retrieve stored answers at all. Each reply is generated afresh, one token at a time."
+              >
+                It looked the answer up in two different places
+              </button>
+            </div>
+            <p class="quiz-feedback" aria-live="polite"></p>
+          </div>
+          <div class="quiz">
+            <h3>
+              At twelve characters of context the output is fluent, correctly
+              spelled and nearly all copied. What has gone wrong?
+            </h3>
+            <p>Look at how many continuations are on offer at each step.</p>
+            <div class="quiz-options">
+              <button
+                type="button"
+                data-feedback="Temperature only reshapes the odds among the options available. When there is a single option, no temperature can choose anything else."
+              >
+                The temperature is too low</button
+              ><button
+                type="button"
+                data-correct="true"
+                data-feedback="Correct. Each twelve-character run occurs once in the book, so exactly one continuation is ever on offer. The model has too much capacity for its data, which is overfitting from lesson 02. The cure is the same: far more text, or a model that generalises."
+              >
+                Each long context was seen only once, so there is only one thing
+                it can say</button
+              ><button
+                type="button"
+                data-feedback="More context is what real models want. The trouble is having too little text to support that much context with a model that can only match exactly."
+              >
+                Long contexts are always worse than short ones
+              </button>
+            </div>
+            <p class="quiz-feedback" aria-live="polite"></p>
+          </div>
+        </section>
+        <section id="takeaways">
+          <p class="section-label">Takeaways</p>
+          <h2>What to remember</h2>
+          <div class="takeaway-grid">
+            <div>
+              <strong>One token at a time</strong>
+              <p>
+                Odds, a pick, append, repeat. There is no plan for the sentence.
+              </p>
+            </div>
+            <div>
+              <strong>Fluency comes from context</strong>
+              <p>
+                More of the past in view turns noise into spelling into
+                sentences.
+              </p>
+            </div>
+            <div>
+              <strong>The pick is separate from the odds</strong>
+              <p>
+                Temperature and top-k are settings on the sampler, not the
+                model.
+              </p>
+            </div>
+            <div>
+              <strong>It continues patterns. It does not consult facts</strong>
+              <p>
+                Plausible and true are different properties. Only the first is
+                what the loss rewards.
+              </p>
+            </div>
+          </div>
+        </section>
+      </article>
+      <aside class="lesson-aside">
+        <nav aria-label="On this page">
+          <h2>On this page</h2>
+          <ul>
+            <li><a href="#idea">The one idea</a></li>
+            <li><a href="#context">Why context is everything</a></li>
+            <li><a href="#arithmetic">Why not a lookup table</a></li>
+            <li><a href="#check">Knowledge check</a></li>
+            <li><a href="#takeaways">Takeaways</a></li>
+          </ul>
+        </nav>
+        <div class="aside-card">
+          <h2>Go deeper</h2>
+          <p>
+            See the odds for every next character, write one character at a
+            time, and narrow the choice with top-k.
+          </p>
+          <a href="next-token-lab.html">Open the Next-Token Lab →</a>
+        </div>
+      </aside>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-06-attention.html">← Attention</a>
+      </div>
+      <div><span>Next</span><a href="labs.html">Explore the labs →</a></div>
+    </footer>
+    <script type="module" src="/src/lessons/next-token.ts"></script>
+  </body>
+</html>
