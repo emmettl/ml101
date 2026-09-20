@@ -58,11 +58,7 @@ export const COURSE_LESSONS: readonly CourseLesson[] = [
     title: "Predict the next token",
     href: "lesson-07-next-token.html",
   },
-];
-
-/** Lessons still being written; shown on the home page so the route ahead is visible. */
-export const PLANNED_LESSONS: readonly Pick<CourseLesson, "number" | "title">[] = [
-  { number: "08", title: "From toy to ChatGPT" },
+  { id: "scale", number: "08", title: "From toy to ChatGPT", href: "lesson-08-scale.html" },
 ];
 
 const LESSON_COMPLETE_PREFIX = "ml101:progress:lesson:";

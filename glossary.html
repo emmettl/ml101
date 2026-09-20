@@ -171,6 +171,14 @@
             only teacher a model has. Also called a data point or a sample.
           </p>
         </article>
+        <article class="glossary-entry" id="fine-tuning">
+          <h2>Fine-tuning</h2>
+          <p>
+            Continuing to train an already-trained model on a much smaller set
+            of examples chosen to shape its behaviour, such as conversations
+            showing what a good answer looks like. Same loss, new examples.
+          </p>
+        </article>
         <article class="glossary-entry" id="generalisation">
           <h2>Generalisation</h2>
           <p>
@@ -194,6 +202,14 @@
             The training loop: measure the gradient, move every knob a little
             way downhill, repeat. Nothing more clever than that is happening, at
             any scale.
+          </p>
+        </article>
+        <article class="glossary-entry" id="hallucination">
+          <h2>Hallucination</h2>
+          <p>
+            Fluent, confident output that is not true. It is not a malfunction:
+            the model was trained to produce plausible text, and plausible is a
+            different property from correct.
           </p>
         </article>
         <article class="glossary-entry" id="held-out-data">
@@ -331,6 +347,15 @@
             <a href="neuron-lab.html">Watch the trade in the Neuron Lab →</a>
           </p>
         </article>
+        <article class="glossary-entry" id="pretraining">
+          <h2>Pretraining</h2>
+          <p>
+            The first and by far the largest stage of training a language model:
+            predicting the next token across trillions of tokens of text. Almost
+            all of a model's cost and knowledge come from it.
+            <a href="scale-ladder.html">Price one in the Scale Ladder →</a>
+          </p>
+        </article>
         <article class="glossary-entry" id="query-key-value">
           <h2>Query, key and value</h2>
           <p>
@@ -351,12 +376,31 @@
             >
           </p>
         </article>
+        <article class="glossary-entry" id="rlhf">
+          <h2>Reinforcement learning from human feedback (RLHF)</h2>
+          <p>
+            A later training stage in which people compare pairs of answers, a
+            second model learns to predict their preferences, and the chatbot is
+            nudged towards answers that score well. It makes models more
+            helpful, and more eager to please.
+          </p>
+        </article>
         <article class="glossary-entry" id="sampling">
           <h2>Sampling</h2>
           <p>
             Choosing one token from a language model's odds. It is a separate
             step from the model, with its own settings, and it is where the
             randomness in a chatbot's replies comes from.
+          </p>
+        </article>
+        <article class="glossary-entry" id="scaling-laws">
+          <h2>Scaling laws</h2>
+          <p>
+            The observation that a language model's loss falls smoothly and
+            predictably as its size, its training text and its training
+            arithmetic grow together. It is why labs can plan enormous training
+            runs in advance.
+            <a href="scale-ladder.html">See the curve in the Scale Ladder →</a>
           </p>
         </article>
         <article class="glossary-entry" id="sigmoid">

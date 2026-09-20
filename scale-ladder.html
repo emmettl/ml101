@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Size a language model of your own and see what it costs to train, store and feed, using the same back-of-envelope rules the labs use."
+    />
+    <title>ML 101 — Scale Ladder</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-08-scale.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 09 · Scale</p>
+      <h1>Scale Ladder</h1>
+      <p class="lede">
+        Pick a size for a model and the lab works out what follows: how much
+        text it should read, how much arithmetic that takes, how long on how
+        many chips, and how much memory just to hold it. These are the rules of
+        thumb used to plan real training runs, and they fit on a postcard.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> three standard approximations. Training arithmetic ≈ 6 ×
+      knobs × tokens. A well-fed model reads about 20 tokens per knob (Hoffmann
+      et al., 2022). One modern accelerator does about 4 × 10<sup>14</sup>
+      useful operations a second once real-world inefficiency is allowed for.
+      Figures for real models are those their makers published. Electricity,
+      failed runs, data preparation, fine-tuning, the cost of answering
+      questions afterwards and everything about closed models are left out.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="ladder-name">1 billion knobs</strong>
+        <p id="ladder-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Your model</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="ladder-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="ladder-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="ladder-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Where it sits</p>
+                <h2 id="ladder-title">How does your model compare?</h2>
+                <p>
+                  Each gridline is a thousand times the one before. Green bars
+                  are models you trained in this course; the amber bar is yours.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="ladder-chart"
+                  role="img"
+                  aria-label="Your model among twelve others by number of parameters, on a logarithmic scale"
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>In plain terms</strong>
+              <p id="ladder-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="bill-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The bill</p>
+                <h2 id="bill-title">What does it take to train?</h2>
+                <p>
+                  The line shows training arithmetic against model size when the
+                  text grows in step with the model. Both axes multiply: one
+                  gridline across is ×1,000, one gridline up is ×1,000,000.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="ladder-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="ladder-cost-chart"
+                  role="img"
+                  aria-label="Training operations against number of parameters on logarithmic axes"
+                ></svg>
+              </div>
+            </div>
+            <p class="simulation-status" id="ladder-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="table-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The ladder, in numbers</p>
+                <h2 id="table-title">What did the real ones cost?</h2>
+                <p>
+                  Training arithmetic is shown only where the makers published
+                  how many tokens the model read. One accelerator-year is one
+                  chip running flat out for a year.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Year</th>
+                    <th>Knobs</th>
+                    <th>Tokens read</th>
+                    <th>Tokens per knob</th>
+                    <th>Training arithmetic</th>
+                    <th>Accelerator-years</th>
+                  </tr>
+                </thead>
+                <tbody id="ladder-ledger"></tbody>
+              </table>
+            </div>
+            <p class="simulation-status" id="ladder-note"></p>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Cost grows with the square</h3>
+          <p>
+            A bigger model needs more text, so both factors grow together. Ten
+            times the model is a hundred times the bill. That single fact shapes
+            the whole industry.
+          </p>
+        </article>
+        <article>
+          <h3>More chips buy time, not work</h3>
+          <p>
+            The arithmetic has to be done by someone. A thousand chips finish a
+            thousand times sooner, for the same total. What they buy is a model
+            this year instead of next century.
+          </p>
+        </article>
+        <article>
+          <h3>Text runs out before ambition does</h3>
+          <p>
+            The largest models already read more than any library holds. Finding
+            enough good text, and not reading the same page twice, is now as
+            much the constraint as chips.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The six-operations rule and the smooth fall of loss with scale are
+          from Kaplan et al.,
+          <a href="https://arxiv.org/abs/2001.08361"
+            >“Scaling Laws for Neural Language Models”</a
+          >
+          (2020). The twenty-tokens-per-knob rule is from Hoffmann et al.,
+          <a href="https://arxiv.org/abs/2203.15556"
+            >“Training Compute-Optimal Large Language Models”</a
+          >
+          (2022). GPT-3's figures are from Brown et al.,
+          <a href="https://arxiv.org/abs/2005.14165"
+            >“Language Models are Few-Shot Learners”</a
+          >
+          (2020), and Llama 3.1's from Meta's
+          <a href="https://arxiv.org/abs/2407.21783"
+            >“The Llama 3 Herd of Models”</a
+          >
+          (2024). Learning from human preferences is described in Ouyang et al.,
+          <a href="https://arxiv.org/abs/2203.02155"
+            >“Training language models to follow instructions with human
+            feedback”</a
+          >
+          (2022).
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/scale-ladder.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>
