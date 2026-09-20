@@ -28,8 +28,11 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 | 06 | Attention | Attention Lab | live |
 | 07 | Predict the next token | Next-Token Lab | live |
 | 08 | From toy to ChatGPT | Scale Ladder | live |
+| 09 | Open-book answers | Open-Book Lab | live |
 
 Lesson 07 has a second lab, **Table vs Network**, which bridges to lesson 08: the count table and a small neural language model, trained in a Web Worker, scored side by side on held-out text.
+
+Lesson 09 turns from how models are built to how they are used. Its **Open-Book Lab** does the retrieval half of retrieval-augmented generation for real (passages, TF-IDF vectors, cosine ranking, the assembled prompt) and scores it on 24 questions with known answers, half asked in the book's words and half in a reader's. There is no language model on the page, and the lab says so.
 
 Two further pages follow the lessons. `names-guide.html` is a prose-first deep dive that decodes the confusable names (parameter / hyperparameter; training / validation / test) with two questions, and simulates how peeking at a test set inflates a score. `capstone.html` (“Ship a model you'd trust”) has no answer key: the learner makes five decisions on a synthetic dataset with a planted leak and class imbalance, seven checks are computed from what their model actually does on 4,000 fresh customers, and the result is a model card they can copy.
 

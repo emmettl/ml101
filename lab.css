@@ -369,6 +369,46 @@ body.lab {
   margin: 0;
 }
 
+.ask-own {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.ask-own label {
+  color: var(--steel);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ask-own input {
+  flex: 1 1 220px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+}
+
+.passages + .outcome {
+  margin-top: 14px;
+}
+
+.panel > .passages {
+  margin-top: 14px;
+}
+
+pre.generated {
+  max-height: 340px;
+  overflow: auto;
+  font-size: 13px;
+}
+
 .chart-caption {
   margin: 0 0 6px 2px;
   color: var(--muted);

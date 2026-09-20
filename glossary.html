@@ -105,6 +105,16 @@
               >
             </p>
           </article>
+          <article class="glossary-entry" id="chunk">
+            <h2>Chunk (passage)</h2>
+            <p>
+              A piece of a document, typically a few hundred words, cut so that
+              it can be searched for and handed to a model on its own. Too short
+              and it loses the answer's surroundings; too long and the answer is
+              buried. Neighbouring chunks usually overlap so that no sentence is
+              lost to a boundary.
+            </p>
+          </article>
           <article class="glossary-entry" id="class-imbalance">
             <h2>Class imbalance</h2>
             <p>
@@ -136,6 +146,15 @@
             <p>
               The point at which further training steps stop changing anything
               much, because the slope underfoot has flattened out.
+            </p>
+          </article>
+          <article class="glossary-entry" id="cosine-similarity">
+            <h2>Cosine similarity</h2>
+            <p>
+              How nearly two lists of numbers point the same way, from 0
+              (nothing in common) to 1 (the same direction), ignoring how long
+              either is. It is the usual way to ask which stored passage is
+              closest to a question.
             </p>
           </article>
           <article class="glossary-entry" id="cross-entropy">
@@ -445,6 +464,19 @@
               second model learns to predict their preferences, and the chatbot
               is nudged towards answers that score well. It makes models more
               helpful, and more eager to please.
+            </p>
+          </article>
+          <article class="glossary-entry" id="retrieval">
+            <h2>Retrieval-augmented generation (RAG)</h2>
+            <p>
+              Answering from documents the model was never trained on: search
+              them for the passages most likely to hold the answer, paste those
+              into the prompt, and have the model answer from what it reads. No
+              knob moves, so the knowledge can be edited and the answer can cite
+              its source.
+              <a href="open-book-lab.html"
+                >Score a search in the Open-Book Lab →</a
+              >
             </p>
           </article>
           <article class="glossary-entry" id="sampling">

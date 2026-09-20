@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Retrieval, the half of retrieval-augmented generation that decides everything: cut a book into passages, search them, and see how often the answer reaches the model."
+    />
+    <title>ML 101 — Open-Book Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-09-open-book.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 11 · Using a model</p>
+        <h1>Open-Book Lab</h1>
+        <p class="lede">
+          A language model can only answer from its knobs or from the text in
+          front of it. Retrieval chooses that text. Here a book is cut into
+          passages and searched, and 24 questions with known answers measure how
+          often the right passage reaches the model. When it does not, no model,
+          however large, can put that right.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> the book is seven chapters of
+        <em>Alice's Adventures in Wonderland</em>. There is no language model on
+        this page: the lab does the retrieval half for real, shows exactly what
+        would be sent, and checks against an answer key whether the answer is in
+        it. Passages and questions are turned into numbers by weighting words (a
+        word counts for more if it is rare in the book), which can be inspected
+        and runs instantly. Real systems use a learned embedding in its place,
+        which also matches words that merely mean the same. Every other step,
+        and every failure you can produce here, is the same in production.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="book-name">60-word passages, 3 passages handed over</strong>
+        <p id="book-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="book-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="book-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="search-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">One question</p>
+                <h2 id="search-title">What would the model be handed?</h2>
+                <p>
+                  The best-matching passages, in order. Words that matched the
+                  question are in bold; open a passage to read it. If the answer
+                  is inside, it is underlined in green.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <p class="chart-caption">The question</p>
+              <p class="generated" id="book-asked"></p>
+              <form class="ask-own" id="book-ask">
+                <label for="book-own">Or ask your own</label>
+                <input
+                  id="book-own"
+                  type="text"
+                  maxlength="200"
+                  autocomplete="off"
+                  placeholder="What did Alice fall down?"
+                />
+                <button type="submit" class="resample quiet">Search</button>
+              </form>
+            </div>
+            <div class="chart-wrap" style="margin-top: 14px">
+              <p class="chart-caption" id="book-passages-caption">
+                Passages retrieved, best match first
+              </p>
+              <ol
+                class="passages"
+                id="book-passages"
+                aria-labelledby="book-passages-caption"
+              ></ol>
+            </div>
+            <div class="outcome">
+              <strong>Reading the result</strong>
+              <p id="book-outcome" aria-live="polite"></p>
+            </div>
+            <div class="chart-wrap" style="margin-top: 14px">
+              <p class="chart-caption" id="book-prompt-caption">
+                What the model receives
+              </p>
+              <pre
+                class="generated"
+                id="book-prompt"
+                tabindex="0"
+                aria-labelledby="book-prompt-caption"
+              ></pre>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="exam-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">All 24 questions</p>
+                <h2 id="exam-title">How often does the answer get through?</h2>
+                <p>
+                  One question proves little. This is the course's usual test: a
+                  set of questions with known answers, scored the same way every
+                  time you move a setting.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="book-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="book-chart"
+                  role="img"
+                  aria-label="Answers found against the number of passages handed over, for questions in the book's words and in a reader's words"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>asked in the book's words</span>
+              <span><i class="held"></i>asked in a reader's own words</span>
+            </div>
+            <p class="simulation-status" id="book-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Question by question</p>
+                <h2 id="ledger-title">Which ones fail, and why?</h2>
+                <p>
+                  There are three ways to miss, and each has a different fix: a
+                  boundary cut the answer in two, the right passage ranked too
+                  low to be handed over, or the question shares too few words
+                  with it to rank at all.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Question</th>
+                    <th>Wording</th>
+                    <th>Answer</th>
+                    <th>Result</th>
+                  </tr>
+                </thead>
+                <tbody id="book-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The model never changed</h3>
+          <p>
+            Nothing here trained anything. Retrieval adds knowledge by pasting
+            text into the prompt, which is why it can be updated in seconds, can
+            cite its source, and costs nothing like fine-tuning.
+          </p>
+        </article>
+        <article>
+          <h3>Retrieval sets the ceiling</h3>
+          <p>
+            If the passage is not handed over, the best possible reply is “I
+            cannot tell”. Most failures blamed on the model in these systems are
+            search failures, and you find them with an answer key, as you did
+            here.
+          </p>
+        </article>
+        <article>
+          <h3>Every setting is a trade</h3>
+          <p>
+            Longer passages and more of them find more answers and bury each one
+            deeper in text the model must read and you must pay for. Passage
+            length, overlap and count are hyperparameters, tuned on held-out
+            questions like any other.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The name comes from Lewis et al.,
+          <a href="https://arxiv.org/abs/2005.11401"
+            >“Retrieval-Augmented Generation for Knowledge-Intensive NLP
+            Tasks”</a
+          >
+          (2020). The word-weighting used here is TF-IDF, from Spärck Jones
+          (1972); its descendant BM25 remains a hard baseline to beat, and
+          production systems often run it alongside a learned embedding and
+          merge the two rankings. On how models use long contexts unevenly, see
+          Liu et al.,
+          <a href="https://arxiv.org/abs/2307.03172">“Lost in the Middle”</a>
+          (2023).
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/open-book-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>
