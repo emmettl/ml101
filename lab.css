@@ -925,3 +925,19 @@ a.hub-card:hover {
     min-height: 44px;
   }
 }
+
+/* The predict card sits inside a lab panel; keep its question in the body face. */
+.lab .predict {
+  margin-top: 0;
+}
+
+.lab .predict-heading {
+  margin-bottom: 12px;
+}
+
+.lab .predict-question {
+  font:
+    600 17px/1.4 "Segoe UI",
+    system-ui,
+    sans-serif;
+}

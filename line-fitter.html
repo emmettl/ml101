@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Fit a line to examples you can drag, and see every possible setting of its two knobs at once as a loss landscape."
+    />
+    <title>ML 101 — Line Fitter</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-00-knobs.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 01 · Models, knobs and the miss</p>
+      <h1>Line Fitter</h1>
+      <p class="lede">
+        The left chart shows the examples and the line. The right chart shows the same moment from
+        the machine's point of view: every possible setting of the two knobs, coloured by how
+        wrong it would be. Move either one and the other follows.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> one input, one output, a straight-line model with two knobs, and 24 synthetic
+      examples drawn around a hidden line with added noise. Real problems have many inputs and
+      far more knobs, and their landscapes cannot be drawn. Feature scaling, train/test splitting
+      and automated fitting are left for later labs.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="fit-name">Squared miss</strong>
+        <p id="fit-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside class="controls" data-collapsible="open" aria-labelledby="controls-title">
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Knobs</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show knobs"
+                data-hide-label="Hide knobs"
+              >
+                Hide knobs
+              </button>
+              <button type="button" class="reset-button" id="fit-reset">Reset</button>
+            </div>
+          </div>
+          <div id="fit-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="views-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Two views of the same two numbers</p>
+                <h2 id="views-title">Where is the line, and where is that on the map?</h2>
+                <p>
+                  Drag any example to move it. Drag the amber dot on the map to set both knobs at
+                  once. The ring marks the best setting for the current examples.
+                </p>
+              </div>
+              <div class="path-actions">
+                <div class="transport">
+                  <button type="button" id="fit-snap" class="resample">Snap to best fit</button>
+                  <button type="button" id="fit-resample" class="resample quiet">
+                    New examples
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-pair">
+              <div class="chart-wrap">
+                <p class="chart-caption">The examples and the line</p>
+                <div class="plot-host">
+                  <svg
+                    id="fit-data-chart"
+                    role="img"
+                    aria-label="Examples, the current line, and each example's miss"
+                  ></svg>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <p class="chart-caption">Every setting of the two knobs</p>
+                <div class="plot-host" id="fit-map-host">
+                  <svg
+                    id="fit-map-chart"
+                    role="img"
+                    aria-label="Loss landscape over tilt and lift, with the current setting and the best setting marked"
+                  ></svg>
+                </div>
+                <div class="heat-legend">
+                  <span>small miss</span><i></i><span>large miss</span>
+                </div>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i></i>your line</span>
+              <span><i class="miss"></i>each example's miss</span>
+              <span><i class="path"></i>you are here</span>
+            </div>
+            <div class="outcome">
+              <strong>What you are looking at</strong>
+              <p id="fit-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="stats-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The numbers behind the picture</p>
+                <h2 id="stats-title">How far from the best possible are you?</h2>
+                <p>
+                  The best setting is found exactly, by formula for squared misses and by
+                  iteration for plain ones. It moves whenever an example moves.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="fit-stats"></div>
+            <p class="simulation-status" id="fit-simulation-status">Calculating…</p>
+          </section>
+          <section id="predict" class="panel" aria-label="Predict before you move it"></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Every example, largest contribution first</p>
+                <h2 id="ledger-title">Which examples are doing the damage?</h2>
+                <p>
+                  The miss is an average, but it is rarely shared evenly. Under squaring a handful
+                  of examples usually account for most of it.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Example</th>
+                    <th>Input</th>
+                    <th>Answer</th>
+                    <th>Line's guess</th>
+                    <th>Off by</th>
+                    <th>Counts as</th>
+                    <th>Share of the miss</th>
+                  </tr>
+                </thead>
+                <tbody id="fit-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The map is the machine's whole world</h3>
+          <p>
+            A learning algorithm never sees the scatter plot. It sees only the height of the
+            ground where it stands. Everything in the next lab happens on the right-hand chart.
+          </p>
+        </article>
+        <article>
+          <h3>Examples shape the ground</h3>
+          <p>
+            Drag one example and the whole landscape shifts. Training data does not just score the
+            model. It defines what “good” means.
+          </p>
+        </article>
+        <article>
+          <h3>How you measure the miss is a choice</h3>
+          <p>
+            Squaring punishes big misses hard, so one odd example can drag the line. Plain
+            distance shrugs it off. Neither is correct; they encode different priorities.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The squared-miss fit is ordinary least squares, first published by Legendre in 1805.
+          For a careful treatment see Hastie, Tibshirani and Friedman,
+          <a href="https://hastie.su.domains/ElemStatLearn/"
+            ><em>The Elements of Statistical Learning</em></a
+          >, chapter 3; for a gentler one, James et al.,
+          <a href="https://www.statlearning.com/"
+            ><em>An Introduction to Statistical Learning</em></a
+          >, chapter 3. Both are free to read online. The examples here are synthetic; nothing in
+          this lab is a claim about real rents.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/line-fitter.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

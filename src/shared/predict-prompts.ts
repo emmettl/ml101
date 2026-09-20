@@ -1,0 +1,166 @@
+import { judges, type PredictChoice, type PredictPrompt } from "./predict";
+
+/**
+ * Predict-then-reveal prompts, keyed by page file name. Each names one control and one
+ * readout on that page; the right answer is whatever the lab's own engine produces, so a
+ * prompt cannot go stale when a model changes. Several are deliberate traps.
+ */
+
+const upSameDown: PredictChoice[] = [
+  { id: "up", label: "It goes up" },
+  { id: "same", label: "It stays about the same" },
+  { id: "down", label: "It goes down" },
+];
+
+const blowUp = (noun: string): PredictChoice[] => [
+  { id: "down", label: `${noun} falls or holds steady` },
+  { id: "small", label: `${noun} rises, but by less than ten times` },
+  { id: "big", label: `${noun} rises more than tenfold` },
+];
+
+/** Reads "1,000,000" and "over 1,000,000" as a million rather than as 1. */
+const plainNumber = (text: string): number | undefined => {
+  const digits = text.replace(/−/g, "-").replace(/[^\d.-]/g, "");
+  const value = Number(digits);
+  return digits && Number.isFinite(value) ? value : undefined;
+};
+
+const times = (before: number, after: number): string =>
+  before > 0 ? `${(after / before).toFixed(after / before >= 10 ? 0 : 1)} times` : "many times";
+
+const prompts: Record<string, PredictPrompt[]> = {
+  "line-fitter": [
+    {
+      id: "outlier-tilt",
+      question:
+        "You switch on one far-away example, a flat that rented for almost nothing, and change nothing else. There are now 25 examples instead of 24. What happens to the best tilt?",
+      readout: { selector: "#fit-stats", match: "Best tilt", label: "best tilt" },
+      change: {
+        selector: "#fit-outlier",
+        value: "on",
+        describe: "The lab will switch the far-away example on.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(0.05),
+      explain: (before, after) =>
+        `One example in 25 moved the best tilt by ${Math.abs(after - before).toFixed(2)}. Under squaring, a miss of 8 counts as 64, so the cheapest way to lower the total is to swing the whole line towards the odd example, at the expense of the other 24.`,
+      settle: "#fit-simulation-status",
+    },
+    {
+      id: "outlier-floor",
+      question:
+        "Same switch. The best possible miss is the lowest any straight line can score. What does one odd example in 25 do to it?",
+      readout: { selector: "#fit-stats", match: "Best possible", label: "best possible miss" },
+      change: {
+        selector: "#fit-outlier",
+        value: "on",
+        describe: "The lab will switch the far-away example on.",
+      },
+      choices: [
+        { id: "down", label: "Nothing much, or it falls" },
+        { id: "small", label: "It rises by less than half" },
+        { id: "big", label: "It rises by more than half" },
+      ],
+      judge: judges.riseSize(1.5),
+      explain: (before, after) =>
+        `It rose ${times(before, after)} over. No line can serve both the crowd and the odd one out, and squaring makes the compromise expensive. Switch the miss to plain distance and try again: the damage is far smaller.`,
+      settle: "#fit-simulation-status",
+    },
+  ],
+  "descent-lab": [
+    {
+      id: "rate-faster",
+      question:
+        "At a learning rate of 0.05 the walk needs about fifty steps to reach the bottom. You make the stride four times longer, 0.20, and change nothing else. What happens to the number of steps it needs?",
+      readout: {
+        selector: "#descent-stats",
+        match: "Steps to the bottom",
+        label: "steps to the bottom",
+      },
+      change: {
+        selector: "#descent-learningRate",
+        value: String(Math.log10(0.2)),
+        describe: "The lab will move the learning rate to 0.20.",
+      },
+      choices: [
+        { id: "up", label: "It needs more steps" },
+        { id: "same", label: "About the same" },
+        { id: "down", label: "It needs fewer steps" },
+      ],
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before} steps to ${after}. While the stride is still shorter than the valley is wide, a longer one simply covers the ground sooner. That is why people push the learning rate as high as they dare.`,
+      settle: "#descent-simulation-status",
+    },
+    {
+      id: "rate-too-far",
+      question:
+        "Encouraged, you push the learning rate a little further, to 0.30. What happens to the miss after sixty steps?",
+      readout: {
+        selector: "#descent-stats",
+        match: "Miss after 60 steps",
+        label: "miss after 60 steps",
+        parse: plainNumber,
+      },
+      change: {
+        selector: "#descent-learningRate",
+        value: String(Math.log10(0.3)),
+        describe: "The lab will move the learning rate to 0.30.",
+      },
+      choices: blowUp("The miss"),
+      judge: judges.riseSize(10),
+      explain: () =>
+        "Every step still pointed downhill. The stride is now longer than the valley is wide, so each step lands higher on the far side than it started, where the ground is steeper, which makes the next step longer still. There is a hard edge, shown in the lab as the largest safe rate, and no warning before it.",
+      settle: "#descent-simulation-status",
+    },
+  ],
+  "overfitting-lab": [
+    {
+      id: "degree-up",
+      question:
+        "You push flexibility to 12, the most the lab allows, and change nothing else. The training miss will fall. What happens to the held-out miss?",
+      readout: {
+        selector: "#overfit-stats",
+        match: "Held-out miss",
+        label: "held-out miss",
+        parse: plainNumber,
+      },
+      change: {
+        selector: "#overfit-degree",
+        value: "12",
+        describe: "The lab will move flexibility to 12.",
+      },
+      choices: blowUp("The held-out miss"),
+      judge: judges.riseSize(10),
+      explain: (before, after) =>
+        `It rose ${times(before, after)} over, while the training miss fell to almost nothing. Thirteen knobs and a handful of points leaves the curve free to swing wherever it likes between them, and it does.`,
+      settle: "#overfit-simulation-status",
+    },
+    {
+      id: "more-data-train",
+      question:
+        "You give the curve 60 training examples instead of 14, and change nothing else. More data is good. So what happens to the training miss?",
+      readout: {
+        selector: "#overfit-stats",
+        match: "Training miss",
+        label: "training miss",
+        parse: plainNumber,
+      },
+      change: {
+        selector: "#overfit-count",
+        value: "60",
+        describe: "The lab will raise the number of training examples to 60.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(0.004),
+      explain: () =>
+        "The training miss got worse, and that is good news. With 14 points the curve could thread through nearly all of them, noise included. Sixty points cannot all be threaded, so it has to settle for the shape they share. Look at the held-out miss: that is where the benefit shows.",
+      settle: "#overfit-simulation-status",
+    },
+  ],
+};
+
+export function promptsForPage(pathname: string): PredictPrompt[] {
+  const name = pathname.split("/").pop()?.replace(/\.html$/, "") ?? "";
+  return prompts[name] ?? [];
+}
