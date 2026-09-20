@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Parameter or hyperparameter? Training, validation or test? Two questions decode the most confusing names in machine learning."
+    />
+    <title>ML 101 — Which knob? Which data?</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="guide.css" />
+  </head>
+  <body class="lab guide">
+    <!-- include: lab-head lesson-href="glossary.html" lesson-label="Glossary" -->
+    <div class="hero">
+      <p class="eyebrow">Deep dive · the names that trip everyone up</p>
+      <h1>Which knob?<br />Which data?</h1>
+      <p class="lede">
+        Machine learning has two families of names that sound alike and mean
+        opposite things. Parameter and hyperparameter. Training, validation and
+        test. Each family is decoded by a single question. Learn the two
+        questions and the vocabulary stops being a wall.
+      </p>
+    </div>
+    <main id="content">
+      <section aria-labelledby="decode-title">
+        <p class="eyebrow">Start here</p>
+        <h2 id="decode-title">Two questions replace seven definitions</h2>
+        <div class="decoder-card">
+          <article>
+            <span>Question one · for any number</span>
+            <h3>Who sets it?</h3>
+            <p>
+              If gradient descent moves it during training, it is a
+              <b>parameter</b>. If a person chooses it, before or around
+              training, it is a <b>hyperparameter</b>. That is the entire
+              distinction.
+            </p>
+          </article>
+          <article>
+            <span>Question two · for any pile of data</span>
+            <h3>What is it allowed to influence?</h3>
+            <p>
+              <b>Training</b> data may move the parameters.
+              <b>Validation</b> data may inform a person's choices.
+              <b>Test</b> data may influence nothing at all. It exists to be
+              looked at once.
+            </p>
+          </article>
+        </div>
+        <p class="memory-line">
+          A parameter is learned. A hyperparameter is chosen. And the moment a
+          pile of data influences a choice, it stops being a test.
+        </p>
+      </section>
+
+      <section aria-labelledby="knob-title">
+        <p class="eyebrow">Decoder one</p>
+        <h2 id="knob-title">Pick a number. Is it learned, or chosen?</h2>
+        <p>
+          Every example comes from a lab in this course. Pick one and the card
+          answers both questions for it.
+        </p>
+        <fieldset class="choice-field">
+          <legend>The number in question</legend>
+          <div class="choice-set" id="guide-items"></div>
+        </fieldset>
+        <div class="result-card" aria-live="polite">
+          <span class="step-label" id="guide-item-kind">Parameter</span>
+          <h3 id="guide-item-name"></h3>
+          <p id="guide-item-example"></p>
+          <p id="guide-item-why"></p>
+          <dl>
+            <div>
+              <dt>Who sets it</dt>
+              <dd id="guide-item-set"></dd>
+            </div>
+            <div>
+              <dt>Which data may influence it</dt>
+              <dd id="guide-item-judged"></dd>
+            </div>
+            <div>
+              <dt>Which data never may</dt>
+              <dd id="guide-item-never"></dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section aria-labelledby="piles-title">
+        <p class="eyebrow">One matrix</p>
+        <h2 id="piles-title">Three piles, three jobs, no sharing</h2>
+        <div class="matrix">
+          <article>
+            <span class="step-label">Usually about 60–80%</span>
+            <h3>Training</h3>
+            <p>The examples descent learns from.</p>
+            <ul>
+              <li>Moves the parameters, thousands of times.</li>
+              <li>
+                Its score always flatters, and can only improve with capacity.
+              </li>
+              <li>
+                Tells you whether training worked, not whether the model is any
+                good.
+              </li>
+            </ul>
+          </article>
+          <article>
+            <span class="step-label">Usually about 10–20%</span>
+            <h3>Validation</h3>
+            <p>The examples you consult while making choices.</p>
+            <ul>
+              <li>Compares learning rates, sizes, cut-offs, when to stop.</li>
+              <li>
+                Honest at first, and a little less so each time you consult it.
+              </li>
+              <li>
+                Also called a development or held-out set, which is where
+                confusion starts.
+              </li>
+            </ul>
+          </article>
+          <article>
+            <span class="step-label">Usually about 10–20%</span>
+            <h3>Test</h3>
+            <p>The examples nobody looks at until the end.</p>
+            <ul>
+              <li>Influences nothing. Scored once, reported as is.</li>
+              <li>
+                The only number that estimates how the model does on new data.
+              </li>
+              <li>If it disappoints, you do not get to try again on it.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="peek-title">
+        <p class="eyebrow">Decoder two</p>
+        <h2 id="peek-title">What did you use the test set for?</h2>
+        <p>
+          Here is why the rule is strict. Imagine every model you try is exactly
+          as good as every other: each is truly right 80% of the time. Score
+          them on a test set of 200 examples and each score wobbles by chance.
+          Now choose how you used that test set.
+        </p>
+        <fieldset class="choice-field">
+          <legend>How the test set was used</legend>
+          <div class="choice-set" id="guide-uses"></div>
+        </fieldset>
+        <div class="result-card" aria-live="polite">
+          <span class="step-label" id="guide-use-verdict-label">Honest</span>
+          <h3 id="guide-use-title"></h3>
+          <p id="guide-use-verdict"></p>
+          <dl>
+            <div>
+              <dt>What every model truly scores</dt>
+              <dd id="guide-use-truth"></dd>
+            </div>
+            <div>
+              <dt>What you would report, on average</dt>
+              <dd id="guide-use-reported"></dd>
+            </div>
+            <div>
+              <dt>Improvement that is pure luck</dt>
+              <dd id="guide-use-inflation"></dd>
+            </div>
+          </dl>
+        </div>
+        <p id="guide-use-note"></p>
+      </section>
+
+      <section aria-labelledby="questions-title">
+        <p class="eyebrow">When someone shows you a score</p>
+        <h2 id="questions-title">Five questions worth asking</h2>
+        <ol class="question-list">
+          <li>
+            <div>
+              <strong>Scored on which pile?</strong>
+              <span
+                >“Accuracy” with no pile named is nearly always training
+                accuracy.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>How many things were tried against that pile?</strong>
+              <span
+                >One honest look and two hundred tries produce very different
+                numbers.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Compared with what?</strong>
+              <span
+                >Doing nothing, a simple rule, or last year's model. A score
+                alone means little.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Could any input contain the answer?</strong>
+              <span
+                >Anything recorded after the event being predicted is the answer
+                in disguise.</span
+              >
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Does the test data look like tomorrow's data?</strong>
+              <span
+                >A random slice of last year tells you about last year.</span
+              >
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="traps-title">
+        <p class="eyebrow">Common traps</p>
+        <h2 id="traps-title">Six distinctions worth keeping separate</h2>
+        <div class="trap-grid">
+          <article>
+            <h3>Parameter ≠ hyperparameter</h3>
+            <p>
+              “The model has 70 billion parameters” counts learned knobs. The
+              learning rate is not one of them, however much it mattered.
+            </p>
+          </article>
+          <article>
+            <h3>Validation ≠ test</h3>
+            <p>
+              Many papers and libraries call the validation set “test”. Ask what
+              it influenced. If the answer is “our choices”, it was validation.
+            </p>
+          </article>
+          <article>
+            <h3>Loss ≠ accuracy</h3>
+            <p>
+              Loss is what descent pushes down, and it has a slope. Accuracy is
+              what people quote, and it does not. They usually move together.
+              Not always.
+            </p>
+          </article>
+          <article>
+            <h3>Epoch ≠ step</h3>
+            <p>
+              A step is one update from one batch. An epoch is one pass through
+              all the training data, which may be thousands of steps.
+            </p>
+          </article>
+          <article>
+            <h3>Training ≠ inference</h3>
+            <p>
+              Training moves the knobs and is done once, at great cost.
+              Inference uses the frozen knobs to answer a question, and is what
+              you pay for per request.
+            </p>
+          </article>
+          <article>
+            <h3>Model ≠ algorithm</h3>
+            <p>
+              The algorithm is the procedure that learns. The model is what it
+              leaves behind: a recipe plus the numbers it settled on.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="next-title">
+        <p class="eyebrow">See them at work</p>
+        <h2 id="next-title">Where each distinction bites</h2>
+        <div class="next-links">
+          <a href="overfitting-lab.html"
+            ><span>Watch training error flatter</span
+            ><strong>Overfitting Lab →</strong></a
+          >
+          <a href="descent-lab.html"
+            ><span>Choose a hyperparameter badly</span
+            ><strong>Descent Lab →</strong></a
+          >
+          <a href="neuron-lab.html"
+            ><span>Set a cut-off that descent cannot</span
+            ><strong>Neuron Lab →</strong></a
+          >
+          <a href="capstone.html"
+            ><span>Split three ways, and find the leak</span
+            ><strong>Capstone →</strong></a
+          >
+        </div>
+      </section>
+
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The three-way split is set out in Hastie, Tibshirani and Friedman,
+          <a href="https://hastie.su.domains/ElemStatLearn/"
+            ><em>The Elements of Statistical Learning</em></a
+          >, section 7.2. On how repeated use wears out a test set, see Dwork et
+          al.,
+          <a href="https://www.science.org/doi/10.1126/science.aaa9375"
+            >“The reusable holdout: Preserving validity in adaptive data
+            analysis”</a
+          >, Science 2015. The figures in the second decoder are simulated here,
+          from models that are all equally good by construction.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/names-guide.ts"></script>
+  </body>
+</html>

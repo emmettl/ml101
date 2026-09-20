@@ -23,7 +23,7 @@
         </div>
       </div>
     </header>
-    <main class="glossary-main">
+    <main id="content" class="glossary-main">
       <div class="glossary-tools">
         <label class="visually-hidden" for="glossary-search"
           >Search the glossary</label
@@ -73,6 +73,15 @@
             >
           </p>
         </article>
+        <article class="glossary-entry" id="baseline">
+          <h2>Baseline</h2>
+          <p>
+            The score of the simplest thing you could do instead, such as always
+            predicting the commonest outcome. A model's score means little until
+            it is set beside one.
+            <a href="capstone.html">Beat one in the capstone →</a>
+          </p>
+        </article>
         <article class="glossary-entry" id="batch">
           <h2>Batch</h2>
           <p>
@@ -91,6 +100,15 @@
             <a href="overfitting-lab.html"
               >Raise the capacity in the Overfitting Lab →</a
             >
+          </p>
+        </article>
+        <article class="glossary-entry" id="class-imbalance">
+          <h2>Class imbalance</h2>
+          <p>
+            When one outcome is much rarer than the other. Accuracy then
+            flatters: a model that never predicts the rare outcome is right most
+            of the time and useless.
+            <a href="capstone.html">Meet it in the capstone →</a>
           </p>
         </article>
         <article class="glossary-entry" id="classification">
@@ -123,6 +141,15 @@
             The usual loss for classification: the average surprise at the right
             answer, measured as the negative logarithm of the probability the
             model gave it. Confident mistakes cost the most.
+          </p>
+        </article>
+        <article class="glossary-entry" id="data-leakage">
+          <h2>Data leakage</h2>
+          <p>
+            An input that would not be available at the moment a real prediction
+            is needed, usually because it was recorded after the event being
+            predicted. It produces superb scores on archived data and failure in
+            use. <a href="capstone.html">Find the leak in the capstone →</a>
           </p>
         </article>
         <article class="glossary-entry" id="decision-boundary">
@@ -162,6 +189,14 @@
             <a href="embedding-lab.html"
               >Watch one form in the Embedding Lab →</a
             >
+          </p>
+        </article>
+        <article class="glossary-entry" id="epoch">
+          <h2>Epoch</h2>
+          <p>
+            One complete pass through the training data. Not the same as a step,
+            which is a single update from a single batch; an epoch may contain
+            thousands of steps.
           </p>
         </article>
         <article class="glossary-entry" id="example">
@@ -225,6 +260,14 @@
             A setting chosen by a person rather than learned from examples: the
             learning rate, the batch size, the capacity of the model. Knobs
             about the knobs.
+          </p>
+        </article>
+        <article class="glossary-entry" id="inference">
+          <h2>Inference</h2>
+          <p>
+            Using a trained model to answer a question, with its knobs frozen.
+            Training is done once at great cost; inference is what is paid for
+            with every request.
           </p>
         </article>
         <article class="glossary-entry" id="language-model">
@@ -514,6 +557,16 @@
           <p>
             A model too stiff to follow the pattern. Both its scores are poor,
             and close together. More training will not help; more capacity will.
+          </p>
+        </article>
+        <article class="glossary-entry" id="validation-set">
+          <h2>Validation set</h2>
+          <p>
+            Examples kept out of training and consulted while making choices,
+            such as the learning rate or when to stop. Because it influences
+            decisions, its score slowly becomes optimistic, which is why a
+            separate test set is kept back.
+            <a href="names-guide.html">Decode the three piles →</a>
           </p>
         </article>
         <article class="glossary-entry" id="weight">

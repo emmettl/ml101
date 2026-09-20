@@ -201,6 +201,30 @@ h3 {
   stroke-width: 1.8;
 }
 
+.skip-link {
+  position: absolute;
+  z-index: 20;
+  top: 8px;
+  left: 8px;
+  padding: 10px 14px;
+  border-radius: 7px;
+  background: var(--amber);
+  color: var(--on-amber);
+  font-size: 14px;
+  font-weight: 800;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--amber);
+  outline-offset: 2px;
+}
+
 .visually-hidden {
   position: absolute;
   overflow: hidden;
