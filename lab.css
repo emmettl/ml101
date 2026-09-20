@@ -942,3 +942,7 @@ a.hub-card:hover {
 label.chart-caption {
   display: block;
 }
+
+.chart-wrap.room {
+  max-width: 620px;
+}

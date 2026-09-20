@@ -212,3 +212,82 @@ test("the playground learns the ring live, then shows blame for a chosen example
   await expect(page.locator("#play-ledger tr")).toHaveCount(8);
   expect(errors).toEqual([]);
 });
+
+test("letters fuse into tokens, and unfamiliar words stay in fragments", async ({ page }) => {
+  await page.goto("/lesson-05-text.html");
+  const chips = page.locator("#bpe-chips li");
+  const characters = await chips.count();
+  await page.locator("#bpe-merges").fill("400");
+  expect(await chips.count()).toBeLessThan(characters / 3);
+  await expect(chips.first()).toHaveText("alice");
+  await page.locator("#bpe-sentence").selectOption({ index: 1 });
+  await expect(page.locator("#bpe-prose")).toContainText("never met these words");
+  await expect(page.locator("#embedding-caption")).toContainText("nearest word is “queen”");
+});
+
+test("analogies need room: eight dimensions solve them, two do not", async ({ page }) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/embedding-lab.html");
+  const stats = page.locator("#embed-stats");
+  await expect(stats).toContainText("6 of 6");
+  await page.locator("#embed-text").fill("the jabberwocky");
+  await expect(page.locator("#embed-token-outcome")).toContainText("“jabberwocky” costs");
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="few"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(stats).toContainText("2 of 6");
+  await expect(page.locator("#embed-ledger tr")).toHaveCount(6);
+  expect(errors).toEqual([]);
+});
+
+test("attention follows the question, from the keyboard, and flips with the last word", async ({
+  page,
+}) => {
+  await page.goto("/attention-lab.html");
+  const stats = page.locator("#attn-stats");
+  await expect(page.locator("#attn-name")).toContainText("animal");
+  await page.locator("#attn-ending").selectOption("wide");
+  await expect(page.locator("#attn-name")).toContainText("street");
+  await expect(stats).toContainText("a place");
+
+  const before = await page.locator("#attn-queryX").inputValue();
+  await page.locator("#attn-plane [data-handle='0']").focus();
+  await page.keyboard.press("Shift+ArrowRight");
+  expect(await page.locator("#attn-queryX").inputValue()).not.toBe(before);
+
+  await page.locator("#attn-direction").selectOption("backwards");
+  await expect(page.locator("#attn-outcome")).toContainText("3 later words are hidden");
+  await expect(page.locator("#attn-arcs .hidden-word")).toHaveCount(3);
+});
+
+test("a longer context turns composing into reciting, and greedy picking into a loop", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-07-next-token.html");
+  await expect(page.locator("#stat-4")).toHaveText("Noise");
+  await page.locator("#lm-context").fill("5");
+  await expect(page.locator("#stat-4")).toHaveText("Composing");
+  await page.locator("#lm-context").fill("12");
+  await expect(page.locator("#stat-4")).toHaveText("Reciting");
+  await expect(page.locator("#lm-output mark").first()).toBeVisible();
+
+  await page.goto("/next-token-lab.html");
+  await expect(page.locator("#lm-simulation-status")).toContainText("Current", {
+    timeout: 20_000,
+  });
+  await expect(page.locator("#lm-ledger tr")).toHaveCount(10);
+  await page.locator("#lm-step").click();
+  await page.locator("#lm-step").click();
+  await expect(page.locator("#lm-outcome")).toContainText("Last step it picked");
+
+  const card = page.locator("#predict");
+  await card.locator(".predict-step", { hasText: "Next prediction" }).click();
+  await card.locator('.predict-choices button[data-choice="down"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 25_000 });
+  await expect(page.locator("#lm-description")).toContainText("Stuck in a loop");
+  expect(errors).toEqual([]);
+});

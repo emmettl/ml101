@@ -29,6 +29,56 @@ const times = (before: number, after: number): string =>
   before > 0 ? `${(after / before).toFixed(after / before >= 10 ? 0 : 1)} times` : "many times";
 
 const prompts: Record<string, PredictPrompt[]> = {
+  "attention-lab": [
+    {
+      id: "ending-wide",
+      question:
+        "The sentence ends “…because it was too tired”, and “it” gives most of its attention to “animal”. You change one word, the last: “…too wide”. What happens to the share of attention on “animal”?",
+      readout: { selector: "#attn-stats", match: "Share on “animal”", label: "share on “animal”" },
+      change: {
+        selector: "#attn-ending",
+        value: "wide",
+        describe: "The lab will change the last word to “wide”.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Streets are wide and animals get tired, so the question “it” asks swings from “who here is a living thing?” to “who here is a place?”, and the attention follows. One token, two meanings, settled by context. A fixed embedding could never do this.`,
+      settle: "#attn-simulation-status",
+    },
+    {
+      id: "focus-zero",
+      question:
+        "Back to “tired”. You turn the focus down to zero, so every score becomes zero. About four words currently share the attention in effect. What happens to that number?",
+      readout: { selector: "#attn-stats", match: "Words that matter", label: "words that matter" },
+      change: {
+        selector: "#attn-sharpness",
+        value: "0",
+        describe: "The lab will set the focus to 0.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(0.5),
+      explain: (_before, after) =>
+        `It rose to ${after}: all eleven other words, equally. With every score at zero, softmax has nothing to prefer, so “it” becomes a plain average of the sentence. The words are all there and the structure is gone. Attention earns its keep by being uneven.`,
+      settle: "#attn-simulation-status",
+    },
+    {
+      id: "backwards-only",
+      question:
+        "Chatbots may only look backwards. You forbid “it” from seeing the three words after it, including “tired”, and leave its question unchanged. What happens to the share on “animal”?",
+      readout: { selector: "#attn-stats", match: "Share on “animal”", label: "share on “animal”" },
+      change: {
+        selector: "#attn-direction",
+        value: "backwards",
+        describe: "The lab will restrict “it” to looking backwards only.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `It went up, from ${before}% to ${after}%. Shares must add to 100%, so hiding three words hands their share to everyone else. But notice what was cheated here: the question stayed pointed at living things, and in a real model that question could only have been formed by seeing “tired”. Looking backwards only, “it” genuinely cannot know yet. The matter is settled later, when “tired” arrives and looks back.`,
+      settle: "#attn-simulation-status",
+    },
+  ],
   "embedding-lab": [
     {
       id: "dimensions-analogies",

@@ -23,9 +23,9 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 | 02 | Too clever by half | Overfitting Lab | live |
 | 03 | From numbers to decisions | Neuron Lab | live |
 | 04 | Stacking neurons | Network Playground | live |
-| 05 | Text becomes numbers | Token & Embedding Lab | in preparation |
-| 06 | Attention | Attention Lab | in preparation |
-| 07 | Predict the next token | Next-Token Lab | in preparation |
+| 05 | Text becomes numbers | Token & Embedding Lab | live |
+| 06 | Attention | Attention Lab | live |
+| 07 | Predict the next token | Next-Token Lab | live |
 | 08 | From toy to ChatGPT | Scale Ladder | in preparation |
 
 A prose-first deep-dive guide (training / validation / test, parameter / hyperparameter) and a self-grading capstone (“Ship a model you'd trust”) follow the lessons.
@@ -41,6 +41,7 @@ Run `npm install` once. Use `npm run dev` for local development and `npm run bui
 - `src/fit/` is the straight-line engine: data, loss, the loss landscape, exact best fits, gradients, gradient descent and the largest safe learning rate. It drives lessons 00–01, the Line Fitter and the Descent Lab.
 - `src/overfit/` is the curve-fitting engine: Chebyshev features, a Cholesky least-squares solve with a wiggliness penalty, held-out scoring and the degree sweep. It drives lesson 02 and the Overfitting Lab.
 - `src/network/` is the classification engine: four two-class puzzles, a single sigmoid neuron, small fully connected networks, cross-entropy, backpropagation (checked against finite differences) and mini-batch training. `view.ts` beside it draws the decision map and wiring diagram. It drives lessons 03–04, the Neuron Lab and the Network Playground.
+- `src/language/` holds the text engines: a byte-pair tokeniser (`bpe.ts`), skip-gram word embeddings on an invented mini-language with analogy arithmetic (`embeddings.ts`), hand-set two-dimensional attention (`attention.ts`) and a character n-gram language model with temperature, top-k and a verbatim-copy detector (`ngram.ts`), plus their views. `src/data/alice.txt` is the first seven chapters of *Alice's Adventures in Wonderland* (public domain, distribution boilerplate removed), imported with `?raw`. They drive lessons 05–07 and their labs.
 - `src/lessons/` holds one small entry module per lesson widget, plus the glossary filter. `src/labs/` holds one controller per lab. Lessons and labs import the same engines, so a lesson chart and its lab cannot drift apart.
 - `src/progress/` renders learner progress on the home page.
 - `src/shared/` contains everything reusable:
@@ -57,6 +58,6 @@ Create `name.html` in the repository root; every root HTML file is discovered au
 
 ## Important note
 
-This material is educational. The models are deliberately tiny and illustrative: they show how the mechanism works, not how production systems are built, tuned or evaluated. All data is synthetic.
+This material is educational. The models are deliberately tiny and illustrative: they show how the mechanism works, not how production systems are built, tuned or evaluated. All data is synthetic, apart from one public-domain text.
 
 The project is institution-neutral: examples are synthetic or drawn from public sources, and no private or organisation-specific material belongs in the repository.

@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Drag the question a word is asking and watch attention follow: scores, softmax shares and the blended result, with a switch for looking backwards only."
+    />
+    <title>ML 101 — Attention Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-06-attention.html" lesson-label="Read the lesson" -->
+    <div class="hero">
+      <p class="eyebrow">Lab 07 · Transformers</p>
+      <h1>Attention Lab</h1>
+      <p class="lede">
+        The lower chart is the room: every word placed by the badge it wears.
+        The amber arrow is the question “it” is asking. Drag the arrowhead.
+        Words the arrow points towards get a high score, the scores become
+        shares, and the upper chart shows where the attention went. That is the
+        entire mechanism.
+      </p>
+    </div>
+    <p class="scope-note">
+      <b>Scope:</b> one attention head, one asking word, twelve words, and
+      queries and keys of two numbers each, set by hand so that one axis means
+      “living thing” and the other “place”. A trained transformer learns its
+      queries, keys and values, uses hundreds of numbers for each, runs dozens
+      of heads in dozens of layers, and adds information about word order. None
+      of that changes the arithmetic shown here.
+    </p>
+    <main>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="attn-name">“it” → animal</strong>
+        <p id="attn-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="attn-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="attn-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="views-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Question, badges, shares</p>
+                <h2 id="views-title">Who does “it” listen to?</h2>
+                <p>
+                  Drag the amber arrowhead, or focus it and use the arrow keys.
+                  A word scores highly when the arrow points its way, and more
+                  highly the longer the arrow is.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <p class="chart-caption">Where the attention goes</p>
+              <div class="plot-host">
+                <svg
+                  id="attn-arcs"
+                  role="img"
+                  aria-label="The sentence, with arcs from the word it as thick as the attention paid to each word"
+                ></svg>
+              </div>
+            </div>
+            <div class="chart-wrap room" style="margin-top: 14px">
+              <p class="chart-caption">
+                The room: badges (dots) and the question (arrow)
+              </p>
+              <div class="plot-host">
+                <svg
+                  id="attn-plane"
+                  role="img"
+                  aria-label="Each word placed by its key; the query of the word it drawn as an arrow from the centre"
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>What just happened</strong>
+              <p id="attn-outcome" aria-live="polite"></p>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="stats-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The result</p>
+                <h2 id="stats-title">What has “it” become?</h2>
+                <p>
+                  After attention, “it” is replaced by the share-weighted blend
+                  of the other words. The reading is simply which side of that
+                  blend is larger.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="attn-stats"></div>
+            <p class="simulation-status" id="attn-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The whole calculation, word by word</p>
+                <h2 id="ledger-title">Where does each percentage come from?</h2>
+                <p>
+                  Score = question × badge, added across both numbers, divided
+                  by √2 and multiplied by the focus. Share = softmax of the
+                  scores. Nothing else is involved.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Word</th>
+                    <th>Badge: living</th>
+                    <th>Badge: place</th>
+                    <th>Score</th>
+                    <th>Share</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody id="attn-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Direction is relevance</h3>
+          <p>
+            A question and a badge match when they point the same way. Learning
+            to attend is learning which directions to ask in, and which to
+            advertise.
+          </p>
+        </article>
+        <article>
+          <h3>Shares must add up</h3>
+          <p>
+            Softmax makes attention a competition: listening more to one word
+            means listening less to the rest. That is how a word commits to a
+            reading.
+          </p>
+        </article>
+        <article>
+          <h3>Chatbots cannot look ahead</h3>
+          <p>
+            Forbid looking forwards and “it” can no longer see how the sentence
+            ends. In a real model the ambiguity is settled later, by the words
+            that come after looking back.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The mechanism is from Vaswani et al.,
+          <a href="https://arxiv.org/abs/1706.03762"
+            >“Attention Is All You Need”</a
+          >
+          (2017); the division by the square root of the vector length is theirs
+          too. The example sentence follows the one used in Google's
+          <a
+            href="https://research.google/blog/transformer-a-novel-neural-network-architecture-for-language-understanding/"
+            >announcement of the transformer</a
+          >. For a careful illustrated walk through a full block, see Jay
+          Alammar's
+          <a href="https://jalammar.github.io/illustrated-transformer/"
+            ><em>The Illustrated Transformer</em></a
+          >. Be cautious about reading meaning into attention maps from real
+          models: what a head attends to is suggestive, not an explanation.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/attention-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

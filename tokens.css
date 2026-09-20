@@ -643,6 +643,48 @@ h3 {
   font-size: 13px;
 }
 
+.attn-arc {
+  fill: none;
+  stroke: var(--amber-dark);
+  stroke-linecap: round;
+}
+
+.attn-word {
+  fill: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.attn-word.focus {
+  fill: var(--amber-dark);
+  font-weight: 800;
+}
+
+.attn-word.hidden-word {
+  fill: var(--muted);
+  opacity: 0.45;
+}
+
+.attn-share {
+  fill: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+.attn-bar {
+  fill: var(--amber);
+}
+
+.plot-line.query {
+  stroke: var(--amber-dark);
+  stroke-width: 3;
+}
+
+.plot-point.key-dot {
+  fill: var(--steel);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

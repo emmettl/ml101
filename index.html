@@ -65,7 +65,7 @@
               role="progressbar"
               aria-label="Lessons complete"
               aria-valuemin="0"
-              aria-valuemax="5"
+              aria-valuemax="8"
               aria-valuenow="0"
             >
               <span id="progress-bar"></span>
@@ -83,11 +83,10 @@
           </div>
           <p class="card-label">Course at a glance</p>
           <div class="metric">
-            <strong>5</strong
-            ><span>lessons live, four more in preparation</span>
+            <strong>8</strong><span>lessons live, one more in preparation</span>
           </div>
           <div class="metric">
-            <strong>5</strong><span>interactive labs</span>
+            <strong>8</strong><span>interactive labs</span>
           </div>
           <div class="metric">
             <strong>0</strong><span>equations you need to know first</span>
@@ -109,19 +108,22 @@
         </div>
         <div class="lab-nav-groups">
           <div class="lab-nav-group">
-            <p class="lab-nav-label">Fit</p>
+            <p class="lab-nav-label">Fit and learn</p>
             <a href="line-fitter.html">Line Fitter</a>
+            <a href="descent-lab.html">Descent Lab</a>
+            <a href="overfitting-lab.html">Overfitting Lab</a>
+          </div>
+          <div class="lab-nav-group">
+            <p class="lab-nav-label">Decide</p>
+            <a href="neuron-lab.html">Neuron Lab</a>
+            <a href="network-playground.html">Network Playground</a>
             <a href="labs.html">All labs</a>
           </div>
           <div class="lab-nav-group">
-            <p class="lab-nav-label">Learn</p>
-            <a href="descent-lab.html">Descent Lab</a>
-            <a href="network-playground.html">Network Playground</a>
-          </div>
-          <div class="lab-nav-group">
-            <p class="lab-nav-label">Generalise</p>
-            <a href="overfitting-lab.html">Overfitting Lab</a>
-            <a href="neuron-lab.html">Neuron Lab</a>
+            <p class="lab-nav-label">Read and write</p>
+            <a href="embedding-lab.html">Token &amp; Embedding Lab</a>
+            <a href="attention-lab.html">Attention Lab</a>
+            <a href="next-token-lab.html">Next-Token Lab</a>
           </div>
         </div>
       </nav>
@@ -205,21 +207,27 @@
               <a href="network-playground.html">Network Playground →</a>
             </div>
           </li>
-          <li class="lesson-card planned">
+          <li class="lesson-card" data-lesson-id="text">
             <span class="lesson-number" aria-hidden="true">05</span>
             <p class="lesson-kicker">Representation</p>
             <h3>Text becomes numbers</h3>
             <p>Tokens and embeddings: how meaning turns into position.</p>
-            <div class="lesson-links"><span>In preparation</span></div>
+            <div class="lesson-links">
+              <a href="lesson-05-text.html">Read lesson</a>
+              <a href="embedding-lab.html">Embedding Lab →</a>
+            </div>
           </li>
-          <li class="lesson-card planned">
+          <li class="lesson-card" data-lesson-id="attention">
             <span class="lesson-number" aria-hidden="true">06</span>
             <p class="lesson-kicker">Transformers</p>
             <h3>Attention</h3>
             <p>How each word decides which other words to listen to.</p>
-            <div class="lesson-links"><span>In preparation</span></div>
+            <div class="lesson-links">
+              <a href="lesson-06-attention.html">Read lesson</a>
+              <a href="attention-lab.html">Attention Lab →</a>
+            </div>
           </li>
-          <li class="lesson-card planned">
+          <li class="lesson-card" data-lesson-id="next-token">
             <span class="lesson-number" aria-hidden="true">07</span>
             <p class="lesson-kicker">Language models</p>
             <h3>Predict the next token</h3>
@@ -227,7 +235,10 @@
               Generation, temperature, and why a model can recite what it should
               not.
             </p>
-            <div class="lesson-links"><span>In preparation</span></div>
+            <div class="lesson-links">
+              <a href="lesson-07-next-token.html">Read lesson</a>
+              <a href="next-token-lab.html">Next-Token Lab →</a>
+            </div>
           </li>
           <li class="lesson-card planned">
             <span class="lesson-number" aria-hidden="true">08</span>

@@ -50,13 +50,18 @@ export const COURSE_LESSONS: readonly CourseLesson[] = [
     href: "lesson-03-decisions.html",
   },
   { id: "networks", number: "04", title: "Stacking neurons", href: "lesson-04-networks.html" },
+  { id: "text", number: "05", title: "Text becomes numbers", href: "lesson-05-text.html" },
+  { id: "attention", number: "06", title: "Attention", href: "lesson-06-attention.html" },
+  {
+    id: "next-token",
+    number: "07",
+    title: "Predict the next token",
+    href: "lesson-07-next-token.html",
+  },
 ];
 
 /** Lessons still being written; shown on the home page so the route ahead is visible. */
 export const PLANNED_LESSONS: readonly Pick<CourseLesson, "number" | "title">[] = [
-  { number: "05", title: "Text becomes numbers" },
-  { number: "06", title: "Attention" },
-  { number: "07", title: "Predict the next token" },
   { number: "08", title: "From toy to ChatGPT" },
 ];
 
