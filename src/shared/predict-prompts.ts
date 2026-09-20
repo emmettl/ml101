@@ -217,6 +217,22 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#book-simulation-status",
     },
     {
+      id: "averaged-vectors",
+      question:
+        "Matching is by shared words, which cannot tell that “bunny” means “rabbit”. You switch to learned word vectors, which can: every passage becomes the average of its words' vectors, and no word has to match at all. What happens to the number of answers found?",
+      readout: { selector: "#book-stats", match: /^Answers found/, label: "answers found" },
+      change: {
+        selector: "#book-method",
+        value: "average",
+        describe: "The lab will fetch the word vectors (0.6 MB) and search by averaged vectors.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. Each word vector is good: “bunny” really does sit beside “rabbit”. But a passage is sixty of them averaged, and the one word that mattered is outvoted by the fifty-nine that did not. This is why word matching stayed the method to beat for decades after word vectors arrived. What finally beat it was a transformer that reads the whole passage in context and is trained, on a great many question-and-passage pairs, to put a question next to its answer.`,
+      settle: "#book-simulation-status",
+    },
+    {
       id: "overlap",
       question:
         "At 60 words with no overlap, some answers are cut in two by a passage boundary. You set the overlap to a half, so every passage starts in the middle of the one before. What happens to the number of answers found?",

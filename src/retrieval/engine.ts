@@ -83,18 +83,22 @@ export interface Index {
   vectors: Map<string, number>[];
 }
 
-function scaled(counts: Map<string, number>, rarity: Map<string, number>): Map<string, number> {
-  const vector = new Map<string, number>();
+/** Scale a sparse vector to length one. */
+export function unit(vector: Map<string, number>): Map<string, number> {
   let squares = 0;
-  for (const [stem, count] of counts) {
-    const weight = (1 + Math.log(count)) * (rarity.get(stem) ?? 0);
-    if (weight === 0) continue;
-    vector.set(stem, weight);
-    squares += weight * weight;
-  }
+  for (const weight of vector.values()) squares += weight * weight;
   const length = Math.sqrt(squares) || 1;
   for (const [stem, weight] of vector) vector.set(stem, weight / length);
   return vector;
+}
+
+function scaled(counts: Map<string, number>, rarity: Map<string, number>): Map<string, number> {
+  const vector = new Map<string, number>();
+  for (const [stem, count] of counts) {
+    const weight = (1 + Math.log(count)) * (rarity.get(stem) ?? 0);
+    if (weight > 0) vector.set(stem, weight);
+  }
+  return unit(vector);
 }
 
 export function buildIndex(words: readonly Word[], chunks: Chunk[]): Index {
@@ -119,7 +123,8 @@ export interface Match {
   /** Cosine similarity with the question: 0 shares nothing, 1 is the same mix of words. */
   score: number;
   /** The words that produced the score, heaviest first. */
-  shared: { stem: string; weight: number }[];
+  /** `via` is set by the search by meaning, when a different word of the question led here. */
+  shared: { stem: string; weight: number; via?: string }[];
 }
 
 // peek:start retrieve
@@ -131,9 +136,8 @@ export function embedQuestion(index: Index, question: string): Map<string, numbe
   return scaled(counts, index.rarity);
 }
 
-/** Score every passage against the question and keep the best `keep`. */
-export function retrieve(index: Index, question: string, keep: number): Match[] {
-  const asked = embedQuestion(index, question);
+/** Score every passage against a question vector and keep the best `keep`. */
+export function rank(index: Index, asked: ReadonlyMap<string, number>, keep: number): Match[] {
   const matches: Match[] = [];
   index.vectors.forEach((passage, chunk) => {
     // Both vectors have length one, so the dot product is the cosine of the angle between them.
@@ -149,6 +153,10 @@ export function retrieve(index: Index, question: string, keep: number): Match[] 
       matches.push({ chunk, score, shared: shared.sort((a, b) => b.weight - a.weight) });
   });
   return matches.sort((a, b) => b.score - a.score || a.chunk - b.chunk).slice(0, keep);
+}
+
+export function retrieve(index: Index, question: string, keep: number): Match[] {
+  return rank(index, embedQuestion(index, question), keep);
 }
 // peek:end
 
@@ -210,6 +218,7 @@ export function sitExam(
   text: string,
   questions: readonly Question[],
   depth: number,
+  search: (ask: string, keep: number) => Match[] = (ask, keep) => retrieve(index, ask, keep),
 ): Exam {
   const ranks: number[] = [];
   const cut: boolean[] = [];
@@ -220,7 +229,7 @@ export function sitExam(
       cut.push(false);
       continue;
     }
-    ranks.push(answerRank(index, retrieve(index, question.ask, depth), span));
+    ranks.push(answerRank(index, search(question.ask, depth), span));
     cut.push(cutByBoundary(index, span));
   }
   return { ranks, cut };
