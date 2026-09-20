@@ -114,6 +114,44 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#descent-simulation-status",
     },
   ],
+  "neuron-lab": [
+    {
+      id: "cutoff-false-alarms",
+      question:
+        "The neuron calls an example a triangle when it is at least 50% sure. You make it more cautious: it must now be 80% sure. The neuron itself does not change. What happens to the number of false alarms?",
+      readout: { selector: "#neuron-stats", match: "False alarms", label: "false alarms" },
+      change: {
+        selector: "#neuron-threshold",
+        value: "0.8",
+        describe: "The lab will move the cut-off to 0.80.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(0.5),
+      explain: (before, after) =>
+        `From ${before} to ${after}. Demanding more confidence means fewer circles get called triangles. Now look at the misses: they went the other way. The cut-off never removes errors, it converts one kind into the other, and which kind is cheaper is not something the neuron can know.`,
+      settle: "#neuron-simulation-status",
+    },
+    {
+      id: "xor-accuracy",
+      question:
+        "On overlapping clusters one neuron gets about nine in ten right. You switch to the opposite-corners pattern and let it retrain from scratch on 160 fresh examples. How well does it do?",
+      readout: { selector: "#neuron-stats", match: "Right overall", label: "right overall" },
+      change: {
+        selector: "#neuron-pattern",
+        value: "xor",
+        describe: "The lab will switch the pattern to opposite corners and retrain.",
+      },
+      choices: [
+        { id: "high", label: "About as well: above 85%" },
+        { id: "middle", label: "Noticeably worse: somewhere from 65% to 85%" },
+        { id: "chance", label: "Little better than a coin flip: under 65%" },
+      ],
+      judge: (_before, after) => (after >= 85 ? "high" : after >= 65 ? "middle" : "chance"),
+      explain: () =>
+        "One neuron draws one straight line, and any straight line leaves one pair of opposite corners on the same side. Training harder, or on more examples, cannot add a second line. The machine is too simple for the pattern, which is the cue for the next lesson.",
+      settle: "#neuron-simulation-status",
+    },
+  ],
   "overfitting-lab": [
     {
       id: "degree-up",

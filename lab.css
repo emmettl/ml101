@@ -378,47 +378,6 @@ body.lab {
   text-transform: uppercase;
 }
 
-.plot-host {
-  position: relative;
-  border: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.plot-host canvas {
-  position: absolute;
-  image-rendering: auto;
-  pointer-events: none;
-}
-
-.plot-host svg {
-  position: relative;
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.heat-legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 2px 0;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.heat-legend i {
-  flex: 1;
-  max-width: 160px;
-  height: 8px;
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--heat-low),
-    var(--heat-mid),
-    var(--heat-high)
-  );
-}
-
 .legend {
   display: flex;
   flex-wrap: wrap;
