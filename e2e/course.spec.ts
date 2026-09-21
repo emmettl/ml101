@@ -607,3 +607,62 @@ test("a passage encoder finds what word matching cannot, and declines a typed qu
   await expect(page.locator("#book-outcome")).toContainText("cannot read a question you type");
   expect(errors).toEqual([]);
 });
+
+test("a prejudiced past is learned, survives deleting the column, and is invisible to the lender's score", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/fairness-lab.html");
+  const status = page.locator("#fair-simulation-status");
+  await expect(status).toContainText("Current · 60% prejudice · sees group");
+  const figure = async (label: string) =>
+    Number(
+      (await page.locator("#fair-stats .stat", { hasText: label }).locator("strong").innerText())
+        .replace("−", "-")
+        .replace(/[^\d.-]/g, ""),
+    );
+  const seen = await figure("Gap: would repay, and approved");
+  expect(seen).toBeGreaterThan(35);
+  await expect(page.locator("#fair-outcome")).toContainText("on the group column");
+  await expect(page.locator("#fair-ledger tr")).toHaveCount(2);
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="most"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(status).toContainText("no group column");
+  await expect(page.locator("#fair-outcome")).toContainText("has found the group again");
+  await expect(page.locator("#fair-weights li", { hasText: "neighbourhood" })).toContainText(
+    "counts against Orange",
+  );
+
+  await page.locator("#fair-proxy").fill("0");
+  await expect(status).toContainText("reveals group 0%");
+  expect(Math.abs(await figure("Gap: would repay, and approved"))).toBeLessThan(6);
+  await expect(page.locator("#fair-outcome")).toContainText("lower approval rate for everybody");
+  expect(errors).toEqual([]);
+});
+
+test("with a head start no cut-off rule levels everything, and job words lean in real vectors", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/fairness-lab.html");
+  const status = page.locator("#fair-simulation-status");
+  await page.locator("#fair-prejudice").fill("0");
+  await page.locator("#fair-headStart").fill("0.6");
+  await page.locator("#fair-policy").selectOption("same-rate");
+  await expect(status).toContainText("head start 60% · equal approval rates");
+  await expect(
+    page.locator("#fair-stats .stat", { hasText: "Gap: approved" }).first(),
+  ).toContainText("points");
+  await expect(page.locator("#fair-outcome")).toContainText("No setting closes all three");
+  await expect(page.locator("#fair-outcome")).toContainText("Separate cut-offs");
+
+  await page.locator("#fair-load").click();
+  await expect(page.locator("#fair-leans li")).toHaveCount(36, { timeout: 20_000 });
+  await expect(page.locator("#fair-leans li").first()).toContainText("leans towards “he”");
+  await expect(page.locator("#fair-leans li").last()).toContainText("leans towards “she”");
+  await expect(page.locator("#fair-leans-outcome")).toContainText("Nobody labelled anything");
+  expect(errors).toEqual([]);
+});

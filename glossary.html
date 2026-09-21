@@ -94,6 +94,17 @@
               >
             </p>
           </article>
+          <article class="glossary-entry" id="data-bias">
+            <h2>Bias (in data)</h2>
+            <p>
+              A systematic tilt in the examples a model learns from: decisions
+              that were prejudiced, groups that are missing, text that repeats a
+              stereotype. The model reproduces it faithfully, and its scores
+              cannot show it, because they are measured against the same
+              examples. Not to be confused with the bias knob of a neuron, which
+              is only an offset.
+            </p>
+          </article>
           <article class="glossary-entry" id="capacity">
             <h2>Capacity</h2>
             <p>
@@ -228,6 +239,19 @@
               One input paired with the answer we wanted for it. Examples are
               the only teacher a model has. Also called a data point or a
               sample.
+            </p>
+          </article>
+          <article class="glossary-entry" id="fairness">
+            <h2>Fairness (of a model's decisions)</h2>
+            <p>
+              Several measurable things, which conflict. Equal approval rates
+              across groups; an equal chance of approval for people who truly
+              qualify; approvals that mean the same thing whichever group they
+              are given to. When groups differ in how often the outcome really
+              occurs, no model can deliver all three, so someone has to choose.
+              <a href="fairness-lab.html"
+                >Try all three in the Fairness Lab →</a
+              >
             </p>
           </article>
           <article class="glossary-entry" id="fine-tuning">
@@ -435,6 +459,15 @@
               model: predicting the next token across trillions of tokens of
               text. Almost all of a model's cost and knowledge come from it.
               <a href="scale-ladder.html">Price one in the Scale Ladder →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="proxy">
+            <h2>Proxy</h2>
+            <p>
+              A column that stands in for one the model was not given. A
+              postcode, a first name or a school can reveal a person's group
+              well enough that deleting the group column changes little, while
+              making the resulting harm impossible to measure.
             </p>
           </article>
           <article class="glossary-entry" id="query-key-value">

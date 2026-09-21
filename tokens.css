@@ -577,6 +577,84 @@ h3 {
   white-space: nowrap;
 }
 
+/* Bars that grow left or right from a centre line. */
+.lean-bars {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lean-bars li {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) 190px;
+  gap: 10px;
+  align-items: center;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.lean-bars .label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.lean-bars .track {
+  position: relative;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--tint-2);
+}
+
+.lean-bars .track::after {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 50%;
+  width: 1px;
+  background: var(--muted);
+  content: "";
+}
+
+.lean-bars .fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  min-width: 2px;
+  border-radius: 3px;
+  background: var(--steel);
+}
+
+.lean-bars .note {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media (width <= 560px) {
+  .lean-bars li {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .lean-bars .note {
+    grid-column: 1 / -1;
+    margin-bottom: 4px;
+  }
+}
+
+.plot-column {
+  stroke: var(--surface);
+  stroke-width: 1;
+}
+
+.plot-column.class-a {
+  fill: var(--class-a);
+}
+
+.plot-column.class-b {
+  fill: var(--class-b);
+}
+
 /* Retrieval: ranked passages, each a collapsible card. */
 .passages {
   display: grid;
