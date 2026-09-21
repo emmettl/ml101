@@ -3,7 +3,8 @@
  *
  *   node scripts/make-glove.mjs path/to/glove.6B.50d.txt [common-words] [output-prefix]
  *
- * Kept: every word of the book and of the lab's questions that GloVe knows, plus the most
+ * Kept: every word of the book, of the lab's questions and of the Fairness Lab's job list that
+ * GloVe knows, plus the most
  * common English words (GloVe's file is in frequency order) so that a learner's own question
  * is understood. GloVe is Pennington, Socher and Manning (2014), https://nlp.stanford.edu/projects/glove/,
  * released under the Public Domain Dedication and License.
@@ -22,6 +23,7 @@ const spellings = (text) =>
 const needed = new Set([
   ...spellings(readFileSync("src/data/alice.txt", "utf8")),
   ...spellings(readFileSync("src/retrieval/questions.ts", "utf8")),
+  ...spellings(readFileSync("src/fairness/occupations.ts", "utf8")),
 ]);
 
 const words = [];

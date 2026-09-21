@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="How a model comes to treat two groups differently with nobody intending it: prejudiced labels, a proxy that survives deleting the group column, and three definitions of fair that cannot all hold."
+    />
+    <title>ML 101 — Fairness Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-03-decisions.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 12 · Bias</p>
+        <h1>Fairness Lab</h1>
+        <p class="lede">
+          A model is trained to shrink its error on the examples it is given. If
+          those examples are past decisions, and the past was prejudiced, the
+          smallest error belongs to the model that repeats the prejudice. This
+          lab builds that model, shows why deleting the sensitive column does
+          not cure it, and then shows that “fair” has three reasonable meanings
+          which cannot all hold at once.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> the applicants are invented, which is the only reason the
+        lab can know who would really have repaid. A real lender sees repayment
+        only for the people it approved, and cannot compute the “would repay”
+        figures on this page. There are two groups of equal size, called Blue
+        and Orange so that you bring no assumptions to them. The model is the
+        single neuron of lesson 03, trained on 3,000 past decisions and measured
+        on 6,000 new applicants. Real cases involve many groups that overlap,
+        many proxies at once, and harm that a number does not capture.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="fair-name"
+          >60% prejudice in the past, model sees group</strong
+        >
+        <p id="fair-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="fair-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="fair-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="who-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">6,000 new applicants</p>
+                <h2 id="who-title">Who gets approved?</h2>
+                <p>
+                  Three questions, asked of each group. How many are approved?
+                  Of those who would repay, how many are approved? Of those
+                  approved, how many would repay? A fair lender might want all
+                  three pairs of bars level.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="fair-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="fair-chart"
+                  role="img"
+                  aria-label="For the Blue and Orange groups: share approved, share of those who would repay that are approved, and share of those approved who would repay. The same figures are in the table below."
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="fair-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="fair-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="knobs-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Inside the model</p>
+                <h2 id="knobs-title">Which knobs did it turn?</h2>
+                <p>
+                  One weight per column, and one for everybody. A bar to the
+                  left counts against approval. Nobody set these: descent did,
+                  to agree with the past decisions as closely as it could.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap" style="padding: 14px">
+              <ul
+                class="lean-bars"
+                id="fair-weights"
+                aria-label="The model's weights"
+              ></ul>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Group by group</p>
+                <h2 id="ledger-title">What does the audit say?</h2>
+                <p>
+                  An overall score hides all of this. The audit is the same
+                  scoring, done once for each group.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Group</th>
+                    <th>New applicants</th>
+                    <th>Approved</th>
+                    <th>Would repay, and approved</th>
+                    <th>Would not repay, but approved</th>
+                    <th>Approved, and would repay</th>
+                    <th>Cut-off</th>
+                  </tr>
+                </thead>
+                <tbody id="fair-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="words-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Not only tables</p>
+                <h2 id="words-title">
+                  What did word vectors pick up from text nobody labelled?
+                </h2>
+                <p>
+                  The lender's bias came from labels somebody wrote. Text has no
+                  labels, and carries the same cargo. These are the real word
+                  vectors from the Open-Book Lab. Average the differences
+                  between “she” and “he”, “woman” and “man”, and six more such
+                  pairs, and you have a direction. Then ask which way each job
+                  word leans along it.
+                </p>
+              </div>
+              <div class="path-actions">
+                <button type="button" id="fair-load" class="resample">
+                  Measure the job words (fetches 0.6 MB)
+                </button>
+              </div>
+            </div>
+            <div class="chart-wrap" style="padding: 14px">
+              <ul
+                class="lean-bars"
+                id="fair-leans"
+                aria-label="Job words, from leaning most towards “he” to leaning most towards “she”"
+              ></ul>
+            </div>
+            <div class="outcome">
+              <strong>Reading the list</strong>
+              <p id="fair-leans-outcome" aria-live="polite">
+                Nothing has been measured yet.
+              </p>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>The loss cannot see it</h3>
+          <p>
+            Scored against the past decisions, the prejudiced model is the
+            accurate one. Nothing in training, validation or testing will flag
+            it, because all three are measured against the same labels. Someone
+            has to go looking, group by group.
+          </p>
+        </article>
+        <article>
+          <h3>Deleting the column is not a cure</h3>
+          <p>
+            Anything correlated with group can stand in for it: a postcode, a
+            first name, a school, a gap in employment. And once the column is
+            gone you can no longer run the audit that would show the harm.
+          </p>
+        </article>
+        <article>
+          <h3>Fair is a choice, and someone must make it</h3>
+          <p>
+            When groups differ in how often the outcome really occurs, equal
+            approval rates, equal chances for those who qualify, and approvals
+            that mean the same thing cannot all hold. Which to keep is a
+            question about values, and the model has none.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          That the three measures cannot all be satisfied is proved in
+          Chouldechova,
+          <a href="https://arxiv.org/abs/1610.07524"
+            >“Fair Prediction with Disparate Impact”</a
+          >
+          (2017), and Kleinberg, Mullainathan and Raghavan,
+          <a href="https://arxiv.org/abs/1609.05807"
+            >“Inherent Trade-Offs in the Fair Determination of Risk Scores”</a
+          >
+          (2016). Separate cut-offs come from Hardt, Price and Srebro,
+          <a href="https://arxiv.org/abs/1610.02413"
+            >“Equality of Opportunity in Supervised Learning”</a
+          >
+          (2016). The word-vector measurement follows Bolukbasi et al.,
+          <a href="https://arxiv.org/abs/1607.06520"
+            >“Man is to Computer Programmer as Woman is to Homemaker?”</a
+          >
+          (2016); the vectors are GloVe (Pennington, Socher and Manning, 2014,
+          public domain). Barocas, Hardt and Narayanan's free textbook
+          <a href="https://fairmlbook.org/"
+            ><em>Fairness and Machine Learning</em></a
+          >
+          covers what this lab leaves out, which is most of the subject.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/fairness-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

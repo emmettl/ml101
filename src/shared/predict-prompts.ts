@@ -270,6 +270,74 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#book-simulation-status",
     },
   ],
+  "fairness-lab": [
+    {
+      id: "drop-the-column",
+      question:
+        "The past decisions were prejudiced against Orange applicants, and the model, which can see the group column, has learned that. Among people who would repay, Blue applicants are far likelier to be approved. You delete the group column and retrain. The model can still see each applicant's neighbourhood. What happens to that gap?",
+      readout: {
+        selector: "#fair-stats",
+        match: "Gap: would repay, and approved",
+        label: "the gap for people who would repay",
+      },
+      change: {
+        selector: "#fair-columns",
+        value: "score-area",
+        describe: "The lab will remove the group column and train the model again.",
+      },
+      choices: [
+        { id: "gone", label: "It all but disappears: the model can no longer tell who is who" },
+        { id: "most", label: "It shrinks, but most of it remains" },
+        { id: "same", label: "It does not shrink at all" },
+      ],
+      judge: (before, after) =>
+        after / before < 0.25 ? "gone" : after / before < 0.92 ? "most" : "same",
+      explain: (before, after) =>
+        `From ${before} points to ${after}. Look at the weights: neighbourhood, which says nothing about repaying, has picked up the weight the group column used to carry, because it predicts who the staff marked down. Now slide “How well neighbourhood reveals group” to 0% and the gap does close. In real data there is never just one proxy, and you rarely get to switch them off.`,
+      settle: "#fair-simulation-status",
+    },
+    {
+      id: "more-prejudice",
+      question:
+        "The lender checks its model the only way it can: on held-out past decisions, as lesson 02 taught. It agrees with them most of the time. Suppose the staff had been even more prejudiced, 100% instead of 60%. What happens to the model's agreement with their decisions?",
+      readout: {
+        selector: "#fair-stats",
+        match: "Agrees with the past decisions",
+        label: "agreement with the past decisions",
+      },
+      change: {
+        selector: "#fair-prejudice",
+        value: "1",
+        describe: "The lab will set the prejudice in the past decisions to 100% and retrain.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. A stronger prejudice is a stronger pattern, and patterns are what a model is good at. By the only score the lender can compute, the more prejudiced model is the better one. Meanwhile the tile beside it, agreement with who would in fact repay, has fallen, and only this lab can see that tile. Held-out data protects you from overfitting. It does nothing about labels that are wrong in the same way everywhere.`,
+      settle: "#fair-simulation-status",
+    },
+    {
+      id: "equal-rates",
+      question:
+        "One remedy is to stop using one cut-off for everyone, and set a separate cut-off for each group so that both are approved at the same rate. That means treating the groups differently on purpose. What happens to the model's agreement with who would in fact repay?",
+      readout: {
+        selector: "#fair-stats",
+        match: "Agrees with who would repay",
+        label: "agreement with who would repay",
+      },
+      change: {
+        selector: "#fair-policy",
+        value: "same-rate",
+        describe:
+          "The lab will set a cut-off per group so that both are approved at the same rate.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. In this setting the two groups are in truth alike, so the fair rule and the accurate rule are the same rule: the separate cut-offs undo the mark-down. It will not stay that simple. Give Blue applicants a head start in life, so that more of them really would repay, and try the three cut-off rules again: each one levels one pair of bars and tilts another.`,
+      settle: "#fair-simulation-status",
+    },
+  ],
   "line-fitter": [
     {
       id: "outlier-tilt",
