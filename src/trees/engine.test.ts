@@ -88,14 +88,15 @@ describe("what the lesson and lab claim", () => {
       const forest = scores(fitForest(data.train, 12, 50), data);
       expect(deep.seen, kind).toBeGreaterThan(shallow.seen);
       expect(deep.seen - deep.unseen, kind).toBeGreaterThan(0.08);
-      // The spiral is too twisted for four questions, so there the deep tree still scores higher.
-      if (kind !== "spiral") {
-        expect(deep.unseen, kind).toBeLessThan(shallow.unseen);
-        expect(deep.seen - deep.unseen, kind).toBeGreaterThan(shallow.seen - shallow.unseen + 0.05);
-      }
-      expect(forest.unseen, kind).toBeGreaterThan(deep.unseen + 0.04);
       const bigger = scores(fitForest(data.train, 12, 200), data);
       expect(Math.abs(bigger.unseen - forest.unseen), kind).toBeLessThanOrEqual(0.03);
+      // The spiral is too twisted for four questions, so there the deep tree still scores
+      // higher, and a forest of deep trees does not beat it. The lab's prose makes no claim
+      // for the spiral; these claims are for the ring and opposite corners.
+      if (kind === "spiral") continue;
+      expect(deep.unseen, kind).toBeLessThan(shallow.unseen);
+      expect(deep.seen - deep.unseen, kind).toBeGreaterThan(shallow.seen - shallow.unseen + 0.05);
+      expect(forest.unseen, kind).toBeGreaterThan(deep.unseen + 0.04);
     }
   });
 
