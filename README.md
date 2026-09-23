@@ -33,6 +33,7 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 | 11 | Groups nobody labelled | Cluster Lab | live |
 | 12 | The same knobs everywhere | Vision Lab | live |
 | 13 | Learning from consequences | Reward Lab | live |
+| 14 | Drawing by removing noise | Diffusion Lab | live |
 
 Lesson 07 has a second lab, **Table vs Network**, which bridges to lesson 08: the count table and a small neural language model, trained in a Web Worker, scored side by side on held-out text.
 

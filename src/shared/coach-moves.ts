@@ -348,6 +348,26 @@ const moves: Record<string, CoachMove[]> = {
         "Three moves in ten at random, beside a cliff. The map it learns is still the edge route; the life it lives while learning is dreadful.",
     },
   ],
+  "diffusion-lab": [
+    {
+      label: "Watch the ring appear",
+      setup: { "draw-shape": "ring", "draw-step": "20" },
+      watch:
+        "A third of the way through the drawing, the cloud is still a cloud. Slide the step up ten at a time and see when the ring shows.",
+    },
+    {
+      label: "The hard shape",
+      setup: { "draw-shape": "spiral", "draw-budget": "3000", "draw-step": "60" },
+      watch:
+        "Thin arms close together. The same network that draws a clean ring smudges the spiral. Compare the “within 0.1” figures.",
+    },
+    {
+      label: "A quick, rough training",
+      setup: { "draw-shape": "heart", "draw-budget": "1000", "draw-step": "60" },
+      watch:
+        "A thousand steps and a rough heart. Switch to 6,000 and see what the extra training buys.",
+    },
+  ],
   capstone: [
     {
       label: "The sensible setup",
