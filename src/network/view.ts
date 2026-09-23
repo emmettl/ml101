@@ -8,7 +8,6 @@ import {
   backpropagate,
   forward,
   probability,
-  probabilityGrid,
   type LabelledPoint,
   type Network,
 } from "./engine";
@@ -22,19 +21,44 @@ export interface DecisionOptions {
   picked?: LabelledPoint;
   /** Circle the training points the model currently gets wrong. */
   markWrong?: boolean;
+  /** Cells per side of the shaded map; trees draw sharp boxes and want a finer one. */
+  grid?: number;
 }
 
 /**
  * The model's opinion of every spot on the plane, shaded from one class colour through blank
  * (unsure) to the other, with the examples on top. Circles are class 0, triangles class 1.
  */
+/** Anything that gives a probability of class 1 at a point can be drawn: a network, or a tree. */
+export type Scorer = Network | ((x: number, y: number) => number);
+
+function scorerOf(model: Scorer): (x: number, y: number) => number {
+  return typeof model === "function" ? model : (x, y) => probability(model, x, y);
+}
+
+function gridOf(
+  score: (x: number, y: number) => number,
+  columns: number,
+  rows: number,
+): Float64Array {
+  const grid = new Float64Array(columns * rows);
+  for (let row = 0; row < rows; row += 1)
+    for (let column = 0; column < columns; column += 1) {
+      const x = PLANE[0] + ((column + 0.5) / columns) * (PLANE[1] - PLANE[0]);
+      const y = PLANE[0] + ((row + 0.5) / rows) * (PLANE[1] - PLANE[0]);
+      grid[row * columns + column] = score(x, y);
+    }
+  return grid;
+}
+
 export function drawDecision(
   svg: SVGSVGElement,
   heat: HeatLayer,
-  network: Network,
+  model: Scorer,
   points: readonly LabelledPoint[],
   options: DecisionOptions,
 ): Plot {
+  const score = scorerOf(model);
   const plot = createPlot(svg, {
     base: options.base,
     xRange: PLANE,
@@ -46,19 +70,23 @@ export function drawDecision(
   const stops = [tokenRgb("--class-a"), tokenRgb("--surface"), tokenRgb("--class-b")];
   // Soften towards the surface colour so the examples stay legible on top.
   const surface = stops[1];
-  heat.draw(plot, probabilityGrid(network, GRID, GRID), GRID, GRID, (p) => {
-    const colour = ramp(stops, p);
-    return [
-      colour[0] * 0.42 + surface[0] * 0.58,
-      colour[1] * 0.42 + surface[1] * 0.58,
-      colour[2] * 0.42 + surface[2] * 0.58,
-    ];
-  });
+  heat.draw(
+    plot,
+    gridOf(score, options.grid ?? GRID, options.grid ?? GRID),
+    options.grid ?? GRID,
+    options.grid ?? GRID,
+    (p) => {
+      const colour = ramp(stops, p);
+      return [
+        colour[0] * 0.42 + surface[0] * 0.58,
+        colour[1] * 0.42 + surface[1] * 0.58,
+        colour[2] * 0.42 + surface[2] * 0.58,
+      ];
+    },
+  );
   const threshold = options.threshold ?? 0.5;
   const mark = (point: LabelledPoint, radius: number, extra: string) => {
-    const wrong =
-      options.markWrong &&
-      probability(network, point.x, point.y) >= threshold !== (point.label === 1);
+    const wrong = options.markWrong && score(point.x, point.y) >= threshold !== (point.label === 1);
     const picked = options.picked === point;
     const classes = `${point.label ? "class-b" : "class-a"} ${extra} ${wrong ? "wrong" : ""} ${picked ? "picked" : ""}`;
     if (point.label) plot.triangle(point.x, point.y, radius, classes);

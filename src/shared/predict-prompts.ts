@@ -333,6 +333,68 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#drift-simulation-status",
     },
   ],
+  "trees-lab": [
+    {
+      id: "deeper-tree",
+      question:
+        "One tree, four questions deep, on the ring, with one training label in ten flipped. You let it ask twelve questions deep instead. What happens to its score on unseen examples?",
+      readout: {
+        selector: "#tree-stats",
+        match: "Right on unseen examples",
+        label: "right on unseen examples",
+      },
+      change: {
+        selector: "#tree-depth",
+        value: "12",
+        describe: "The lab will grow the tree twelve questions deep.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(2),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Look at the training score beside it, which went up, and at the map, which has grown small boxes around single points. The extra questions were spent fitting the mislabelled examples. It is the degree-12 polynomial of lesson 02, built from if-then.`,
+      settle: "#tree-simulation-status",
+    },
+    {
+      id: "forest",
+      question:
+        "Same depth-12 tree, memorising. You grow fifty of them instead, each on a reshuffled copy of the data, and average their verdicts. Every one of the fifty is as deep and as greedy as the original. What happens to the score on unseen examples?",
+      readout: {
+        selector: "#tree-stats",
+        match: "Right on unseen examples",
+        label: "right on unseen examples",
+      },
+      change: {
+        selector: "#tree-method",
+        value: "forest",
+        describe: "The lab will grow a forest of fifty trees at the same depth.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(2),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Each tree memorised a different set of accidents, and where they disagree the average is unsure, which is the right answer near a mislabelled point. The boxes have softened. This is why almost nobody ships a single tree.`,
+      settle: "#tree-simulation-status",
+    },
+    {
+      id: "more-trees",
+      question:
+        "The forest has fifty trees. You give it two hundred. What happens to the score on unseen examples?",
+      readout: {
+        selector: "#tree-stats",
+        match: "Right on unseen examples",
+        label: "right on unseen examples",
+      },
+      change: {
+        selector: "#tree-count",
+        value: "200",
+        describe: "The lab will grow a forest of two hundred trees.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. A forest cannot get better forever: once enough trees are averaged, adding more only makes the average steadier. Look at the curve, which flattens after the first few dozen. Boosting is different: each tree there adds capacity, and enough of them will memorise.`,
+      settle: "#tree-simulation-status",
+    },
+  ],
   "fairness-lab": [
     {
       id: "drop-the-column",

@@ -734,3 +734,47 @@ test("a lab's settings travel in the link, and “Try this” applies a setup", 
   await expect(page).toHaveURL(/#drift-scenario=reason&drift-retraining=never&drift-labelDelay=4/);
   expect(errors).toEqual([]);
 });
+
+test("a deep tree memorises, a forest recovers, and boosted stumps cannot do opposite corners", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-10-trees.html");
+  await expect(page.locator("#stat-4")).toHaveText("Too simple");
+  await page.locator("#tree-depth").fill("12");
+  await expect(page.locator("#stat-4")).toHaveText("Memorising");
+  await expect(page.locator("#tree-prose")).toContainText("private box");
+
+  await page.goto("/trees-lab.html");
+  const status = page.locator("#tree-simulation-status");
+  await expect(status).toContainText("Current · the ring · one tree · depth 4");
+  const figure = async (label: string) =>
+    Number(
+      (
+        await page.locator("#tree-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/[^\d.]/g, ""),
+    );
+  const shallow = await figure("Right on unseen");
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="down"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  expect(await figure("Right on unseen")).toBeLessThan(shallow);
+  const deepGap = await figure("Gap");
+  expect(deepGap).toBeGreaterThan(8);
+  await expect(page.locator("#tree-questions .question").first()).toContainText("Is input");
+
+  await page.locator("#tree-method").selectOption("forest");
+  await expect(status).toContainText("forest of 50");
+  await expect(page.locator("#tree-questions-caption")).toContainText("first of the 50 trees");
+  expect(await figure("Gap")).toBeLessThan(deepGap);
+
+  await page.locator("#tree-pattern").selectOption("xor");
+  await page.locator("#tree-method").selectOption("boosting");
+  await page.locator("#tree-depth").fill("1");
+  await page.locator("#tree-count").fill("200");
+  await expect(status).toContainText("boosting of 200 · depth 1");
+  expect(await figure("Right on unseen")).toBeLessThan(65);
+  await expect(page.locator("#tree-outcome")).toContainText("same sign on both");
+  expect(errors).toEqual([]);
+});

@@ -160,6 +160,33 @@ body.lab {
   font-size: 24px;
 }
 
+.tree-questions ul {
+  margin: 0;
+  padding-left: 18px;
+  list-style: none;
+  border-left: 1px solid var(--line);
+}
+
+.tree-questions > ul {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.tree-questions li {
+  margin: 4px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.tree-questions .question {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.tree-questions .leaf {
+  color: var(--muted);
+}
+
 .coach-moves .share-button {
   min-height: 36px;
   margin-left: auto;
