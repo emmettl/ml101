@@ -250,6 +250,19 @@
               <a href="trees-lab.html">Grow one in the Trees Lab →</a>
             </p>
           </article>
+          <article class="glossary-entry" id="diffusion-model">
+            <h2>Diffusion model</h2>
+            <p>
+              A generator trained on one easy job: given an example with a known
+              amount of noise mixed in, guess the noise. Drawing runs the job
+              backwards from pure noise, removing the guessed noise a step at a
+              time until a new example remains. Picture generators are this,
+              with a caption's embedding as an extra input to steer the drawing.
+              <a href="diffusion-lab.html"
+                >Draw a shape from noise in the Diffusion Lab →</a
+              >
+            </p>
+          </article>
           <article class="glossary-entry" id="drift">
             <h2>Drift</h2>
             <p>
@@ -518,6 +531,15 @@
               can pull a model a long way, because large misses are counted so
               heavily.
               <a href="line-fitter.html">Switch one on in the Line Fitter →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="noise-schedule">
+            <h2>Noise schedule</h2>
+            <p>
+              The fixed plan for how much noise a diffusion model mixes in at
+              each stage, from barely any to nothing but. Neighbouring stages
+              differ only slightly, so undoing one is always a modest ask; the
+              network is told the stage along with the noisy input.
             </p>
           </article>
           <article class="glossary-entry" id="overfitting">

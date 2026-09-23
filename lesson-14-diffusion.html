@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Diffusion models: drown data in noise on a schedule, train a network to guess the noise, and draw by running the guess backwards from pure noise. Why picture generators work, in two dimensions."
+    />
+    <title>Drawing by removing noise — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="diffusion">
+    <!-- include: lesson-topbar -->
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 14 · Other machines</p>
+            <h1>Drawing by removing noise</h1>
+            <p class="lede">
+              Lesson 08 said that image generators use the same knobs, loss and
+              descent as everything else, with a task of removing noise from a
+              picture a little at a time. This lesson makes good on that in two
+              dimensions, where a picture is a cloud of points and you can watch
+              a shape drown and then be drawn back out of nothing.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>9 minutes</strong
+            ><span>Builds on</span><strong>Lessons 00, 04 and 08</strong
+            ><a href="diffusion-lab.html">Open the Diffusion Lab →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>Learn to clean a little, then clean a lot</h2>
+            <p>
+              Making a picture from nothing is a hopeless training target: which
+              picture? Removing a little noise from a picture is an easy one,
+              and it has a right answer, because you added the noise yourself. A
+              <a class="term" href="glossary.html#diffusion-model"
+                >diffusion model</a
+              >
+              is a network trained on that easy job, run many times over.
+            </p>
+            <p>
+              Training goes like this. Take an example. Mix in noise, a chosen
+              amount on a fixed schedule from “barely any” to “nothing but”.
+              Show the network the result and how far along the schedule it is,
+              and ask it to guess the noise you added. Score the guess with
+              lesson 00's squared error and nudge every knob, as always. Drawing
+              goes the other way. Start from pure noise. Ask the network what
+              noise it sees, subtract a little of it, add a pinch of fresh
+              noise, and ask again, sixty times. What is left is a new example
+              that was never in the training set.
+            </p>
+            <div class="callout">
+              Drown examples in noise on a schedule. Train a network to guess
+              the noise. Draw by starting from pure noise and removing the
+              guessed noise a step at a time. A picture generator is this, with
+              pixels for points.
+            </div>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>The schedule</strong>
+                <p>
+                  How much signal survives at each stage, fixed in advance and
+                  told to the network. Early stages keep almost everything; the
+                  last keeps nothing.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The target</strong>
+                <p>
+                  Not the clean example but the noise itself. Guessing the noise
+                  and guessing the example are the same information, and the
+                  noise is the steadier target to learn.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Why steps</strong>
+                <p>
+                  From pure noise there is no right answer, only a direction.
+                  Small steps with a little fresh noise let the drawing commit
+                  gradually instead of guessing everything at once.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Steering</strong>
+                <p>
+                  Give the network a caption's embedding as an extra input
+                  during training, and at drawing time the caption steers which
+                  picture the noise becomes.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="drown">
+            <p class="section-label">The mechanism</p>
+            <h2>Drown a shape, stage by stage</h2>
+            <p>
+              Four hundred points on a shape, and the schedule the lab uses.
+              Slide through the sixty stages and watch how long the shape stays
+              recognisable, and where it is finally gone. The network is trained
+              at every stage at once; the drawing runs from the last stage back
+              to the first.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">The drowning</h3>
+                  <p>
+                    Faint dots are the shape; the larger ones are the same
+                    points, drowned.
+                  </p>
+                </div>
+                <span class="engine-badge">Live noise schedule</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="draw-shape">Shape</label
+                  ><select id="draw-shape">
+                    <option value="ring" selected>A ring</option>
+                    <option value="heart">A heart</option>
+                    <option value="moons">Two moons</option>
+                    <option value="spiral">A spiral</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="draw-stage"
+                    >Stage · <span id="draw-stage-value">12 of 60</span></label
+                  ><input
+                    id="draw-stage"
+                    type="range"
+                    min="0"
+                    max="60"
+                    step="1"
+                    value="12"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="plot-host">
+                  <svg
+                    id="lesson-chart"
+                    class="lesson-chart"
+                    role="img"
+                    aria-label="Points of a shape, and the same points with noise mixed in at the chosen stage"
+                  ></svg>
+                </div>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Share still signal</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Share that is noise</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>How much is noise</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>The shape is</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="draw-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              The trick of the schedule is that neighbouring stages differ only
+              a little, so undoing one stage is always a modest ask. Undoing all
+              sixty at once would mean drawing the whole shape from pure noise
+              in a single guess, which is the hopeless job the method was
+              invented to avoid.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">
+              The arithmetic, and what it does not buy
+            </p>
+            <h2>
+              Sixty guesses per picture, and a picture that was never seen
+            </h2>
+            <p>
+              A language model makes one forward pass per token. A diffusion
+              model makes one per step per picture, sixty here and often twenty
+              to fifty in products, each a full run of a large network over
+              every pixel. That is why generating a picture takes seconds and
+              why so much engineering goes into needing fewer steps.
+            </p>
+            <p>
+              What comes out was never in the training set, and is not a copy of
+              anything, in the same sense that lesson 07's text was not: the
+              network learned what the examples have in common, and draws from
+              that. It is also in the same sense a mirror of its examples.
+              Whatever was common in them is common in what it draws, and
+              whatever was absent it cannot draw at all.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Noise and steps</h2>
+            <div class="quiz">
+              <h3>
+                Why train the network to guess the noise that was added, rather
+                than to guess the clean example directly?
+              </h3>
+              <p>Think about the earliest stages of the drowning.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Either target contains the same information: the noisy point is the clean point plus the noise, so knowing one gives the other. The choice is about which is easier to learn."
+                >
+                  Because the clean example cannot be recovered from a noisy one</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. At a lightly drowned stage the clean example is almost the input, so guessing it means copying the input with a tiny correction that is hard to learn precisely; the noise is that correction, stated plainly. At a heavily drowned stage the two targets are equally hard. Predicting the noise is the steadier target across the whole schedule, and it is what the original method found worked best."
+                >
+                  Because the noise is a steadier target across every stage of
+                  the schedule</button
+                ><button
+                  type="button"
+                  data-feedback="The noise is drawn fresh each time and has no pattern to learn; the network learns which part of the input does not belong to the shape, which is a pattern about the data."
+                >
+                  Because noise is simpler, so a smaller network will do
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                A colleague suggests saving time by asking the network once,
+                from pure noise, to guess all the noise, and subtracting it in a
+                single step. What will come out?
+              </h3>
+              <p>What is the right answer from pure noise?</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Sixty steps take sixty times as long as one, and the suggestion would indeed be fast. The trouble is what it draws."
+                >
+                  The same drawing, sixty times faster</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. From pure noise every point of the shape is an equally good answer, so the best single guess is the average of them all: a blob in the middle. Small steps with fresh noise let each point commit gradually to one part of the shape. Faster samplers exist, and none of them works in one step without further tricks."
+                >
+                  A blur in the middle: the average of every possible answer</button
+                ><button
+                  type="button"
+                  data-feedback="The network was trained at every stage including the last, so it has an answer there. The answer is just not useful."
+                >
+                  Nothing: the network was never trained on pure noise
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
+              <div>
+                <strong>Easy job, many times</strong>
+                <p>
+                  Removing a little noise has a right answer. Drawing is that
+                  job repeated from pure noise to a finished picture.
+                </p>
+              </div>
+              <div>
+                <strong>Knobs, loss, descent, again</strong>
+                <p>
+                  Squared error on a noise guess, nudged by descent. Nothing new
+                  inside; only the task is new.
+                </p>
+              </div>
+              <div>
+                <strong>Steps are why it works</strong>
+                <p>
+                  From pure noise the only honest guess is an average. Gradual
+                  steps let a drawing commit.
+                </p>
+              </div>
+              <div>
+                <strong>Mirror of its examples</strong>
+                <p>
+                  New pictures, drawn from what the training pictures had in
+                  common. Lesson 05's warning holds for pictures too.
+                </p>
+              </div>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#drown">Drown a shape</a></li>
+              <li><a href="#arithmetic">Sixty guesses per picture</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Train the noise-guesser in your browser and watch a ring, a heart
+              or a spiral drawn out of pure noise, one step at a time.
+            </p>
+            <a href="diffusion-lab.html">Open the Diffusion Lab →</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-13-reward.html">← Learning from consequences</a>
+      </div>
+      <div>
+        <span>Course complete</span><a href="./">Back to the course home →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/diffusion.ts"></script>
+  </body>
+</html>

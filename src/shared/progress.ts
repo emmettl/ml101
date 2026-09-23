@@ -74,6 +74,12 @@ export const COURSE_LESSONS: readonly CourseLesson[] = [
     title: "Learning from consequences",
     href: "lesson-13-reward.html",
   },
+  {
+    id: "diffusion",
+    number: "14",
+    title: "Drawing by removing noise",
+    href: "lesson-14-diffusion.html",
+  },
 ];
 
 const LESSON_COMPLETE_PREFIX = "ml101:progress:lesson:";

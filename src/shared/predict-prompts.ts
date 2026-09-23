@@ -333,6 +333,72 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#drift-simulation-status",
     },
   ],
+  "diffusion-lab": [
+    {
+      id: "halfway",
+      question:
+        "The ring has been drawn: sixty steps from pure noise, and most points sit within 0.1 of the shape. You wind the drawing back to step 30, halfway. What share of the points is within 0.1 of the shape there?",
+      readout: {
+        selector: "#draw-stats",
+        match: "Points within 0.1 of the shape",
+        label: "points within 0.1 of the shape",
+      },
+      change: {
+        selector: "#draw-step",
+        value: "30",
+        describe: "The lab will show the drawing at step 30 of 60.",
+      },
+      choices: [
+        { id: "most", label: "Still most of them: the shape forms early" },
+        { id: "half", label: "About half: the shape forms at a steady rate" },
+        { id: "few", label: "Few: the shape forms late" },
+      ],
+      judge: (_before, after) => (after >= 60 ? "most" : after >= 35 ? "half" : "few"),
+      explain: (before, after) =>
+        `From ${before}% to ${after}% at the halfway step. The first thirty steps undo the stages where the shape was already drowned beyond recognition, so they mostly move the cloud as a whole; the shape itself appears in the last third. Read the table below: the signal left at each stage tells the same story.`,
+      settle: "#draw-simulation-status",
+    },
+    {
+      id: "spiral",
+      question:
+        "Back at step 60. The ring came out clean. You switch the shape to a spiral, with thin arms close together, and train the same network for the same number of steps. What happens to the share of points within 0.1 of the shape?",
+      readout: {
+        selector: "#draw-stats",
+        match: "Points within 0.1 of the shape",
+        label: "points within 0.1 of the shape",
+      },
+      change: {
+        selector: "#draw-shape",
+        value: "spiral",
+        describe: "The lab will train on a spiral and draw it.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(10),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. The network's guess at the noise blurs the arms together where they run close, and a few thousand knobs trained for a few seconds cannot resolve them. Products use networks a million times larger and train for weeks; the smudge is the same problem at a scale where it is not visible.`,
+      settle: "#draw-simulation-status",
+    },
+    {
+      id: "longer",
+      question:
+        "Still the spiral. You double the training to 6,000 steps. What happens to the share of points within 0.1 of the shape?",
+      readout: {
+        selector: "#draw-stats",
+        match: "Points within 0.1 of the shape",
+        label: "points within 0.1 of the shape",
+      },
+      change: {
+        selector: "#draw-budget",
+        value: "6000",
+        describe: "The lab will train for 6,000 steps, which takes about ten seconds.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(5),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. More training sharpens the guess, and the loss curve shows it was still falling. It does not reach the ring's figure: the spiral is a harder shape for this network, and there is a limit to what a few thousand knobs can draw however long they train.`,
+      settle: "#draw-simulation-status",
+    },
+  ],
   "reward-lab": [
     {
       id: "sarsa-route",

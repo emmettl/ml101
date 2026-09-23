@@ -904,3 +904,43 @@ test("Q-learning walks the edge, SARSA keeps its distance, and exploring near a 
   await expect(page.locator("#rl-ledger tr")).toHaveCount(10);
   expect(errors).toEqual([]);
 });
+
+test("a shape drowns on the schedule in the lesson, and in the lab a ring is drawn from noise", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-14-diffusion.html");
+  await expect(page.locator("#stat-4")).toHaveText("Recognisable");
+  await page.locator("#draw-stage").fill("60");
+  await expect(page.locator("#stat-4")).toHaveText("Gone");
+  await expect(page.locator("#draw-prose")).toContainText("pure noise");
+
+  await page.goto("/diffusion-lab.html");
+  const status = page.locator("#draw-simulation-status");
+  await expect(status).toContainText(
+    "Current · a ring · 64 neurons · 3000 steps · drawing at step 60 of 60",
+    { timeout: 90_000 },
+  );
+  const figure = async (label: string) =>
+    Number(
+      (
+        await page.locator("#draw-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/[^\d.]/g, ""),
+    );
+  expect(await figure("Points within 0.1")).toBeGreaterThan(80);
+  expect(await figure("Same, for pure noise")).toBeLessThan(25);
+  await expect(page.locator("#draw-ledger tr")).toHaveCount(7);
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="few"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(status).toContainText("drawing at step 30 of 60");
+  expect(await figure("Points within 0.1")).toBeLessThan(35);
+
+  await page.locator("#draw-step").fill("60");
+  await page.locator("#draw-again").click();
+  await expect(status).toContainText("drawing at step 60 of 60");
+  expect(await figure("Points within 0.1")).toBeGreaterThan(80);
+  expect(errors).toEqual([]);
+});

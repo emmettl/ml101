@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="A diffusion model in two dimensions: train a small network to guess the noise in drowned points, then draw a shape from pure noise by removing it step by step."
+    />
+    <title>ML 101 — Diffusion Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-14-diffusion.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 18 · Other machines</p>
+        <h1>Diffusion Lab</h1>
+        <p class="lede">
+          Six hundred points on a shape are drowned in noise, a little at a
+          time, until nothing of the shape remains. A small network is trained
+          on one job: given a drowned point and how far along the drowning it
+          is, guess the noise. Then start from pure noise, remove the guessed
+          noise sixty times over, and watch the shape come out. This is how
+          picture generators work, with pixels in place of points.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> two numbers per point instead of a million pixels, and a
+        network of a few thousand knobs trained in your browser for a few
+        seconds, so the drawings are rough where a product's would be sharp.
+        Every piece is the real one: the noise schedule, the training target,
+        the sampler. The faint dots are the true shape, shown so you can judge
+        the drawing; the sampler never sees them. Real generators add a text
+        encoder so that words can steer the drawing, which this lab omits.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="draw-name"
+          >a ring, 64 neurons per layer, 3,000 steps</strong
+        >
+        <p id="draw-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="draw-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="draw-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="cloud-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">From noise to shape</p>
+                <h2 id="cloud-title">What does it draw?</h2>
+                <p>
+                  Four hundred points, started as pure noise and pulled towards
+                  the shape a step at a time. Slide “The drawing, step by step”
+                  to watch it happen.
+                </p>
+              </div>
+              <div class="path-actions">
+                <button type="button" id="draw-again" class="resample quiet">
+                  Draw again from fresh noise
+                </button>
+              </div>
+            </div>
+            <div class="stats" id="draw-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="draw-cloud"
+                  role="img"
+                  aria-label="Four hundred drawn points on a plane, with the true shape shown faintly behind them"
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="draw-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="draw-simulation-status">
+              Training…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="loss-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Training</p>
+                <h2 id="loss-title">How well does it guess the noise?</h2>
+                <p>
+                  The squared error between the noise added and the noise
+                  guessed, averaged over each 250 steps. Guessing zero every
+                  time would score 1.0. It never reaches zero, because early in
+                  the drowning the noise is genuinely unguessable.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="draw-loss"
+                  role="img"
+                  aria-label="Squared error of the noise guess against training steps"
+                ></svg>
+              </div>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Step by step</p>
+                <h2 id="ledger-title">When does the shape appear?</h2>
+                <p>
+                  How much of the original signal the drowning left at each
+                  stage, and how close the drawing is at the matching step.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Drawing step</th>
+                    <th>Signal left at this stage</th>
+                    <th>Average distance to the shape</th>
+                    <th>Within 0.1 of the shape</th>
+                  </tr>
+                </thead>
+                <tbody id="draw-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Learn to remove, not to make</h3>
+          <p>
+            The network is never asked to draw a shape. It is asked, over and
+            over, how much noise is in this point. Drawing is that skill run
+            backwards, and a network that can clean a little can be made to
+            clean a lot, one step at a time.
+          </p>
+        </article>
+        <article>
+          <h3>Many small steps beat one big one</h3>
+          <p>
+            From pure noise there is no right answer, only a direction. Taking a
+            small step, adding a little fresh noise and asking again lets the
+            cloud commit gradually, which is why the early steps look aimless
+            and the shape appears late.
+          </p>
+        </article>
+        <article>
+          <h3>The same knobs, at any scale</h3>
+          <p>
+            Two numbers a point here; three per pixel, a million pixels, and a
+            network of a billion knobs in a product. The drowning, the target
+            and the sampler are unchanged. So is the descent that trains it.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The method is Ho, Jain and Abbeel,
+          <a href="https://arxiv.org/abs/2006.11239"
+            >“Denoising Diffusion Probabilistic Models”</a
+          >
+          (2020), whose training and sampling loops this lab follows with its
+          noise schedule scaled to sixty steps. The idea of drowning data in
+          noise and learning to reverse it is Sohl-Dickstein et al. (2015).
+          Products such as Stable Diffusion add a compressor so the drowning
+          happens in a smaller space, and a text encoder so that a caption
+          steers the drawing: Rombach et al.,
+          <a href="https://arxiv.org/abs/2112.10752"
+            >“High-Resolution Image Synthesis with Latent Diffusion Models”</a
+          >
+          (2022).
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/diffusion-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

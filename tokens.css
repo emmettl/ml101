@@ -677,6 +677,11 @@ h3 {
   opacity: 0.85;
 }
 
+.plot-point.drawn {
+  fill: var(--amber-dark);
+  fill-opacity: 0.85;
+}
+
 /* Bars that grow left or right from a centre line. */
 .lean-bars {
   display: grid;
