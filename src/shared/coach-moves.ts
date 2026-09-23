@@ -263,6 +263,31 @@ const moves: Record<string, CoachMove[]> = {
         "The best case: the break is seen the month it happens and repaired as soon as six months of new data exist.",
     },
   ],
+  "trees-lab": [
+    {
+      label: "A tree that memorises",
+      setup: { "tree-method": "tree", "tree-depth": "12" },
+      watch:
+        "Nearly every training example right, and a boundary full of small boxes around single points. Read the unseen score.",
+    },
+    {
+      label: "A hundred stumps, boosted",
+      setup: { "tree-method": "boosting", "tree-depth": "1", "tree-count": "100" },
+      watch:
+        "Each tree asks one question. A hundred of them in turn still draw the ring. Now switch the pattern to opposite corners.",
+    },
+    {
+      label: "A forest on the spiral",
+      setup: {
+        "tree-pattern": "spiral",
+        "tree-method": "forest",
+        "tree-depth": "12",
+        "tree-count": "50",
+      },
+      watch:
+        "Fifty memorising trees, averaged. The boxes soften and the gap between the two scores closes.",
+    },
+  ],
   capstone: [
     {
       label: "The sensible setup",

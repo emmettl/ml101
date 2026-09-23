@@ -214,6 +214,16 @@
               <a href="descent-lab.html">Find the edge in the Descent Lab →</a>
             </p>
           </article>
+          <article class="glossary-entry" id="decision-tree">
+            <h2>Decision tree</h2>
+            <p>
+              A model made of if-then questions about one input at a time, each
+              chosen greedily as the split that best sorts the examples, ending
+              in leaves that give the answer. Readable and quick to build; its
+              boundary is made of boxes, and a deep one memorises.
+              <a href="trees-lab.html">Grow one in the Trees Lab →</a>
+            </p>
+          </article>
           <article class="glossary-entry" id="drift">
             <h2>Drift</h2>
             <p>
@@ -234,6 +244,15 @@
               <a href="embedding-lab.html"
                 >Watch one form in the Embedding Lab →</a
               >
+            </p>
+          </article>
+          <article class="glossary-entry" id="ensemble">
+            <h2>Ensemble</h2>
+            <p>
+              Many models combined into one answer. A random forest grows trees
+              on reshuffled copies of the data and averages them, which smooths
+              away each tree's accidents. Boosting grows them in turn, each
+              fitted to the mistakes the previous ones left.
             </p>
           </article>
           <article class="glossary-entry" id="epoch">
@@ -279,6 +298,18 @@
               Doing well on inputs the model has never seen. It is the entire
               point of machine learning, and it cannot be measured on the
               training examples.
+            </p>
+          </article>
+          <article class="glossary-entry" id="gradient-boosting">
+            <h2>Gradient boosting</h2>
+            <p>
+              Build a model as a sum of small trees, adding one at a time, each
+              fitted to the residuals of the sum so far. It is gradient descent
+              where every step is a tree, and it remains the strongest method on
+              most tabular data.
+              <a href="trees-lab.html"
+                >Add trees one at a time in the Trees Lab →</a
+              >
             </p>
           </article>
           <article class="glossary-entry" id="gradient">

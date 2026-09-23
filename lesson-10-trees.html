@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Decision trees: a model built from if-then questions instead of knobs, chosen greedily and never by descent. Why they memorise, how forests and boosting fix that, and why they still win on spreadsheets."
+    />
+    <title>Questions instead of knobs — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="trees">
+    <!-- include: lesson-topbar -->
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 10 · Other machines</p>
+            <h1>Questions instead of knobs</h1>
+            <p class="lede">
+              Every model so far has been a machine with knobs, set by rolling
+              downhill. Here is one with no knobs at all. It asks a question
+              about the input, then another, then another, and stops at an
+              answer. It cannot be trained by descent, it can be printed and
+              read, and a hundred of them together still beat neural networks on
+              most spreadsheets.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>10 minutes</strong
+            ><span>Builds on</span><strong>Lessons 02 and 03</strong
+            ><a href="trees-lab.html">Open the Trees Lab →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>Sort the examples with the best question you can see</h2>
+            <p>
+              A
+              <a class="term" href="glossary.html#decision-tree"
+                >decision tree</a
+              >
+              is a flowchart. At the top is a question about one input: is the
+              customer's tenure below eight months? Each answer leads to another
+              question, or to a leaf that gives the verdict. To make a
+              prediction you start at the top and follow the answers down.
+            </p>
+            <p>
+              Building one is greedy. Look at every input, and every place you
+              could cut it, and ask: which single cut sorts the examples most
+              cleanly into their two classes? Take that cut. Now do the same
+              again on each side, with only the examples that landed there. Stop
+              when the sides are pure, or too small, or you have asked enough
+              questions. There is no loss to roll down and no gradient. Each
+              question is chosen once and never revisited, which is why a tree
+              is fast to build and why it can miss a split that would only have
+              paid off two questions later.
+            </p>
+            <div class="callout">
+              A tree is a stack of if-then questions, each chosen as the single
+              split that best sorts the examples it sees. What descent did for
+              knobs, greedy search does for questions.
+            </div>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Depth</strong>
+                <p>
+                  How many questions can be asked on the way to an answer. Depth
+                  is the tree's capacity, and plays exactly the role polynomial
+                  degree played in lesson 02.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Boxes</strong>
+                <p>
+                  Every question is about one input, so every cut is parallel to
+                  an axis. A tree's boundary is a set of boxes, and a diagonal
+                  line takes it a staircase of questions to approximate.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Readable</strong>
+                <p>
+                  A tree with a dozen questions can be printed on a page and
+                  argued with. Nothing else in this course can.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>No scaling needed</strong>
+                <p>
+                  Only the order of values matters to a question, so a column in
+                  pounds and a column in millions need no rescaling, and a wild
+                  outlier moves nothing.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="grow">
+            <p class="section-label">The mechanism</p>
+            <h2>Grow one, and watch it memorise</h2>
+            <p>
+              The puzzles are the ones from lesson 04, with one change: one
+              training label in ten has been flipped, because real data always
+              has some. Slide the depth up and watch two things: the boundary
+              turn from a few boxes into many, and the two scores part company.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">One tree, growing</h3>
+                  <p>Count the boxes as the depth rises.</p>
+                </div>
+                <span class="engine-badge">Live tree engine</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="tree-pattern">Pattern</label
+                  ><select id="tree-pattern">
+                    <option value="circle" selected>
+                      Ring around a centre
+                    </option>
+                    <option value="xor">Opposite corners</option>
+                    <option value="spiral">Two spiral arms</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="tree-depth"
+                    >Depth · <span id="tree-depth-value">2</span></label
+                  ><input
+                    id="tree-depth"
+                    type="range"
+                    min="1"
+                    max="12"
+                    step="1"
+                    value="2"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="plot-host" id="lesson-host">
+                  <svg
+                    id="lesson-chart"
+                    class="lesson-chart"
+                    role="img"
+                    aria-label="Two classes of examples on a plane, shaded by the tree's verdict, with every edge parallel to an axis"
+                  ></svg>
+                </div>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Questions asked</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Right on training examples</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Right on unseen examples</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Verdict</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="tree-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              At depth twelve, on the ring, the tree gets nearly every training
+              example right and does worse on unseen ones than it did at depth
+              four. It has drawn a private box around each mislabelled point.
+              That is overfitting, and trees are unusually good at it, because a
+              question costs nothing and there is always another to ask.
+            </p>
+          </section>
+          <section id="ensembles">
+            <p class="section-label">The remedy, and why it works</p>
+            <h2>Many trees: voting, or taking turns</h2>
+            <p>
+              A single deep tree memorises. The cure that made trees the
+              workhorse of applied machine learning is to grow many and combine
+              them, in one of two ways.
+            </p>
+            <ol class="pipeline" aria-label="Two ways to combine trees">
+              <li>
+                <strong>A forest votes</strong>
+                <p>
+                  Grow each tree on a reshuffled copy of the data, drawn with
+                  replacement, so that each memorises different accidents.
+                  Average their verdicts and the accidents cancel.
+                </p>
+                <em
+                  >Hard to overfit; most of the gain comes from the first few
+                  dozen trees.</em
+                >
+              </li>
+              <li>
+                <strong>Boosting takes turns</strong>
+                <p>
+                  Grow a small tree. Look at what it got wrong. Grow the next
+                  tree on those residuals, add a fraction of it, and repeat. The
+                  sum of the trees is the model.
+                </p>
+                <em
+                  >It is gradient descent, with a tree for a step. Add too many
+                  and it memorises too.</em
+                >
+              </li>
+              <li>
+                <strong>Where they win</strong>
+                <p>
+                  On tables of named columns, boosted trees beat neural networks
+                  more often than not, in seconds, on a laptop. On pixels, sound
+                  and text, where no column means anything on its own, the
+                  network wins.
+                </p>
+                <em>The reason to know both.</em>
+              </li>
+            </ol>
+            <p>
+              Boosting with depth-1 trees, each a single question, has a limit
+              worth seeing in the lab: a sum of one-input answers cannot express
+              “both inputs have the same sign”, so it never solves the
+              opposite-corners puzzle, however many trees you add. Give each
+              tree a second question and it does.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Boxes and votes</h2>
+            <div class="quiz">
+              <h3>
+                A tree's decision boundary is always made of edges parallel to
+                the axes, never a diagonal. Why?
+              </h3>
+              <p>Think about what one question can refer to.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Descent is not involved at all: a tree chooses questions greedily. The shape comes from what a question can say, not from how it was found."
+                >
+                  Because descent can only move one knob at a time</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. A question compares one input to a number, which cuts the plane parallel to an axis. A diagonal needs both inputs at once, which a tree can only approximate with a staircase of questions. Networks, whose neurons weigh all inputs together, draw the diagonal in one line."
+                >
+                  Because each question is about one input on its own</button
+                ><button
+                  type="button"
+                  data-feedback="Trees split at midpoints between actual values, which can be anywhere. The edges are straight and axis-parallel however finely the inputs are measured."
+                >
+                  Because the inputs are rounded to a grid
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                A depth-12 tree with 50 questions scores 92% on its 320 training
+                examples and 79% on unseen ones. A forest of fifty such trees
+                scores 94% and 89%. What did the forest change?
+              </h3>
+              <p>
+                Each tree in the forest is just as deep, and just as greedy.
+              </p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Every tree in the forest is as deep as the single one, and memorises just as readily. Depth is not what changed."
+                >
+                  It made the trees shallower, so they cannot memorise</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. Each tree grew on a reshuffled copy of the data and memorised a different set of accidents. Where they agree is the real pattern; where they disagree, the average is unsure, which is the honest answer. The single tree's 13-point gap became 5."
+                >
+                  Each tree memorised different accidents, and the average
+                  cancels them</button
+                ><button
+                  type="button"
+                  data-feedback="No tree in a forest sees the unseen examples; they are held out from all of them. The forest's advantage is in how it uses the training data, not in seeing more of it."
+                >
+                  It trained on the unseen examples as well
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
+              <div>
+                <strong>Not everything is descent</strong>
+                <p>
+                  A tree is built by greedy search over questions. Same loss to
+                  shrink, no gradient in sight.
+                </p>
+              </div>
+              <div>
+                <strong>Depth is capacity</strong>
+                <p>
+                  A deep tree memorises like a high-degree polynomial, and the
+                  held-out score catches it the same way.
+                </p>
+              </div>
+              <div>
+                <strong>Many weak, one strong</strong>
+                <p>
+                  Forests average away accidents; boosting fixes them in turn.
+                  Both turn a fragile model into a robust one.
+                </p>
+              </div>
+              <div>
+                <strong>Pick the machine for the data</strong>
+                <p>
+                  Tables of columns: trees, usually boosted. Pixels, sound,
+                  text: networks. Knowing which is most of the job.
+                </p>
+              </div>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#grow">Grow one, and watch it memorise</a></li>
+              <li><a href="#ensembles">Many trees</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Grow forests and boosted trees, read a tree's questions, and see
+              which puzzle a hundred single questions can never solve.
+            </p>
+            <a href="trees-lab.html">Open the Trees Lab →</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-09-open-book.html">← Open-book answers</a>
+      </div>
+      <div>
+        <span>Course complete</span><a href="./">Back to the course home →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/trees.ts"></script>
+  </body>
+</html>

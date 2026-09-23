@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Decision trees, random forests and gradient boosting on the same puzzles as the Network Playground: grow a tree, read its questions, watch it memorise, then grow a hundred."
+    />
+    <title>ML 101 — Trees Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-10-trees.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 14 · Other machines</p>
+        <h1>Trees Lab</h1>
+        <p class="lede">
+          A model made of if-then questions, on the same four puzzles the
+          Network Playground used. Nothing here is trained by descent: each
+          question is chosen greedily as the split that best sorts the examples.
+          Grow one tree and read it. Grow it deep and watch it memorise. Then
+          grow a hundred, and let them vote or take turns.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> 320 training examples and 80 unseen, with a share of the
+        training labels flipped so that there is something to memorise. Two
+        inputs only, so a tree's boxes can be drawn; real trees ask about
+        hundreds of columns and a forest also gives each tree a random subset of
+        them. Boosting here takes a fixed step of 0.3 per tree; real libraries
+        add regularisation, early stopping and a great deal of engineering,
+        which change the numbers and not the picture.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="tree-name">one tree, 4 deep, on the ring</strong>
+        <p id="tree-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="tree-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="tree-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="map-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The decision map</p>
+                <h2 id="map-title">What shape can questions draw?</h2>
+                <p>
+                  Every question is about one input, so every edge is parallel
+                  to an axis. Training examples the machine gets wrong are
+                  circled; faint marks are the unseen examples.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="tree-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host" id="tree-map-host">
+                <svg
+                  id="tree-map"
+                  role="img"
+                  aria-label="Two classes of examples on a plane, shaded by the tree machine's confidence, with edges parallel to the axes"
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="tree-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="tree-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="curve-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Training against unseen</p>
+                <h2 id="curve-title">When does more stop helping?</h2>
+                <p>
+                  For one tree, both scores as the depth grows. For a forest or
+                  boosting, both scores as trees are added in the order they
+                  were grown.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="tree-curve"
+                  role="img"
+                  aria-label="Accuracy on training and unseen examples against depth, or against the number of trees used"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>training examples</span>
+              <span><i class="held"></i>unseen examples</span>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="questions-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Readable, up to a point</p>
+                <h2 id="questions-title">What is it actually asking?</h2>
+                <p>
+                  A tree can be printed and read, which no network can. A
+                  hundred trees cannot, whatever each one says.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap" style="padding: 14px">
+              <p class="chart-caption" id="tree-questions-caption">The tree</p>
+              <div class="tree-questions" id="tree-questions"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Greedy, and readable</h3>
+          <p>
+            A tree never turns a knob. It picks the best question it can see
+            right now, then the best in each branch, and stops. That makes it
+            fast, easy to explain, and blind to any split that only pays off two
+            questions later.
+          </p>
+        </article>
+        <article>
+          <h3>Memorising has a new shape</h3>
+          <p>
+            Lesson 02's wiggly curve becomes a boundary of tiny boxes, one per
+            stray example. The cure is the same: less capacity, or more data, or
+            an average over many models that each memorised differently.
+          </p>
+        </article>
+        <article>
+          <h3>Still the champions of the spreadsheet</h3>
+          <p>
+            On tables of columns, boosted trees beat neural networks more often
+            than not, and they train in seconds. Networks win on pixels, sound
+            and text, where the columns have no meaning on their own.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Trees grown this way are from Breiman, Friedman, Olshen and Stone,
+          <em>Classification and Regression Trees</em> (1984). Forests are
+          Breiman,
+          <a href="https://link.springer.com/article/10.1023/A:1010933404324"
+            >“Random Forests”</a
+          >
+          (2001). Boosting as descent with a tree for a step is Friedman,
+          <a href="https://projecteuclid.org/euclid.aos/1013203451"
+            >“Greedy Function Approximation: A Gradient Boosting Machine”</a
+          >
+          (2001); the library everyone uses is Chen and Guestrin,
+          <a href="https://arxiv.org/abs/1603.02754">“XGBoost”</a> (2016). On
+          why trees still win on tables, see Grinsztajn, Oyallon and Varoquaux,
+          <a href="https://arxiv.org/abs/2207.08815"
+            >“Why do tree-based models still outperform deep learning on tabular
+            data?”</a
+          >
+          (2022).
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/trees-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>
