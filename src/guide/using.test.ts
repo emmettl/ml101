@@ -19,6 +19,7 @@ describe("the recommender", () => {
         const verdict = recommend(missing, have);
         expect(["prompt", "retrieve", "fine-tune", "train"]).toContain(verdict.way);
         expect(verdict.why.length).toBeGreaterThan(40);
+        expect(verdict.first.length).toBeGreaterThan(30);
       }
   });
 

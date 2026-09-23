@@ -50,6 +50,7 @@ function showVerdict(): void {
   byId("use-why").textContent = verdict.why;
   byId("use-changes").textContent = verdict.changes;
   byId("use-limit").textContent = verdict.limit;
+  byId("use-first").textContent = verdict.first;
 }
 
 let volume = "product";
@@ -90,7 +91,7 @@ function showBill(): void {
         ? `The examples that steer the manner are sent with every request. At this volume that is ${money(bill({ ...usage, inputTokens: PROMPTS.short.tokens }).perMonth)} a month without them: fine-tuning moves the manner into the knobs and drops the examples from the prompt, which is worth doing once the difference pays for the retraining.`
         : output === "page"
           ? `Output tokens cost several times input tokens, and a page of them per request dominates this bill. Asking for a shorter answer is the cheapest change there is.`
-          : `Prices fall and models change; the arithmetic does not. Requests times tokens times price, and the input usually outnumbers the output by ten to one, which is why prompt length is the first thing to look at.`;
+          : `Prices fall and models change; the arithmetic does not: requests, times tokens, times price. Output tokens cost several times input ones, so here a ${OUTPUTS[output].tokens}-token answer outweighs a ${PROMPTS[prompt].tokens}-token prompt; add examples or passages to the prompt and the balance swings the other way.`;
 }
 
 choiceSet(
