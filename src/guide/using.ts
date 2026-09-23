@@ -17,6 +17,8 @@ export interface Verdict {
   changes: string;
   /** What it cannot fix. */
   limit: string;
+  /** The first concrete thing to do. */
+  first: string;
 }
 
 export const MISSING: Record<Missing, string> = {
@@ -51,6 +53,8 @@ export function recommend(missing: Missing, have: Have): Verdict {
         "Nothing in the model. An index of passages, rebuilt when a document changes, and a prompt that carries the best matches.",
       limit:
         "The search sets the ceiling: a passage that is not retrieved cannot be used. Keep a set of questions with known answers and measure the search, as in the Open-Book Lab.",
+      first:
+        "Write fifty questions with known answers, cut the documents into passages, and measure how often the right passage comes back before any model is involved.",
     };
   if (missing === "manner" && have === "nothing")
     return {
@@ -61,6 +65,8 @@ export function recommend(missing: Missing, have: Have): Verdict {
         "Only the text you send. No training, no index, nothing to maintain but the prompt itself.",
       limit:
         "Every request carries the instructions and examples, which costs tokens, and a prompt cannot teach the model a fact or a skill it lacks.",
+      first:
+        "Write the instruction, add three examples of the shape you want, and score twenty held-back cases by hand.",
     };
   if (missing === "manner")
     return {
@@ -81,6 +87,10 @@ export function recommend(missing: Missing, have: Have): Verdict {
         have === "dozens"
           ? "Long prompts cost on every request, and the manner drifts when a request is unlike the examples."
           : "It changes how the model behaves, not what it knows. Facts still go stale, and every retrain needs the evaluation set run again.",
+      first:
+        have === "dozens"
+          ? "Pick the five examples most unlike each other, put them in the prompt, and score the rest."
+          : "Hold back a slice of the examples for scoring, and fine-tune a small model first to see what the gain is worth.",
     };
   if (missing === "skill" && have === "nothing")
     return {
@@ -91,6 +101,8 @@ export function recommend(missing: Missing, have: Have): Verdict {
         "The text you send, and a growing file of question-and-answer pairs that you will need whichever way you go next.",
       limit:
         "A skill the model genuinely lacks will not appear from instructions alone. Expect to come back to this decision with examples in hand.",
+      first:
+        "Start a file of question-and-answer pairs today; correct the model's answers as you go, and keep the corrections.",
     };
   if (missing === "skill" && have === "dozens")
     return {
@@ -100,6 +112,8 @@ export function recommend(missing: Missing, have: Have): Verdict {
       changes:
         "The text you send. Keep a held-out set of the examples, as lesson 02 taught, to score against.",
       limit: "If the score is not good enough, the fix is more examples, not a cleverer prompt.",
+      first:
+        "Hold back a third of the examples, put the rest in the prompt, and score the held-back third.",
     };
   if (missing === "skill" && have === "thousands")
     return {
@@ -110,6 +124,8 @@ export function recommend(missing: Missing, have: Have): Verdict {
         "The model's knobs, a little. A model to host and a retraining routine, with the evaluation set run each time.",
       limit:
         "It learns the examples' regularities, including their mistakes and biases, as the Fairness Lab showed. Facts still belong in retrieval.",
+      first:
+        "Split the examples three ways, as lesson 02 taught, and fine-tune on the first pile only.",
     };
   return {
     way: "train",
@@ -119,6 +135,8 @@ export function recommend(missing: Missing, have: Have): Verdict {
       "Everything: the data pipeline, the training, the hosting. Every lesson in this course applies.",
     limit:
       "It knows only your task. The moment the job needs language, world knowledge or judgement, you are back to a pretrained model with one of the other three.",
+    first:
+      "Try lesson 10's boosted trees on a sample before building anything: they take an afternoon and set the bar.",
   };
 }
 
