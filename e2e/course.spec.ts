@@ -704,3 +704,33 @@ test("a changed reason rots the model while the input monitor stays silent, and 
   );
   expect(errors).toEqual([]);
 });
+
+test("a lab's settings travel in the link, and “Try this” applies a setup", async ({ page }) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto(
+    "/drift-lab.html#drift-scenario=customers&drift-retraining=inputs&drift-labelDelay=2",
+  );
+  const status = page.locator("#drift-simulation-status");
+  await expect(status).toContainText(
+    "the customers change · retrained when the input monitor rings · labels 2 months late",
+  );
+  await expect(page.locator("#drift-scenario")).toHaveValue("customers");
+
+  const coach = page.locator("nav.coach");
+  await expect(coach.locator(".coach-moves button:not(.share-button)")).toHaveCount(3);
+  await coach.locator("button", { hasText: "learned the old world" }).click();
+  await expect(status).toContainText(
+    "the reason changes overnight · retrained every 6 months · labels 6 months late",
+  );
+  await expect(coach.locator(".coach-note")).toContainText("Event column");
+  await expect(page).toHaveURL(/#drift-scenario=sudden/);
+
+  await page.locator("#drift-reset").click();
+  await expect(status).toContainText("the reason changes, slowly · never retrained");
+  await expect(page).not.toHaveURL(/#/);
+
+  await page.locator("#drift-labelDelay").fill("4");
+  await page.locator(".share-button").click();
+  await expect(page).toHaveURL(/#drift-scenario=reason&drift-retraining=never&drift-labelDelay=4/);
+  expect(errors).toEqual([]);
+});
