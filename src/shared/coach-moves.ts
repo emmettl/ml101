@@ -277,15 +277,15 @@ const moves: Record<string, CoachMove[]> = {
         "Each tree asks one question. A hundred of them in turn still draw the ring. Now switch the pattern to opposite corners.",
     },
     {
-      label: "A forest on the spiral",
+      label: "A forest on opposite corners",
       setup: {
-        "tree-pattern": "spiral",
+        "tree-pattern": "xor",
         "tree-method": "forest",
         "tree-depth": "12",
         "tree-count": "50",
       },
       watch:
-        "Fifty memorising trees, averaged. The boxes soften and the gap between the two scores closes.",
+        "Fifty memorising trees, averaged. The boxes soften and the gap between the two scores narrows.",
     },
   ],
   capstone: [
