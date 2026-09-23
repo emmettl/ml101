@@ -214,6 +214,17 @@
               <a href="descent-lab.html">Find the edge in the Descent Lab →</a>
             </p>
           </article>
+          <article class="glossary-entry" id="drift">
+            <h2>Drift</h2>
+            <p>
+              The world moving on after a model is trained. If the inputs change
+              but the rule holds, a monitor on the inputs sees it and the model
+              may be fine. If the rule changes, the inputs can look exactly as
+              before and the model quietly stops being right; only the labels,
+              which arrive late, can show it.
+              <a href="drift-lab.html">Watch both in the Drift Lab →</a>
+            </p>
+          </article>
           <article class="glossary-entry" id="embedding">
             <h2>Embedding</h2>
             <p>
@@ -335,6 +346,16 @@
               A row of neurons that all read the same inputs. Hidden layers sit
               between input and output, and what each of their neurons comes to
               detect is discovered during training, not assigned.
+            </p>
+          </article>
+          <article class="glossary-entry" id="label-delay">
+            <h2>Label delay</h2>
+            <p>
+              The time between a prediction and learning whether it was right. A
+              churn model finds out when the customer stays or goes; a loan
+              model, when it is repaid. Every accuracy figure in production is a
+              figure about the past, and retraining can only use months whose
+              labels have arrived.
             </p>
           </article>
           <article class="glossary-entry" id="learning-rate">

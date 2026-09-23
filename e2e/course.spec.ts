@@ -666,3 +666,41 @@ test("with a head start no cut-off rule levels everything, and job words lean in
   await expect(page.locator("#fair-leans-outcome")).toContainText("Nobody labelled anything");
   expect(errors).toEqual([]);
 });
+
+test("a changed reason rots the model while the input monitor stays silent, and stale labels mislead a retrain", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/drift-lab.html");
+  const status = page.locator("#drift-simulation-status");
+  await expect(status).toContainText("Current · the reason changes, slowly · never retrained");
+  const figure = async (label: string) =>
+    Number(
+      (
+        await page.locator("#drift-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/[^\d.]/g, ""),
+    );
+  expect(await figure("Right in the last month")).toBeLessThan(70);
+  expect(await figure("Peak input shift")).toBeLessThan(0.5);
+  await expect(page.locator("#drift-outcome")).toContainText("no way to notice");
+  await expect(page.locator("#drift-ledger tr")).toHaveCount(30);
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="down"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(status).toContainText("the customers change");
+  expect(await figure("Peak input shift")).toBeGreaterThan(1);
+  expect(await figure("Months over 5 points")).toBe(0);
+
+  await page.locator("#drift-scenario").selectOption("sudden");
+  await page.locator("#drift-retraining").selectOption("schedule");
+  await page.locator("#drift-labelDelay").fill("6");
+  await expect(status).toContainText("retrained every 6 months · labels 6 months late");
+  await expect(page.locator("#drift-outcome")).toContainText("learned the old rule again");
+  await expect(page.locator("#drift-ledger tr.best-row")).toHaveCount(3);
+  await expect(page.locator("#drift-ledger tr.best-row").nth(1)).toContainText(
+    "Retrained on months 7 to 12",
+  );
+  expect(errors).toEqual([]);
+});

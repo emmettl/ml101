@@ -270,6 +270,69 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#book-simulation-status",
     },
   ],
+  "drift-lab": [
+    {
+      id: "customers-change",
+      question:
+        "The reason customers cancel is changing slowly and the model, never retrained, is rotting. Switch to a world where the reason stays fixed but the customers themselves change: a new app, younger accounts, inputs drifting far from the training data. What happens to the number of months more than 5 points below the best possible?",
+      readout: {
+        selector: "#drift-stats",
+        match: "Months over 5 points below the best possible",
+        label: "months more than 5 points below the best possible",
+      },
+      change: {
+        selector: "#drift-scenario",
+        value: "customers",
+        describe:
+          "The lab will change the scenario so that the customers drift and the rule holds.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. The inputs end up more than a standard deviation from where the model was trained, and the input monitor rings, yet the model is fine: it learned the rule, and the rule did not change. Now look at the monitor chart for the two scenarios. It is loud in the harmless one and silent in the harmful one.`,
+      settle: "#drift-simulation-status",
+    },
+    {
+      id: "input-alarm",
+      question:
+        "The reason customers cancel changes overnight, a year after launch. You add an input monitor and retrain whenever it rings. How many times will the model be retrained in three years?",
+      readout: { selector: "#drift-stats", match: "Times retrained", label: "times retrained" },
+      change: {
+        selector: "#drift-retraining",
+        value: "inputs",
+        describe: "The lab will retrain whenever the inputs drift too far from the training data.",
+      },
+      choices: [
+        { id: "none", label: "Never: the inputs do not move" },
+        { id: "once", label: "Once, soon after the change" },
+        { id: "many", label: "Several times, as the alarm keeps ringing" },
+      ],
+      judge: (_before, after) => (after === 0 ? "none" : after === 1 ? "once" : "many"),
+      explain: (_before, after) =>
+        `${after} times. The customers look exactly as they always did; what changed is what a support ticket means, and no statistic of the inputs can see that. The model is wrong for the rest of the run and the dashboard stays green. Only the labels can catch this, and the next prompt is about how late they are.`,
+      settle: "#drift-simulation-status",
+    },
+    {
+      id: "late-labels",
+      question:
+        "Same overnight change, and now the model is retrained when its accuracy falls. Labels currently arrive 3 months late. Suppose they took 6 months instead. What happens to the number of months more than 5 points below the best possible?",
+      readout: {
+        selector: "#drift-stats",
+        match: "Months over 5 points below the best possible",
+        label: "months more than 5 points below the best possible",
+      },
+      change: {
+        selector: "#drift-labelDelay",
+        value: "6",
+        describe: "The lab will make the labels arrive 6 months late.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. The alarm can only ring once the labels show the fall, and the retrain can only use months that have labels. Twice the delay is twice the wait before anyone knows, and then the first retrain may learn from data that all comes from before the change. Read the Event column of the table for that retrain.`,
+      settle: "#drift-simulation-status",
+    },
+  ],
   "fairness-lab": [
     {
       id: "drop-the-column",
