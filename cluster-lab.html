@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="K-means, one round at a time: give every point to its nearest centre, move the centres, repeat. Watch the loss fall, see what it cannot find, and learn why the number of groups is your choice."
+    />
+    <title>ML 101 — Cluster Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-11-clusters.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 15 · Other machines</p>
+        <h1>Cluster Lab</h1>
+        <p class="lede">
+          Points on a plane and no labels at all. K-means guesses where k groups
+          are, gives every point to its nearest centre, moves each centre to the
+          middle of its points, and repeats until nothing moves. Step through
+          the rounds, watch the one number it shrinks, and try it on the shapes
+          it cannot find.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> the points are invented in known groups, which is the only
+        reason the lab can report how well the found clusters agree with them.
+        Real data has no such answer key, and every score you can compute
+        without one, the loss included, keeps falling as k rises. Two inputs so
+        that the picture can be drawn; k-means works the same way in a thousand,
+        where nothing can be drawn and the same limits apply.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="clu-name">three round groups, k = 3</strong>
+        <p id="clu-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="clu-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="clu-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="map-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">The points, and where the centres went</p>
+                <h2 id="map-title">Which groups did it find?</h2>
+                <p>
+                  Each point takes the colour of its nearest centre. The large
+                  marks are the centres. Slide “Rounds played” back to zero and
+                  forward again to watch them move.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="clu-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="clu-map"
+                  role="img"
+                  aria-label="Points on a plane coloured by the cluster they were assigned to, with the cluster centres marked"
+                ></svg>
+              </div>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="clu-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="clu-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="loss-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Descent without a gradient</p>
+                <h2 id="loss-title">What is it shrinking?</h2>
+                <p>
+                  The total squared distance from every point to its centre,
+                  after each round. Both steps of a round can only lower it,
+                  which is why it always settles and why it can settle in the
+                  wrong place.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="clu-loss"
+                  role="img"
+                  aria-label="Total squared distance to the centres after each round"
+                ></svg>
+              </div>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="elbow-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Choosing k</p>
+                <h2 id="elbow-title">How many groups are there?</h2>
+                <p>
+                  The settled loss for every k from 1 to 8, best of five starts.
+                  It falls at every step and always will. People look for the
+                  bend, the “elbow”, and call that k.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="clu-elbow"
+                  role="img"
+                  aria-label="Settled loss against the number of groups asked for, from one to eight"
+                ></svg>
+              </div>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Cluster by cluster</p>
+                <h2 id="ledger-title">What is in each cluster?</h2>
+                <p>
+                  The last two columns use the hidden groups the points were
+                  made in. No real dataset would let you fill them.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Cluster</th>
+                    <th>Points</th>
+                    <th>Centre</th>
+                    <th>Mostly from</th>
+                    <th>Share from that group</th>
+                  </tr>
+                </thead>
+                <tbody id="clu-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>No labels, so no truth to score against</h3>
+          <p>
+            Every earlier lab had an answer to compare with. Here there is only
+            a number the algorithm chose to shrink. It will shrink it whatever
+            the data looks like, and a low loss is not the same as a grouping
+            that means anything.
+          </p>
+        </article>
+        <article>
+          <h3>Round groups, straight fences</h3>
+          <p>
+            Nearest-centre means every boundary is a straight line halfway
+            between two centres. Rings, stripes and groups of very different
+            spread are cut wrongly, however many rounds are played. Other
+            methods exist for those; none is free of assumptions.
+          </p>
+        </article>
+        <article>
+          <h3>k is your decision</h3>
+          <p>
+            The loss cannot choose k, because it always prefers more. The elbow
+            is a habit, not a theorem. Run from several starts, keep the lowest
+            loss, and then decide what the groups are for.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The algorithm is Lloyd's (1957, published 1982),
+          <a href="https://doi.org/10.1109/TIT.1982.1056489"
+            >“Least squares quantization in PCM”</a
+          >; the “spread out” start is Arthur and Vassilvitskii,
+          <a href="https://theory.stanford.edu/~sergei/papers/kMeansPP-soda.pdf"
+            >“k-means++: the advantages of careful seeding”</a
+          >
+          (2007). For the shapes k-means cannot find, DBSCAN (Ester et al.,
+          1996) and spectral clustering are the usual next steps; the
+          <a href="https://scikit-learn.org/stable/modules/clustering.html"
+            >scikit-learn clustering guide</a
+          >
+          shows them side by side on exactly these kinds of puzzle.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/cluster-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

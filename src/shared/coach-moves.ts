@@ -288,6 +288,26 @@ const moves: Record<string, CoachMove[]> = {
         "Fifty memorising trees, averaged. The boxes soften and the gap between the two scores narrows.",
     },
   ],
+  "cluster-lab": [
+    {
+      label: "Watch it settle",
+      setup: { "clu-round": "0" },
+      watch:
+        "Round zero: the centres are only guesses. Slide “Rounds played” up one at a time and watch the loss fall with each move.",
+    },
+    {
+      label: "The rings",
+      setup: { "clu-shape": "rings", "clu-k": "2" },
+      watch:
+        "Two centres, two rings, and a straight fence between them. Agreement with the hidden groups is a coin toss, and the loss does not mind.",
+    },
+    {
+      label: "A bad start",
+      setup: { "clu-shape": "three", "clu-k": "3", "clu-start": "random", "clu-seed": "6" },
+      watch:
+        "Three round groups and three centres, and still two of them share one group. The loss is higher than the right answer's, which is how you would know without labels.",
+    },
+  ],
   capstone: [
     {
       label: "The sensible setup",

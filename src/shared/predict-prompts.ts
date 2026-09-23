@@ -333,6 +333,68 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#drift-simulation-status",
     },
   ],
+  "cluster-lab": [
+    {
+      id: "more-centres",
+      question:
+        "Three round groups, and k-means with k = 3 has found them. You ask for eight groups instead. What happens to the loss, the total squared distance from points to their centres?",
+      readout: {
+        selector: "#clu-stats",
+        match: /^Loss/,
+        label: "the loss",
+      },
+      change: {
+        selector: "#clu-k",
+        value: "8",
+        describe: "The lab will run k-means with eight centres.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. More centres are always nearer, so the loss falls at every k and would reach zero with a centre per point. The three groups are now cut into eight pieces and the loss is delighted. Whatever chooses k, it cannot be this number.`,
+      settle: "#clu-simulation-status",
+    },
+    {
+      id: "fewer-centres",
+      question:
+        "Still three round groups. You ask for two centres. What happens to the agreement with the hidden groups?",
+      readout: {
+        selector: "#clu-stats",
+        match: "Agreement with the hidden groups",
+        label: "agreement with the hidden groups",
+      },
+      change: {
+        selector: "#clu-k",
+        value: "2",
+        describe: "The lab will run k-means with two centres.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Two centres cannot hold three groups, so one centre takes a whole group and the other sits between the remaining two, or one group is split down the middle. Note that this figure exists only because the lab invented the points. In real data you would have the loss, and the loss was perfectly content.`,
+      settle: "#clu-simulation-status",
+    },
+    {
+      id: "rings",
+      question:
+        "Two centres again, but now the points are two rings, one inside the other, which are the two hidden groups. What happens to the agreement with the hidden groups?",
+      readout: {
+        selector: "#clu-stats",
+        match: "Agreement with the hidden groups",
+        label: "agreement with the hidden groups",
+      },
+      change: {
+        selector: "#clu-shape",
+        value: "rings",
+        describe: "The lab will switch the points to two rings.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%, near a coin toss. Every point goes to its nearest centre, so the fence between two clusters is a straight line, and no straight line separates a ring from its middle. More rounds will not help and neither will a better start. This is what k-means cannot see, and every clustering method has a shape it cannot see.`,
+      settle: "#clu-simulation-status",
+    },
+  ],
   "trees-lab": [
     {
       id: "deeper-tree",
