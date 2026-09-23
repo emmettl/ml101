@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="What happens to a model after it ships: the customers change, or the reason changes, and only one of those shows up on a monitor. Retraining rules, label delay, and the retrain that learned the old world."
+    />
+    <title>ML 101 — Drift Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-08-scale.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 13 · After launch</p>
+        <h1>Drift Lab</h1>
+        <p class="lede">
+          Training stops. The world does not. A model that predicts which
+          customers will cancel is trained on six months of data and then left
+          to run for three years. Sometimes the customers change; sometimes the
+          reason they cancel changes. Only one of those shows up on a monitor,
+          and the labels that would show the other arrive months late.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> the customers are invented, so the lab knows the true rule
+        in every month and can score the best any model could have done. A real
+        team cannot: it sees inputs at once, labels late, and the truth never.
+        The model is the neuron of lesson 03 with three inputs. Every retraining
+        uses the last six months of labelled data and needs six new months of
+        it, which is one plausible rule among many. The scenarios are drawn
+        simply; real drift is several of them at once, at different speeds.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="drift-name"
+          >the reason changes, slowly, never retrained</strong
+        >
+        <p id="drift-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="drift-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="drift-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="accuracy-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Thirty months in production</p>
+                <h2 id="accuracy-title">How long does it stay right?</h2>
+                <p>
+                  The solid line is the share of each month's predictions that
+                  turned out right. The dotted line is what a model that knew
+                  that month's true rule would have scored. The gap between them
+                  is rot.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="drift-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="drift-accuracy"
+                  role="img"
+                  aria-label="Accuracy in each month after launch, against the best possible accuracy that month, with retraining months marked. The same figures are in the table below."
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>right this month</span>
+              <span><i class="held"></i>labels not in yet</span>
+              <span><i class="truth"></i>best possible this month</span>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="drift-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="drift-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="monitor-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">What the team can see today</p>
+                <h2 id="monitor-title">What does the input monitor show?</h2>
+                <p>
+                  How far this month's customers sit from the ones the model was
+                  trained on, in standard deviations. It needs no labels, so it
+                  runs the day the predictions are made. That is its strength
+                  and its blind spot.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="drift-monitor"
+                  role="img"
+                  aria-label="Input shift in each month after launch, with the alarm level marked"
+                ></svg>
+              </div>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Month by month</p>
+                <h2 id="ledger-title">What did each month look like?</h2>
+                <p>
+                  Cancelled and flagged are what the team sees at once; input
+                  shift too. Accuracy arrives with the labels. The best possible
+                  is known only to this lab.
+                </p>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Cancelled</th>
+                    <th>Flagged</th>
+                    <th>Input shift</th>
+                    <th>Right</th>
+                    <th>Best possible</th>
+                    <th>Event</th>
+                  </tr>
+                </thead>
+                <tbody id="drift-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Two kinds of change</h3>
+          <p>
+            When the customers change, the inputs move and a monitor sees it,
+            but a model that learned the right rule keeps applying it. When the
+            reason changes, the inputs look the same as ever and the rule
+            quietly stops being true. The second is the one that hurts, and the
+            one no input monitor can see.
+          </p>
+        </article>
+        <article>
+          <h3>Labels are the only real check, and they are late</h3>
+          <p>
+            Whether a prediction was right is known only once the customer has
+            stayed or gone. Every accuracy figure in production is a figure
+            about the past. Retrain on those labels and you may learn a world
+            that has already ended.
+          </p>
+        </article>
+        <article>
+          <h3>Shipping is the start of the job</h3>
+          <p>
+            Lesson 02's held-out test protects you from a model that memorised.
+            Nothing protects you from a world that moved except watching it.
+            Retraining on a schedule is dull, and it is what most teams end up
+            doing.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The split into changing inputs and a changing rule follows Gama et
+          al.,
+          <a href="https://dl.acm.org/doi/10.1145/2523813"
+            >“A Survey on Concept Drift Adaptation”</a
+          >
+          (2014). Sculley et al.,
+          <a
+            href="https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+            >“Hidden Technical Debt in Machine Learning Systems”</a
+          >
+          (2015), is the paper most teams read after their first model rots in
+          production. Chip Huyen's
+          <a
+            href="https://huyenchip.com/2022/02/07/data-distribution-shifts-and-monitoring.html"
+            >“Data Distribution Shifts and Monitoring”</a
+          >
+          is a practical account of the monitors and their limits.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/drift-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>
