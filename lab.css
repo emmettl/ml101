@@ -187,6 +187,70 @@ body.lab {
   color: var(--muted);
 }
 
+.pixel-grid {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--surface);
+  shape-rendering: crispedges;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gallery li {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.gallery li.right {
+  border-color: var(--jade);
+}
+
+.gallery li.wrong {
+  border-color: var(--brick);
+}
+
+.gallery li span {
+  color: var(--muted);
+}
+
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.filters li {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  font-size: 12px;
+}
+
+.filters li span {
+  grid-column: 1 / -1;
+  color: var(--muted);
+}
+
 .coach-moves .share-button {
   min-height: 36px;
   margin-left: auto;

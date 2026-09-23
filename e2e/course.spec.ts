@@ -825,3 +825,42 @@ test("k-means finds round groups, its loss always falls with k, and it cannot cu
   await expect(page.locator("#clu-outcome")).toContainText("local minimum");
   expect(errors).toEqual([]);
 });
+
+test("filters slide in the lesson, and in the lab they know a moved shape that dense wiring does not", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-12-vision.html");
+  await expect(page.locator("#stat-2")).toHaveText("100");
+  await page.locator("#see-filter").selectOption("outline");
+  await expect(page.locator("#see-prose")).toContainText("outline of a shape");
+  await expect(page.locator("#see-map svg rect")).toHaveCount(100);
+
+  await page.goto("/vision-lab.html");
+  const status = page.locator("#see-simulation-status");
+  await expect(status).toContainText(
+    "Current · fully connected · 32 neurons · training shapes centred",
+    { timeout: 30_000 },
+  );
+  const figure = async (label: string) =>
+    Number(
+      (
+        await page.locator("#see-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/[^\d.]/g, ""),
+    );
+  expect(await figure("Right on centred")).toBeGreaterThan(90);
+  expect(await figure("Right on shifted")).toBeLessThan(45);
+  await expect(page.locator("#see-gallery li.wrong").first()).toBeVisible();
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="up"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 30_000 });
+  await expect(status).toContainText("Current · convolutional · 32 filters");
+  expect(await figure("Right on shifted")).toBeGreaterThan(90);
+  await expect(page.locator("#see-filters li")).toHaveCount(8);
+  await expect(page.locator("#see-filters-caption")).toContainText(
+    "first 8 of the 32 learned filters",
+  );
+  expect(errors).toEqual([]);
+});
