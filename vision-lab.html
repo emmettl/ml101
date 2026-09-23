@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="A convolutional network against a fully connected one on tiny pictures of shapes: watch the filters it learns, and see why sharing the same knobs everywhere lets it recognise a shape wherever it appears."
+    />
+    <title>ML 101 — Vision Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-12-vision.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 16 · Other machines</p>
+        <h1>Vision Lab</h1>
+        <p class="lede">
+          Tiny pictures of four shapes, drawn at random places with noise, and
+          two networks trained to name them. One wires every pixel to every
+          neuron. The other slides a few small filters across the picture and
+          uses the same nine knobs at every position. Train both, look at what
+          they learned, and move the shapes.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> 12×12 pictures of a bar, a cross, a ring and a corner, 400
+        for training and 200 of each kind for testing. The convolutional network
+        has one layer of 3×3 filters, ReLU, and takes each filter's strongest
+        response anywhere in the picture (max pooling) before a final layer.
+        Real networks stack many such layers and pool step by step; the
+        principle is this one. Training runs on the page for 1,200 steps of 16
+        pictures, which takes a second or two.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="see-name"
+          >fully connected, 32 neurons, trained on centred shapes</strong
+        >
+        <p id="see-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="see-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="see-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="score-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Three kinds of test picture</p>
+                <h2 id="score-title">Does it know the shape when it moves?</h2>
+                <p>
+                  New pictures that wander as much as the training ones did;
+                  pictures where the shape wanders up to three pixels; and
+                  pictures where it sits dead centre. Eight of the shifted ones
+                  are shown with the network's verdict.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="see-stats"></div>
+            <ul
+              class="gallery"
+              id="see-gallery"
+              aria-label="Eight shifted test pictures with the network's verdict"
+            ></ul>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="see-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="see-simulation-status">
+              Training…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="filters-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Inside the first layer</p>
+                <h2 id="filters-title">What did it learn to look for?</h2>
+                <p>
+                  A convolutional filter is nine numbers; a fully connected
+                  neuron's weights are a whole picture. Both are drawn here,
+                  blue for negative and orange for positive.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap" style="padding: 14px">
+              <p class="chart-caption" id="see-filters-caption">
+                Learned weights
+              </p>
+              <ul
+                class="filters"
+                id="see-filters"
+                aria-label="Learned filters or neuron weights"
+              ></ul>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="loss-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Training</p>
+                <h2 id="loss-title">How fast did it learn?</h2>
+                <p>
+                  Average surprise per batch of sixteen pictures as training
+                  runs. Blind guessing among four shapes scores 1.39.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="see-loss"
+                  role="img"
+                  aria-label="Training surprise against steps"
+                ></svg>
+              </div>
+            </div>
+          </section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Shape by shape</p>
+                <h2 id="ledger-title">Which shapes give it trouble?</h2>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Shape</th>
+                    <th>Same wandering</th>
+                    <th>Shifted up to 3</th>
+                    <th>Centred</th>
+                  </tr>
+                </thead>
+                <tbody id="see-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Sharing knobs is knowing where you are does not matter</h3>
+          <p>
+            One filter, applied at every position, is a promise: what counts as
+            a corner here counts as a corner there. The fully connected network
+            has to learn that separately for every place a corner could be, and
+            with 400 pictures it cannot.
+          </p>
+        </article>
+        <article>
+          <h3>Fewer knobs, and better</h3>
+          <p>
+            Eight filters are 116 knobs. Thirty-two fully connected neurons are
+            4,772. The small one wins on moved shapes by a wide margin, because
+            it is built for the thing that varies.
+          </p>
+        </article>
+        <article>
+          <h3>Look at the filters</h3>
+          <p>
+            The learned filters are edge and corner detectors that nobody
+            designed. In a deep network the next layer combines them into parts,
+            and the layer after that into objects. Same idea, stacked.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Convolutional networks with learned filters begin with LeCun et al.,
+          <a href="https://doi.org/10.1162/neco.1989.1.4.541"
+            >“Backpropagation Applied to Handwritten Zip Code Recognition”</a
+          >
+          (1989). The moment they took over vision was Krizhevsky, Sutskever and
+          Hinton,
+          <a
+            href="https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
+            >“ImageNet Classification with Deep Convolutional Neural
+            Networks”</a
+          >
+          (2012). To see real learned filters, Zeiler and Fergus,
+          <a href="https://arxiv.org/abs/1311.2901"
+            >“Visualizing and Understanding Convolutional Networks”</a
+          >
+          (2013), draws them layer by layer.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/vision-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

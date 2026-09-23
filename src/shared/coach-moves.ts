@@ -308,6 +308,26 @@ const moves: Record<string, CoachMove[]> = {
         "Three round groups and three centres, and still two of them share one group. The loss is higher than the right answer's, which is how you would know without labels.",
     },
   ],
+  "vision-lab": [
+    {
+      label: "Wired to every pixel, then moved",
+      setup: { "see-design": "dense", "see-units": "32", "see-shift": "0" },
+      watch:
+        "Trained only on centred shapes, it scores near blind guessing once they move. Look at its weights: pictures of centred shapes.",
+    },
+    {
+      label: "Eight filters, no more",
+      setup: { "see-design": "conv", "see-units": "8", "see-shift": "0", "see-rate": "0.2" },
+      watch:
+        "A hundred and sixteen knobs, trained on centred shapes, naming shapes it never saw moved. Read the filters.",
+    },
+    {
+      label: "Too big a step",
+      setup: { "see-design": "conv", "see-units": "8", "see-rate": "2" },
+      watch:
+        "The surprise never falls. The filters' knobs are few and shared, so each step moves them a long way; lesson 01's failure, in a new machine.",
+    },
+  ],
   capstone: [
     {
       label: "The sensible setup",

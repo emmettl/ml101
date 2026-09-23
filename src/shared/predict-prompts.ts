@@ -333,6 +333,68 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#drift-simulation-status",
     },
   ],
+  "vision-lab": [
+    {
+      id: "conv-moves",
+      question:
+        "A fully connected network with 4,772 knobs, trained on shapes that always sit in the centre, names new centred shapes perfectly and scores near blind guessing on shapes moved up to three pixels. You switch to a convolutional network with 32 filters, trained on exactly the same centred pictures. What happens to its score on the shifted pictures?",
+      readout: {
+        selector: "#see-stats",
+        match: "Right on shifted pictures",
+        label: "right on shifted pictures",
+      },
+      change: {
+        selector: "#see-design",
+        value: "conv",
+        describe: "The lab will train a convolutional network on the same centred pictures.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(5),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Neither network saw a moved shape. The convolutional one applies each filter at every position, so a corner three pixels over meets the same nine knobs that learned “corner” in the middle. The fully connected network's weights for those pixels were never trained at all.`,
+      settle: "#see-simulation-status",
+    },
+    {
+      id: "fewer-filters",
+      question:
+        "Thirty-two filters is more than the job needs. You cut it to eight, a network of 116 knobs. What happens to the score on shifted pictures?",
+      readout: {
+        selector: "#see-stats",
+        match: "Right on shifted pictures",
+        label: "right on shifted pictures",
+      },
+      change: {
+        selector: "#see-units",
+        value: "8",
+        describe: "The lab will train a convolutional network with eight filters.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(5),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Eight small detectors are enough for four shapes, and 116 knobs beat the fully connected network's 4,772 by a wide margin. The knobs are not the point; where they are used is.`,
+      settle: "#see-simulation-status",
+    },
+    {
+      id: "big-step",
+      question:
+        "Same eight filters. You raise the learning rate from 0.2 to 2. What happens to the score on new pictures?",
+      readout: {
+        selector: "#see-stats",
+        match: "Right on new pictures, same wandering",
+        label: "right on new pictures",
+      },
+      change: {
+        selector: "#see-rate",
+        value: "2",
+        describe: "The lab will train again with a learning rate of 2.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(5),
+      explain: (before, after) =>
+        `From ${before}% to ${after}%. Nine shared knobs receive the blame from a hundred positions at once, so a step that is safe for a fully connected neuron throws a filter far past the valley. Look at the surprise curve: it never came down. The same divergence as lesson 01, and the same remedy.`,
+      settle: "#see-simulation-status",
+    },
+  ],
   "cluster-lab": [
     {
       id: "more-centres",

@@ -172,6 +172,19 @@
               much, because the slope underfoot has flattened out.
             </p>
           </article>
+          <article class="glossary-entry" id="convolution">
+            <h2>Convolution (filter, kernel)</h2>
+            <p>
+              Sliding a small grid of weights, the filter or kernel, over a
+              picture, multiplying and summing at every position, to make a map
+              of where its pattern occurs. One filter's knobs serve every
+              position, so a network built from them recognises a shape wherever
+              it appears with a fraction of the knobs.
+              <a href="vision-lab.html"
+                >Watch filters being learned in the Vision Lab →</a
+              >
+            </p>
+          </article>
           <article class="glossary-entry" id="cosine-similarity">
             <h2>Cosine similarity</h2>
             <p>
@@ -514,6 +527,15 @@
               One of the adjustable numbers inside a model: a knob. A line has
               two. Large language models have hundreds of billions. Also called
               a weight.
+            </p>
+          </article>
+          <article class="glossary-entry" id="pooling">
+            <h2>Pooling</h2>
+            <p>
+              Summarising a filter's map, typically by keeping the largest
+              response in a region or in the whole picture. It deliberately
+              throws position away, so that later layers answer “is the pattern
+              there?” rather than “where?”.
             </p>
           </article>
           <article class="glossary-entry" id="precision-and-recall">

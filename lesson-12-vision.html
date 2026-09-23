@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Convolution: a small pattern of weights slid across a picture, so that a shape is recognised wherever it appears. Why sharing knobs beats wiring every pixel, and what learned filters look like."
+    />
+    <title>The same knobs everywhere — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="vision">
+    <!-- include: lesson-topbar -->
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 12 · Other machines</p>
+            <h1>The same knobs everywhere</h1>
+            <p class="lede">
+              A picture is a grid of numbers. Wire every one of them to every
+              neuron, as lesson 04 would, and the network has to learn what a
+              cat looks like in the top left, and again in the middle, and again
+              everywhere else. The fix is one of the best ideas in the field:
+              learn a small detector once, and slide it across the whole
+              picture.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>10 minutes</strong
+            ><span>Builds on</span><strong>Lessons 04 and 06</strong
+            ><a href="vision-lab.html">Open the Vision Lab →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>A filter is nine knobs used at every position</h2>
+            <p>
+              Take a 3×3 patch of weights, a
+              <a class="term" href="glossary.html#convolution">filter</a>. Lay
+              it on the top-left corner of the picture, multiply each of its
+              nine numbers by the pixel underneath, and add them up: one number,
+              saying how much that patch looks like the filter. Slide the filter
+              one pixel to the right and do it again. Do it at every position
+              and you have a new, slightly smaller picture, a map of where the
+              pattern occurs. That sliding is <em>convolution</em>.
+            </p>
+            <p>
+              A convolutional network is lesson 04's network with one change in
+              the wiring: instead of every neuron seeing every pixel with its
+              own weight, a neuron sees a 3×3 patch, and every neuron in the
+              layer shares the same nine weights. The knobs are shared, so there
+              are far fewer of them, and what the filter detects at one place it
+              detects at every place. Train it by exactly the descent and
+              backpropagation you already know.
+            </p>
+            <div class="callout">
+              Convolution: slide a small filter over the picture, multiplying
+              and summing at each position. Sharing one filter's knobs across
+              all positions is what lets a network recognise a shape wherever it
+              appears.
+            </div>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Feature map</strong>
+                <p>
+                  The picture a filter produces: bright where the pattern is,
+                  dark where it is not. One map per filter; a layer has many.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Pooling</strong>
+                <p>
+                  Summarising a map: “how strongly did this filter fire,
+                  anywhere?” Taking the largest value throws away position,
+                  which is the point.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Stacking</strong>
+                <p>
+                  A second layer of filters reads the first layer's maps, so it
+                  detects patterns of patterns: edges become corners, corners
+                  become parts, parts become things.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Not only pictures</strong>
+                <p>
+                  Anything with a grid or a line has neighbours: sound, text,
+                  sensor readings. The same trick applies, and did, before
+                  attention took over for text.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="slide">
+            <p class="section-label">The mechanism</p>
+            <h2>Slide a filter and read the map</h2>
+            <p>
+              Five hand-set filters, so you can see what a filter does before
+              any is learned. In the lab, the network chooses its own.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">
+                    One filter, a hundred positions
+                  </h3>
+                  <p>The picture, the filter, and where the filter fires.</p>
+                </div>
+                <span class="engine-badge">Live convolution</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="see-shape">Picture</label
+                  ><select id="see-shape">
+                    <option value="0">A bar</option>
+                    <option value="1" selected>A cross</option>
+                    <option value="2">A ring</option>
+                    <option value="3">A corner</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="see-filter">Filter</label
+                  ><select id="see-filter">
+                    <option value="identity">
+                      Identity: copies the picture
+                    </option>
+                    <option value="blur">Blur: average of neighbours</option>
+                    <option value="vertical" selected>Vertical edges</option>
+                    <option value="horizontal">Horizontal edges</option>
+                    <option value="outline">Outline</option>
+                  </select>
+                </div>
+              </div>
+              <div class="chart-wrap" style="padding: 14px">
+                <div class="convolution-row">
+                  <figure>
+                    <div id="see-picture"></div>
+                    <figcaption>The picture, 12×12</figcaption>
+                  </figure>
+                  <figure class="kernel">
+                    <div id="see-kernel"></div>
+                    <figcaption>
+                      The filter, 3×3<br /><code id="see-kernel-numbers"></code>
+                    </figcaption>
+                  </figure>
+                  <figure>
+                    <div id="see-map"></div>
+                    <figcaption>Where it fires, 10×10</figcaption>
+                  </figure>
+                </div>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Knobs in the filter</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Positions it is applied at</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Strongest response</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Knobs a full-picture neuron would need</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="see-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              Notice the outline filter lights up on every speck of noise as
+              eagerly as on the shape. A learned filter is no cleverer about
+              this than a hand-set one; what saves the network is the layers
+              above, which learn to combine several maps and to ignore the
+              specks.
+            </p>
+          </section>
+          <section id="arithmetic">
+            <p class="section-label">
+              The arithmetic, and what it does not buy
+            </p>
+            <h2>Fewer knobs, and the right kind of ignorance</h2>
+            <p>
+              A fully connected neuron looking at a 12×12 picture has 144
+              weights; thirty-two of them plus an output layer come to 4,772
+              knobs. Eight 3×3 filters plus an output layer come to 116. The lab
+              trains both on four shapes drawn at random positions, and the
+              small one wins, not by a little: moved shapes that the big network
+              scores near blind guessing on, the filters name almost every time.
+            </p>
+            <p>
+              The reason is not cleverness but built-in ignorance. Sharing a
+              filter across positions is a decision, made before training, that
+              <em>where</em> a pattern is does not change <em>what</em> it is.
+              For pictures that is nearly always right, and every training
+              picture then teaches the network about every position at once.
+              Where it is wrong, the same decision hurts: a filter cannot tell a
+              face from an upside-down face without being shown both, and it has
+              no idea that the sky is usually at the top.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Sharing and sliding</h2>
+            <div class="quiz">
+              <h3>
+                A fully connected network trained only on centred shapes scores
+                100% on new centred shapes and 24% on the same shapes moved
+                three pixels. A convolutional one trained the same way scores
+                100% on both. What is the convolutional network doing that the
+                other cannot?
+              </h3>
+              <p>Think about which knobs a moved shape lands on.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="It has far fewer knobs, not more: 116 against 4,772. Capacity is not what is missing in the fully connected network."
+                >
+                  It has more knobs, so it can store every position</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. The filter that learned “corner” at the centre is the same filter applied at every other position, so a corner three pixels over produces the same response. The fully connected network's weights for those pixels were never trained, because nothing ever appeared there."
+                >
+                  It applies the same learned filter at every position, so a
+                  moved shape meets the same knobs</button
+                ><button
+                  type="button"
+                  data-feedback="Neither network saw a moved shape in training. The convolutional one needs no such examples, which is exactly its advantage."
+                >
+                  It was shown moved shapes during training after all
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                Max pooling keeps only a filter's strongest response in the
+                whole picture and throws the position away. Why would you throw
+                away information on purpose?
+              </h3>
+              <p>What does the final layer need to know?</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Pooling does save arithmetic, but that is a side effect. A network can afford the numbers; the question is what they should say."
+                >
+                  To save memory: a hundred numbers per filter is too many</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. To name the shape, the final layer needs “is there a corner?”, not “is there a corner at row 4, column 7?”. Keeping the position would make the answer depend on it, which is the fully connected network's mistake all over again. Deeper networks pool a little at each layer, keeping rough position for as long as it is useful."
+                >
+                  So the answer depends on whether the pattern is present, not
+                  where</button
+                ><button
+                  type="button"
+                  data-feedback="Pooling happens after the filter has responded; it does not change what the filter detects, only what is passed on."
+                >
+                  Because the filter only works at one position anyway
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
+              <div>
+                <strong>Slide, multiply, sum</strong>
+                <p>
+                  A filter is a few knobs applied at every position. Its output
+                  is a map of where its pattern occurs.
+                </p>
+              </div>
+              <div>
+                <strong>Shared knobs, shared knowledge</strong>
+                <p>
+                  Learn a detector once and it works everywhere. Fewer knobs,
+                  less data, and shapes recognised wherever they appear.
+                </p>
+              </div>
+              <div>
+                <strong>Built-in assumptions are the point</strong>
+                <p>
+                  Convolution assumes position does not change identity. Where
+                  that holds it wins; where it does not, it is blind.
+                </p>
+              </div>
+              <div>
+                <strong>Stacked, it sees things</strong>
+                <p>
+                  Edges, then corners, then parts, then objects. Each layer's
+                  filters read the maps of the one below.
+                </p>
+              </div>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#slide">Slide a filter</a></li>
+              <li><a href="#arithmetic">Fewer knobs</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Train a convolutional network against a fully connected one, look
+              at the filters it learns, and move the shapes.
+            </p>
+            <a href="vision-lab.html">Open the Vision Lab →</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-11-clusters.html">← Groups nobody labelled</a>
+      </div>
+      <div>
+        <span>Course complete</span><a href="./">Back to the course home →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/vision.ts"></script>
+  </body>
+</html>
