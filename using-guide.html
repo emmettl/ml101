@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Prompt, retrieve, fine-tune or train? Two questions choose between the four ways of getting a model to do your job, and one sum says what it will cost each month."
+    />
+    <title>ML 101 — Which way to use a model?</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="guide.css" />
+  </head>
+  <body class="lab guide">
+    <!-- include: lab-head lesson-href="lesson-09-open-book.html" lesson-label="Lesson 09" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Deep dive · using a model someone else trained</p>
+        <h1>Which way<br />to use a model?</h1>
+        <p class="lede">
+          Most people who use machine learning will never train a model from
+          scratch. They will take one that exists and get it to do a job. There
+          are four ways to do that, they fix different things, and they cost
+          very different amounts. Two questions choose between them, and one sum
+          says what the choice will cost each month.
+        </p>
+      </div>
+      <section aria-labelledby="ways-title">
+        <p class="eyebrow">Start here</p>
+        <h2 id="ways-title">Four ways, and what each one changes</h2>
+        <div class="decoder-card">
+          <article>
+            <span class="step-label">Prompt</span>
+            <h3>Change what you ask</h3>
+            <p>
+              Instructions and a few examples, sent with every request. Fixes
+              the manner of an answer. Costs nothing to set up and something on
+              every call. Cannot add a fact or a skill.
+            </p>
+          </article>
+          <article>
+            <span class="step-label">Retrieve</span>
+            <h3>Change what it can read</h3>
+            <p>
+              Search your documents and hand the model the page, as in lesson
+              09. Fixes knowledge, especially knowledge that changes. The search
+              sets the ceiling.
+            </p>
+          </article>
+          <article>
+            <span class="step-label">Fine-tune</span>
+            <h3>Change how it behaves</h3>
+            <p>
+              Continue training on your examples, as in lesson 08's second
+              stage. Fixes a manner or a narrow skill, given thousands of
+              examples. Blurs facts as readily as it stores them.
+            </p>
+          </article>
+          <article>
+            <span class="step-label">Train</span>
+            <h3>Build your own</h3>
+            <p>
+              For a narrow task with a mountain of data, a model built for it
+              alone: usually lesson 10's trees, sometimes a small network.
+              Faster, cheaper, and entirely yours; knows nothing else.
+            </p>
+          </article>
+        </div>
+        <p class="memory-line">
+          The prompt changes the question. Retrieval changes the reading.
+          Fine-tuning changes the behaviour. Training changes everything.
+        </p>
+      </section>
+
+      <section aria-labelledby="decide-title">
+        <p class="eyebrow">Decoder one</p>
+        <h2 id="decide-title">What is missing, and what do you have?</h2>
+        <p>
+          Two questions, one recommendation. It is the rule of thumb this course
+          teaches, not a law; the card says what the choice changes and what it
+          cannot fix.
+        </p>
+        <fieldset class="choice-field">
+          <legend>What is missing</legend>
+          <div class="choice-set" id="use-missing"></div>
+        </fieldset>
+        <fieldset class="choice-field">
+          <legend>What you have</legend>
+          <div class="choice-set" id="use-have"></div>
+        </fieldset>
+        <div class="result-card" aria-live="polite">
+          <span class="step-label" id="use-way">Retrieve</span>
+          <h3 id="use-title"></h3>
+          <p id="use-why"></p>
+          <dl>
+            <div>
+              <dt>What changes</dt>
+              <dd id="use-changes"></dd>
+            </div>
+            <div>
+              <dt>What it cannot fix</dt>
+              <dd id="use-limit"></dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section aria-labelledby="cost-title">
+        <p class="eyebrow">Decoder two</p>
+        <h2 id="cost-title">What will it cost each month?</h2>
+        <p>
+          A hosted model is billed by the token, in and out, and output tokens
+          cost several times input ones. The prices below are illustrative; put
+          in your provider's and the sum is the same. Tokens are about 1.3 per
+          English word.
+        </p>
+        <fieldset class="choice-field">
+          <legend>How many requests</legend>
+          <div class="choice-set" id="use-volume"></div>
+        </fieldset>
+        <fieldset class="choice-field">
+          <legend>What each request sends</legend>
+          <div class="choice-set" id="use-prompt"></div>
+        </fieldset>
+        <fieldset class="choice-field">
+          <legend>What comes back</legend>
+          <div class="choice-set" id="use-output"></div>
+        </fieldset>
+        <fieldset class="choice-field">
+          <legend>Which model</legend>
+          <div class="choice-set" id="use-price"></div>
+        </fieldset>
+        <div class="result-card" aria-live="polite">
+          <span class="step-label" id="use-cost-label"
+            >A line in the budget</span
+          >
+          <h3 id="use-cost-title"></h3>
+          <dl>
+            <div>
+              <dt>Tokens per request</dt>
+              <dd id="use-cost-tokens"></dd>
+            </div>
+            <div>
+              <dt>Cost per request</dt>
+              <dd id="use-cost-request"></dd>
+            </div>
+            <div>
+              <dt>Share of the bill that is input</dt>
+              <dd id="use-cost-input"></dd>
+            </div>
+          </dl>
+        </div>
+        <p id="use-cost-note"></p>
+      </section>
+
+      <section aria-labelledby="questions-title">
+        <p class="eyebrow">Before you ship</p>
+        <h2 id="questions-title">Six questions worth answering first</h2>
+        <ol class="question-list">
+          <li>
+            <div>
+              <strong
+                >What does a right answer look like, and who says so?</strong
+              >
+              <p>
+                Write down fifty questions with answers you would accept. This
+                is the held-out set of lesson 02, and without it every other
+                question has no number attached.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>What happens when it is wrong?</strong>
+              <p>
+                Lesson 08: plausible is not the same as true. Decide who checks,
+                what is shown to the user, and whether “I cannot tell” is an
+                allowed answer. It should be.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong
+                >Where does the knowledge live, and who can change it?</strong
+              >
+              <p>
+                In the knobs it is frozen; in an index it is editable; in the
+                prompt it is yours. Lesson 09's support bot with a stale refund
+                policy is the case to keep in mind.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>What goes into the prompt, and should it?</strong>
+              <p>
+                Everything sent is read, stored by someone, and billed. Send the
+                passages that matter, not the document; the customer's question,
+                not their record.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>How will you know it has drifted?</strong>
+              <p>
+                The Drift Lab's lesson: inputs can be watched today, answers
+                only once someone has judged them. Sample and grade a slice
+                every week, against the same fifty questions.
+              </p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>Who is treated worse?</strong>
+              <p>
+                The Fairness Lab's audit is one group-by. Run it on the
+                questions and on the people asking, before someone else does.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <section aria-labelledby="traps-title">
+        <p class="eyebrow">Common traps</p>
+        <h2 id="traps-title">Six confusions worth keeping apart</h2>
+        <div class="trap-grid">
+          <article>
+            <h3>Fine-tuning ≠ teaching facts</h3>
+            <p>
+              It moves the manner and the skill into the knobs. Facts go in
+              blurred and come out stale. Retrieval is for facts.
+            </p>
+          </article>
+          <article>
+            <h3>A long context ≠ retrieval</h3>
+            <p>
+              Pasting the whole document in works, costs twenty times the tokens
+              on every request, and models read very long prompts unevenly.
+              Search first.
+            </p>
+          </article>
+          <article>
+            <h3>A demo ≠ an evaluation</h3>
+            <p>
+              Ten good answers you chose to look at are lesson 02's training
+              set. Fifty questions you wrote before you looked are the test.
+            </p>
+          </article>
+          <article>
+            <h3>Cheaper per token ≠ cheaper</h3>
+            <p>
+              A small model that needs three tries, or a long prompt to behave,
+              can cost more than a large one that gets it right in one.
+            </p>
+          </article>
+          <article>
+            <h3>The model's confidence ≠ yours</h3>
+            <p>
+              A fluent answer and a correct one look the same on the page. Only
+              checking against something outside the model tells them apart.
+            </p>
+          </article>
+          <article>
+            <h3>Trained on your data ≠ yours</h3>
+            <p>
+              A fine-tuned hosted model still lives with the host. Ask what is
+              retained, who can see the prompts, and how to leave.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="next-title">
+        <p class="eyebrow">Where the course covered each piece</p>
+        <h2 id="next-title">The labs behind these decisions</h2>
+        <div class="next-links">
+          <a href="open-book-lab.html">Measure a search: the Open-Book Lab →</a>
+          <a href="drift-lab.html">Watch a model rot: the Drift Lab →</a>
+          <a href="fairness-lab.html">Run the audit: the Fairness Lab →</a>
+          <a href="model-cards.html"
+            >Write it down: three specimen model cards →</a
+          >
+        </div>
+      </section>
+
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          Retrieval as the way to give a model knowledge is Lewis et al.,
+          <a href="https://arxiv.org/abs/2005.11401"
+            >“Retrieval-Augmented Generation for Knowledge-Intensive NLP
+            Tasks”</a
+          >
+          (2020). That fine-tuning changes behaviour is the lesson of Ouyang et
+          al.,
+          <a href="https://arxiv.org/abs/2203.02155"
+            >“Training language models to follow instructions with human
+            feedback”</a
+          >
+          (2022); that it can be done cheaply on a small slice of the knobs is
+          Hu et al., <a href="https://arxiv.org/abs/2106.09685">“LoRA”</a>
+          (2021). The prices in the second decoder are illustrative
+          placeholders, not any provider's.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/using-guide.ts"></script>
+  </body>
+</html>

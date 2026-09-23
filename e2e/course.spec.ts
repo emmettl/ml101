@@ -944,3 +944,33 @@ test("a shape drowns on the schedule in the lesson, and in the lab a ring is dra
   expect(await figure("Points within 0.1")).toBeGreaterThan(80);
   expect(errors).toEqual([]);
 });
+
+test("the using guide recommends a way and prices a month of requests", async ({ page }) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/using-guide.html");
+  await expect(page.locator("#use-way")).toHaveText("Retrieve");
+  await page.locator('#use-missing button[data-value="manner"]').click();
+  await expect(page.locator("#use-way")).toHaveText("Prompt");
+  await page.locator('#use-have button[data-value="thousands"]').click();
+  await expect(page.locator("#use-way")).toHaveText("Fine-tune");
+  await page.locator('#use-missing button[data-value="skill"]').click();
+  await page.locator('#use-have button[data-value="millions"]').click();
+  await expect(page.locator("#use-way")).toHaveText("Train");
+
+  await expect(page.locator("#use-cost-tokens")).toHaveText("350");
+  await page.locator('#use-prompt button[data-value="long"]').click();
+  await expect(page.locator("#use-cost-tokens")).toHaveText("20,150");
+  await expect(page.locator("#use-cost-note")).toContainText("expensive habit");
+  await page.locator('#use-volume button[data-value="scale"]').click();
+  await expect(page.locator("#use-cost-label")).toHaveText("A serious bill");
+  expect(errors).toEqual([]);
+});
+
+test("the specimen model cards carry the labs' own figures", async ({ page }) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/model-cards.html");
+  await expect(page.locator("article.model-card")).toHaveCount(3);
+  await expect(page.locator("article.model-card").nth(1)).toContainText("5,545");
+  await expect(page.locator("article.model-card").nth(2)).toContainText("Orange");
+  expect(errors).toEqual([]);
+});
