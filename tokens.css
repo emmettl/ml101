@@ -577,6 +577,45 @@ h3 {
   white-space: nowrap;
 }
 
+/* Clusters: eight distinguishable fills (Okabe–Ito), the same in both themes. */
+.plot-point.cluster-0 {
+  fill: #0072b2;
+}
+
+.plot-point.cluster-1 {
+  fill: #d55e00;
+}
+
+.plot-point.cluster-2 {
+  fill: #009e73;
+}
+
+.plot-point.cluster-3 {
+  fill: #cc79a7;
+}
+
+.plot-point.cluster-4 {
+  fill: #e69f00;
+}
+
+.plot-point.cluster-5 {
+  fill: #56b4e9;
+}
+
+.plot-point.cluster-6 {
+  fill: #f0e442;
+}
+
+.plot-point.cluster-7 {
+  fill: #7a7a7a;
+}
+
+.plot-point.centre {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  fill-opacity: 0.9;
+}
+
 /* Bars that grow left or right from a centre line. */
 .lean-bars {
   display: grid;

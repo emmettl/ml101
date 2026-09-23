@@ -126,6 +126,19 @@
               lost to a boundary.
             </p>
           </article>
+          <article class="glossary-entry" id="clustering">
+            <h2>Clustering</h2>
+            <p>
+              Finding groups in data that carries no labels. K-means, the oldest
+              method, places k centres and moves them until every point is as
+              near to its centre as can be. Its boundaries are straight fences
+              between centres, so it finds round groups and misses rings and
+              stripes.
+              <a href="cluster-lab.html"
+                >Step through it in the Cluster Lab →</a
+              >
+            </p>
+          </article>
           <article class="glossary-entry" id="class-imbalance">
             <h2>Class imbalance</h2>
             <p>
@@ -233,6 +246,15 @@
               before and the model quietly stops being right; only the labels,
               which arrive late, can show it.
               <a href="drift-lab.html">Watch both in the Drift Lab →</a>
+            </p>
+          </article>
+          <article class="glossary-entry" id="elbow">
+            <h2>Elbow (choosing k)</h2>
+            <p>
+              The habit of plotting a clustering's settled loss against the
+              number of groups asked for and picking the bend. The loss falls at
+              every k, so it cannot choose k by itself; the bend is a judgement,
+              and the purpose of the groups is the better guide.
             </p>
           </article>
           <article class="glossary-entry" id="embedding">
@@ -707,6 +729,15 @@
               A model too stiff to follow the pattern. Both its scores are poor,
               and close together. More training will not help; more capacity
               will.
+            </p>
+          </article>
+          <article class="glossary-entry" id="unsupervised-learning">
+            <h2>Unsupervised learning</h2>
+            <p>
+              Learning from data with no right answers attached. With nothing to
+              be wrong about, the method must invent its own loss, and its score
+              measures that invention rather than any truth. Clustering and the
+              next-token training of lesson 07 are both of this kind.
             </p>
           </article>
           <article class="glossary-entry" id="validation-set">

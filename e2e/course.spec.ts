@@ -778,3 +778,50 @@ test("a deep tree memorises, a forest recovers, and boosted stumps cannot do opp
   await expect(page.locator("#tree-outcome")).toContainText("same sign on both");
   expect(errors).toEqual([]);
 });
+
+test("k-means finds round groups, its loss always falls with k, and it cannot cut a ring", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-11-clusters.html");
+  await expect(page.locator("#stat-4")).toHaveText("Found");
+  await page.locator("#clu-shape").selectOption("rings");
+  await page.locator("#clu-k").fill("2");
+  await expect(page.locator("#stat-4")).toHaveText("Missed");
+  await expect(page.locator("#clu-prose")).toContainText("no straight line");
+
+  await page.goto("/cluster-lab.html");
+  const status = page.locator("#clu-simulation-status");
+  await expect(status).toContainText(
+    "Current · three round groups · k = 3 · start random · guess 1 · settled",
+  );
+  const figure = async (label: string | RegExp) =>
+    Number(
+      (
+        await page.locator("#clu-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/[^\d.]/g, ""),
+    );
+  expect(await figure("Agreement")).toBeGreaterThan(95);
+  const found = await figure(/^Loss/);
+
+  await page.locator("#clu-round").fill("0");
+  await expect(status).toContainText("round 0");
+  expect(await figure(/^Loss/)).toBeGreaterThan(found);
+  await expect(page.locator("#clu-outcome")).toContainText("Round 0 of");
+  await page.locator("#clu-round").fill("30");
+  await expect(status).toContainText("settled");
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="down"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(status).toContainText("k = 8");
+  await expect(page.locator("#clu-ledger tr")).toHaveCount(8);
+
+  await page.locator("#clu-k").fill("3");
+  await page.locator("#clu-seed").fill("6");
+  await expect(status).toContainText("start random · guess 6");
+  expect(await figure("Agreement")).toBeLessThan(75);
+  await expect(page.locator("#clu-outcome")).toContainText("local minimum");
+  expect(errors).toEqual([]);
+});

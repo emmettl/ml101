@@ -30,6 +30,7 @@ It is a sibling of [Derivatives 101](https://github.com/emmettl/derivatives101) 
 | 08 | From toy to ChatGPT | Scale Ladder | live |
 | 09 | Open-book answers | Open-Book Lab | live |
 | 10 | Questions instead of knobs | Trees Lab | live |
+| 11 | Groups nobody labelled | Cluster Lab | live |
 
 Lesson 07 has a second lab, **Table vs Network**, which bridges to lesson 08: the count table and a small neural language model, trained in a Web Worker, scored side by side on held-out text.
 

@@ -61,6 +61,12 @@ export const COURSE_LESSONS: readonly CourseLesson[] = [
   { id: "scale", number: "08", title: "From toy to ChatGPT", href: "lesson-08-scale.html" },
   { id: "open-book", number: "09", title: "Open-book answers", href: "lesson-09-open-book.html" },
   { id: "trees", number: "10", title: "Questions instead of knobs", href: "lesson-10-trees.html" },
+  {
+    id: "clusters",
+    number: "11",
+    title: "Groups nobody labelled",
+    href: "lesson-11-clusters.html",
+  },
 ];
 
 const LESSON_COMPLETE_PREFIX = "ml101:progress:lesson:";

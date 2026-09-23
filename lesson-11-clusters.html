@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Learning without labels: k-means finds groups by shrinking one number it chose itself, which is why it always settles, why it can settle wrongly, and why the number of groups is your decision."
+    />
+    <title>Groups nobody labelled — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="clusters">
+    <!-- include: lesson-topbar -->
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 11 · Other machines</p>
+            <h1>Groups nobody labelled</h1>
+            <p class="lede">
+              Every model so far was shown the right answers and trained to
+              match them. Most data in the world comes with no answers at all:
+              customers, songs, cells, sentences, with nobody having said which
+              belong together. Finding groups in that is called clustering, and
+              its oldest method is a machine with k knobs that sets them by a
+              loss it invented for itself.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>9 minutes</strong
+            ><span>Builds on</span><strong>Lessons 01 and 05</strong
+            ><a href="cluster-lab.html">Open the Cluster Lab →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>With no labels, the loss has to be made up</h2>
+            <p>
+              Lesson 00's machine had a loss because it had answers to miss.
+              Take the answers away and there is nothing to be wrong about, so
+              an
+              <a class="term" href="glossary.html#unsupervised-learning"
+                >unsupervised</a
+              >
+              method has to decide for itself what a good answer looks like.
+              K-means decides this: a good grouping is one where every point
+              sits close to the centre of its group. Its loss is the total
+              squared distance from points to centres, and its knobs are the
+              positions of k centres.
+            </p>
+            <p>
+              It lowers that loss by alternating two steps, each of which can
+              only bring it down. Give every point to its nearest centre. Move
+              every centre to the middle of its points. Repeat until nothing
+              moves. No gradient is computed and none is needed: this is descent
+              by a different route, and like descent it can stop in a dip that
+              is not the bottom.
+            </p>
+            <div class="callout">
+              K-means: guess k centres, assign each point to the nearest, move
+              each centre to the middle of its points, repeat. The loss it
+              shrinks is its own invention, and the k is yours.
+            </div>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Unsupervised</strong>
+                <p>
+                  No labels, so no held-out score, no accuracy, no “right”. What
+                  you can measure is only what the method chose to measure.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Centres and fences</strong>
+                <p>
+                  Nearest-centre means the fence between two clusters is a
+                  straight line halfway between them. All k-means groupings are
+                  cut from straight fences.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Starts matter</strong>
+                <p>
+                  Different starting centres can settle in different places. The
+                  usual fix is to start far apart and to run several times,
+                  keeping the lowest loss.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The same vectors</strong>
+                <p>
+                  Lesson 05's embeddings are points in a space. Cluster them and
+                  you get groups of words, songs or documents that nobody
+                  labelled either.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="find">
+            <p class="section-label">The mechanism</p>
+            <h2>Find the groups, and the ones it cannot</h2>
+            <p>
+              The points below were made in groups, which the algorithm never
+              sees. The lesson uses them only to score. Try the three round
+              groups first, then the rings.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">K-means, settled</h3>
+                  <p>
+                    Large marks are the centres; each point wears the colour of
+                    its nearest.
+                  </p>
+                </div>
+                <span class="engine-badge">Live clustering engine</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="clu-shape">The points</label
+                  ><select id="clu-shape">
+                    <option value="three" selected>Three round groups</option>
+                    <option value="uneven">One big group and one small</option>
+                    <option value="rings">Two rings</option>
+                    <option value="stripes">Two diagonal stripes</option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="clu-k"
+                    >Groups to find (k) · <span id="clu-k-value">3</span></label
+                  ><input
+                    id="clu-k"
+                    type="range"
+                    min="1"
+                    max="8"
+                    step="1"
+                    value="3"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="plot-host">
+                  <svg
+                    id="lesson-chart"
+                    class="lesson-chart"
+                    role="img"
+                    aria-label="Points coloured by the cluster k-means assigned them to, with the centres marked"
+                  ></svg>
+                </div>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Rounds to settle</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Loss</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Agreement with the hidden groups</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Verdict</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p
+                class="interactive-prose"
+                id="clu-prose"
+                aria-live="polite"
+              ></p>
+            </div>
+            <p>
+              On the rings the loss settles contentedly at a grouping that has
+              nothing to do with the rings, because a ring has no centre of its
+              own that a straight fence could protect. On the stripes the fence
+              cuts across them. K-means finds round groups of similar size, and
+              nothing else, however long it runs. Other methods find other
+              shapes, and each has a shape it cannot find.
+            </p>
+          </section>
+          <section id="choosing">
+            <p class="section-label">
+              The arithmetic, and what it does not buy
+            </p>
+            <h2>The loss cannot choose k for you</h2>
+            <p>
+              Add a centre and the loss falls, always, because every point is
+              now at least as near to a centre as before. With as many centres
+              as points the loss is zero and the grouping is worthless. So the
+              number that k-means shrinks is silent on the question that matters
+              most. The habit is to plot the settled loss against k and look for
+              a bend, the “elbow”, where adding centres stops paying. On three
+              clean round groups the bend is obvious. On most real data it is a
+              matter of opinion, and the honest answer to “how many groups?” is
+              “what are the groups for?”.
+            </p>
+            <p>
+              Each round costs one distance per point per centre, so k-means
+              runs on millions of points where fancier methods cannot, which is
+              much of why it survives.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Loss without labels</h2>
+            <div class="quiz">
+              <h3>
+                A colleague runs k-means with k from 1 to 20 and reports that
+                the loss fell every time, so “the data clearly has 20 groups”.
+                What is wrong?
+              </h3>
+              <p>Think about what k = 240 would give.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Twenty rounds is not the issue; each run was allowed to settle. The problem is with what the falling loss means."
+                >
+                  They did not run enough rounds for the loss to settle</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. More centres are always nearer, so the loss falls at every k and reaches zero when every point is its own centre. A falling loss says nothing about how many groups there are. The elbow, several starts, and above all a reason for wanting the groups are what choose k."
+                >
+                  The loss falls at every k whatever the data; it cannot choose
+                  k</button
+                ><button
+                  type="button"
+                  data-feedback="A held-out set needs labels to score against. There are none here, which is the whole difficulty."
+                >
+                  They should have measured the loss on a held-out set
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                On two rings, one inside the other, k-means with k = 2 settles
+                at a low loss with each cluster holding half of each ring. Why
+                can more rounds not fix this?
+              </h3>
+              <p>Where is the fence between two centres?</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Starting elsewhere gives a different straight fence, and no straight fence separates a ring from its middle. The limit is in the rule, not the start."
+                >
+                  It started in the wrong place; a better start would find the
+                  rings</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. A point goes to its nearest centre, so the boundary between two clusters is a straight line halfway between them. The inner ring is surrounded by the outer one on every side, and no straight line keeps them apart. K-means finds round groups; a ring needs a method that follows neighbours rather than centres."
+                >
+                  Nearest-centre boundaries are straight lines, and no straight
+                  line separates the rings</button
+                ><button
+                  type="button"
+                  data-feedback="A ring has a centre, and it is the same point for both rings, which is exactly the trouble: the two centres cannot both be there."
+                >
+                  Rings have no centre, so the loss cannot be computed
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
+              <div>
+                <strong>No labels, invented loss</strong>
+                <p>
+                  An unsupervised method decides for itself what good looks
+                  like. Its score is that decision, not the truth.
+                </p>
+              </div>
+              <div>
+                <strong>Two steps, always downhill</strong>
+                <p>
+                  Assign, then move. Each step lowers the loss, so it settles,
+                  possibly in the wrong dip. Start several times.
+                </p>
+              </div>
+              <div>
+                <strong>Straight fences, round groups</strong>
+                <p>
+                  Nearest-centre draws straight boundaries. Rings and stripes
+                  need another method; every method has a shape it misses.
+                </p>
+              </div>
+              <div>
+                <strong>k is your decision</strong>
+                <p>
+                  The loss always prefers more. The elbow is a habit. The
+                  purpose of the groups is the real guide.
+                </p>
+              </div>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#find">Find the groups</a></li>
+              <li><a href="#choosing">Choosing k</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Step through the rounds, watch the loss fall, try different
+              starts, and read the elbow chart for yourself.
+            </p>
+            <a href="cluster-lab.html">Open the Cluster Lab →</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-10-trees.html">← Questions instead of knobs</a>
+      </div>
+      <div>
+        <span>Course complete</span><a href="./">Back to the course home →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/clusters.ts"></script>
+  </body>
+</html>
