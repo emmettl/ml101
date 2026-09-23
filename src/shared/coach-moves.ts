@@ -328,6 +328,26 @@ const moves: Record<string, CoachMove[]> = {
         "The surprise never falls. The filters' knobs are few and shared, so each step moves them a long way; lesson 01's failure, in a new machine.",
     },
   ],
+  "reward-lab": [
+    {
+      label: "The edge route",
+      setup: { "rl-algorithm": "q-learning", "rl-exploration": "0.1", "rl-episodes": "1000" },
+      watch:
+        "Q-learning finds the shortest route, one square from the cliff, and keeps falling off it while learning.",
+    },
+    {
+      label: "The safe route",
+      setup: { "rl-algorithm": "sarsa", "rl-exploration": "0.1", "rl-episodes": "1000" },
+      watch:
+        "SARSA's guesses include its own random moves. The route lengthens, the falls stop, and the reward while learning goes up.",
+    },
+    {
+      label: "Explore a great deal",
+      setup: { "rl-algorithm": "q-learning", "rl-exploration": "0.3" },
+      watch:
+        "Three moves in ten at random, beside a cliff. The map it learns is still the edge route; the life it lives while learning is dreadful.",
+    },
+  ],
   capstone: [
     {
       label: "The sensible setup",

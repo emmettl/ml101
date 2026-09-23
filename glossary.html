@@ -306,6 +306,16 @@
               sample.
             </p>
           </article>
+          <article class="glossary-entry" id="exploration">
+            <h2>Exploration and exploitation</h2>
+            <p>
+              An agent that always takes its best-guess move never discovers a
+              better one; an agent that always tries random moves never uses
+              what it knows. The share of random moves is a knob, and every
+              random move can cost, which is why the agent that learns for
+              itself walks further from the cliff.
+            </p>
+          </article>
           <article class="glossary-entry" id="fairness">
             <h2>Fairness (of a model's decisions)</h2>
             <p>
@@ -593,6 +603,18 @@
               second model learns to predict their preferences, and the chatbot
               is nudged towards answers that score well. It makes models more
               helpful, and more eager to please.
+            </p>
+          </article>
+          <article class="glossary-entry" id="reinforcement-learning">
+            <h2>Reinforcement learning</h2>
+            <p>
+              Learning from rewards instead of labels. The agent keeps a guess
+              of the reward still to come for every situation and move, acts on
+              the best guess, and corrects it towards what happened plus the
+              next guess, so that credit for a late reward flows backwards one
+              step per visit. The third stage of training a chatbot is this,
+              with human preferences as the reward.
+              <a href="reward-lab.html">Walk the cliff in the Reward Lab →</a>
             </p>
           </article>
           <article class="glossary-entry" id="retrieval">

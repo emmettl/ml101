@@ -864,3 +864,43 @@ test("filters slide in the lesson, and in the lab they know a moved shape that d
   );
   expect(errors).toEqual([]);
 });
+
+test("Q-learning walks the edge, SARSA keeps its distance, and exploring near a cliff costs", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/lesson-13-reward.html");
+  await expect(page.locator("#stat-4")).toHaveText("The edge route");
+  await page.locator("#rl-algorithm").selectOption("sarsa");
+  await expect(page.locator("#stat-4")).toHaveText("The safe route");
+  await expect(page.locator("#lesson-grid .grid-route")).toBeVisible();
+
+  await page.goto("/reward-lab.html");
+  const status = page.locator("#rl-simulation-status");
+  await expect(status).toContainText(
+    "Current · q-learning · exploration 10% · rate 0.50 · 1000 episodes · run 1",
+  );
+  const figure = async (label: string) =>
+    Number(
+      (
+        await page.locator("#rl-stats .stat", { hasText: label }).locator("strong").innerText()
+      ).replace(/[^\d.-]/g, ""),
+    );
+  const edge = await figure("Route reward");
+  expect(edge).toBeGreaterThanOrEqual(10);
+  await expect(page.locator("#rl-outcome")).toContainText("edge route");
+
+  const card = page.locator("#predict");
+  await card.locator('.predict-choices button[data-choice="down"]').click();
+  await card.locator(".predict-reveal").click();
+  await expect(card.locator(".predict-feedback")).toContainText("Right.", { timeout: 15_000 });
+  await expect(status).toContainText("Current · sarsa");
+  expect(await figure("Route reward")).toBeLessThan(edge);
+  await expect(page.locator("#rl-outcome")).toContainText("clear of the cliff");
+
+  await page.locator("#rl-exploration").fill("0.3");
+  await expect(status).toContainText("exploration 30%");
+  expect(await figure("Falls per 100")).toBeGreaterThan(10);
+  await expect(page.locator("#rl-ledger tr")).toHaveCount(10);
+  expect(errors).toEqual([]);
+});

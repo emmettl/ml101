@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Reinforcement learning: no labels, only rewards that arrive late. How an agent works out which moves to thank, why it must explore, and why two ways of guessing choose two different routes past a cliff."
+    />
+    <title>Learning from consequences — ML 101</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body data-lesson="reward">
+    <!-- include: lesson-topbar -->
+    <main id="content">
+      <header class="lesson-hero">
+        <div class="lesson-hero-grid">
+          <div>
+            <p class="eyebrow">Lesson 13 · Other machines</p>
+            <h1>Learning from consequences</h1>
+            <p class="lede">
+              A chess program is never told the right move. A robot is never
+              told the right joint angle. They are told, eventually, whether
+              things went well. Reinforcement learning is learning from that:
+              rewards that arrive late, for actions whose share of the credit
+              nobody has worked out. It is also the third stage of training a
+              chatbot, which is why it ends this course.
+            </p>
+          </div>
+          <aside class="lesson-meta" aria-label="About this lesson">
+            <span>Estimated reading time</span><strong>10 minutes</strong
+            ><span>Builds on</span><strong>Lessons 01, 03 and 08</strong
+            ><a href="reward-lab.html">Open the Reward Lab →</a>
+          </aside>
+        </div>
+      </header>
+      <!-- include: lesson-sequence -->
+      <div class="lesson-layout">
+        <article class="lesson-copy">
+          <section id="idea">
+            <p class="section-label">The one idea</p>
+            <h2>Guess the reward to come, then correct the guess</h2>
+            <p>
+              The agent's knobs are guesses: for every situation and every move
+              it might make, how much reward is still to come. Pick the move
+              with the best guess, make it, and see what happens. Now the guess
+              can be corrected, not against a label, because there is none, but
+              against what actually happened plus the guess for the situation
+              you landed in. Nudge it a fraction of the way towards that.
+              Repeat, for a lifetime of moves.
+            </p>
+            <p>
+              That nudge is lesson 01's descent on a squared error, with one
+              twist: the target is made partly of the agent's own guesses. Good
+              news spreads backwards a step at a time. The move that reached the
+              goal is praised first; the move before it, on the next visit; and
+              so on down the route, which is how an action nine moves before the
+              reward eventually gets its share of the credit.
+            </p>
+            <div class="callout">
+              Reinforcement learning: keep a guess of the reward to come for
+              every situation and move, act on the best guess, and correct it
+              towards what happened plus the next guess. The credit for a late
+              reward flows backwards one step per visit.
+            </div>
+            <div class="concept-grid">
+              <div class="concept">
+                <strong>Reward, not label</strong>
+                <p>
+                  A label says what was right. A reward says how it went. The
+                  agent must work out which of its moves to thank, and which to
+                  blame.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Explore or exploit</strong>
+                <p>
+                  Always taking the best guess means never discovering a better
+                  move. Some share of moves are made at random, and every one of
+                  them can cost.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>Discount</strong>
+                <p>
+                  A reward next move counts for more than one ten moves away.
+                  The rate at which it fades sets how far ahead the agent cares.
+                </p>
+              </div>
+              <div class="concept">
+                <strong>The table becomes a network</strong>
+                <p>
+                  A table of guesses works for a grid. For a screen of pixels or
+                  a sentence, lesson 04's network guesses instead, trained by
+                  the same nudge.
+                </p>
+              </div>
+            </div>
+          </section>
+          <section id="cliff">
+            <p class="section-label">The mechanism</p>
+            <h2>The cliff walk</h2>
+            <p>
+              Eight squares by five. Start bottom left, goal bottom right, and a
+              cliff along the bottom between them. Every move costs one point,
+              the goal pays twenty, and a step off the cliff costs a hundred and
+              sends the agent home. The shortest route hugs the edge. The agent
+              below has made a thousand trips.
+            </p>
+            <div class="interactive" aria-labelledby="interactive-title">
+              <div class="interactive-head">
+                <div>
+                  <h3 id="interactive-title">After a thousand trips</h3>
+                  <p>
+                    Arrows are best guesses; the line is the route they lead to;
+                    greener is more hopeful.
+                  </p>
+                </div>
+                <span class="engine-badge">Live learning engine</span>
+              </div>
+              <div class="interactive-controls">
+                <div class="control">
+                  <label for="rl-algorithm">How guesses are corrected</label
+                  ><select id="rl-algorithm">
+                    <option value="q-learning" selected>
+                      Q-learning: assume the next move will be the best
+                    </option>
+                    <option value="sarsa">
+                      SARSA: use the move it will really make
+                    </option>
+                  </select>
+                </div>
+                <div class="control">
+                  <label for="rl-exploration"
+                    >Random moves ·
+                    <span id="rl-exploration-value">10%</span></label
+                  ><input
+                    id="rl-exploration"
+                    type="range"
+                    min="0"
+                    max="0.3"
+                    step="0.02"
+                    value="0.1"
+                  />
+                </div>
+              </div>
+              <div class="chart-wrap" style="padding: 14px">
+                <svg
+                  id="lesson-grid"
+                  class="reward-grid"
+                  role="img"
+                  aria-label="The cliff walk grid with the agent's best move in each square and its route from start to goal"
+                ></svg>
+              </div>
+              <dl class="interactive-readout">
+                <div>
+                  <dt>Moves on its route</dt>
+                  <dd id="stat-1">–</dd>
+                </div>
+                <div>
+                  <dt>Reward for that route</dt>
+                  <dd id="stat-2">–</dd>
+                </div>
+                <div>
+                  <dt>Falls in the last 100 trips</dt>
+                  <dd id="stat-3">–</dd>
+                </div>
+                <div>
+                  <dt>Verdict</dt>
+                  <dd id="stat-4">–</dd>
+                </div>
+              </dl>
+              <p class="interactive-prose" id="rl-prose" aria-live="polite"></p>
+            </div>
+            <p>
+              Switch the agent to SARSA and it moves away from the edge. The two
+              differ in one line. Q-learning corrects a guess as if the next
+              move will be the best one; SARSA corrects it using the move the
+              agent will actually make, random ones included. Q-learning
+              therefore learns the best route for an agent that never slips, and
+              keeps slipping. SARSA learns the best route for the agent it is.
+              Neither is wrong; they answer different questions.
+            </p>
+          </section>
+          <section id="reward">
+            <p class="section-label">
+              The arithmetic, and what it does not buy
+            </p>
+            <h2>The reward is the whole specification</h2>
+            <p>
+              Nothing in the agent knows what a cliff is. It knows that some
+              moves cost a hundred. Change the numbers and it changes its route,
+              with perfect indifference to what you meant. Agents given a reward
+              for “points” in a boat race learned to circle a lagoon collecting
+              bonuses instead of finishing; agents rewarded for speed learned to
+              fall over quickly. The reward is a contract, and the agent reads
+              it as literally as a contract can be read.
+            </p>
+            <p>
+              Lesson 08's third stage is this, with people as the reward. A
+              second model learns to predict which of two replies people prefer,
+              and the chatbot's knobs are nudged towards replies that score
+              well. It learns what was rewarded, which is what people preferred,
+              which is not always what was true. That is the contract, read
+              literally, again.
+            </p>
+          </section>
+          <section id="check">
+            <p class="section-label">Check your understanding</p>
+            <h2>Credit and cliffs</h2>
+            <div class="quiz">
+              <h3>
+                The reward for reaching the goal arrives nine moves after the
+                agent leaves the start. How does the agent's first move ever get
+                credit for it?
+              </h3>
+              <p>Think about what each guess is corrected towards.</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Nothing is stored about the whole trip. Each correction uses only the reward just received and the guess for the very next square."
+                >
+                  It remembers the whole trip and shares the reward out at the
+                  end</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. The last move is corrected towards the goal's reward. On a later trip, the move before it is corrected towards that improved guess, and so on backwards, one square per visit. It takes many trips for the start to hear the news, which is why early episodes look hopeless."
+                >
+                  Good news spreads backwards one square per visit, through the
+                  guesses</button
+                ><button
+                  type="button"
+                  data-feedback="The discount makes far rewards count for less; it does not carry them anywhere. The carrying is done by the guesses."
+                >
+                  The discount carries the reward back along the route
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+            <div class="quiz">
+              <h3>
+                SARSA chooses a longer route than Q-learning and earns less on
+                paper, yet earns more while learning. Why?
+              </h3>
+              <p>Who is each agent's guess about?</p>
+              <div class="quiz-options">
+                <button
+                  type="button"
+                  data-feedback="Both agents make the same share of random moves. What differs is whether their guesses take those moves into account."
+                >
+                  SARSA explores less, so it falls less</button
+                ><button
+                  type="button"
+                  data-correct="true"
+                  data-feedback="Correct. Q-learning's guess for a square by the cliff assumes the next move will be the best one, so the square looks fine. SARSA's guess uses the move it will actually make, which one time in ten is random, so the square looks as dangerous as it is for an agent that explores. It learns the best route for itself, slips included."
+                >
+                  SARSA's guesses include its own random moves, so squares by
+                  the cliff look dangerous</button
+                ><button
+                  type="button"
+                  data-feedback="The cliff costs both agents the same hundred points. The difference is in what each believes about the squares beside it."
+                >
+                  SARSA is given a bigger penalty for falling
+                </button>
+              </div>
+              <p class="quiz-feedback" aria-live="polite"></p>
+            </div>
+          </section>
+          <section id="takeaways">
+            <p class="section-label">Takeaways</p>
+            <h2>What to remember</h2>
+            <div class="takeaway-grid">
+              <div>
+                <strong>Guess, act, correct</strong>
+                <p>
+                  The knobs are guesses of reward to come, nudged towards what
+                  happened plus the next guess. Descent, with a moving target.
+                </p>
+              </div>
+              <div>
+                <strong>Credit flows backwards slowly</strong>
+                <p>
+                  A late reward reaches the early moves one visit at a time.
+                  Learning from consequences takes many consequences.
+                </p>
+              </div>
+              <div>
+                <strong>Exploring costs, and cannot be skipped</strong>
+                <p>
+                  Random moves find better routes and fall off cliffs. Which
+                  agent you are learning for decides where to walk.
+                </p>
+              </div>
+              <div>
+                <strong>The reward is read literally</strong>
+                <p>
+                  Whatever pays is what gets done. Writing the reward is the
+                  hard part, for robots and for chatbots alike.
+                </p>
+              </div>
+            </div>
+          </section>
+        </article>
+        <aside class="lesson-aside" aria-label="Lesson contents">
+          <nav aria-label="On this page">
+            <h2>On this page</h2>
+            <ul>
+              <li><a href="#idea">The one idea</a></li>
+              <li><a href="#cliff">The cliff walk</a></li>
+              <li><a href="#reward">The reward is the specification</a></li>
+              <li><a href="#check">Knowledge check</a></li>
+              <li><a href="#takeaways">Takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="aside-card">
+            <h2>Go deeper</h2>
+            <p>
+              Set the exploration, the learning rate and the number of trips,
+              watch the reward per trip while it learns, and compare runs.
+            </p>
+            <a href="reward-lab.html">Open the Reward Lab →</a>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <footer class="lesson-next">
+      <div>
+        <span>Previous lesson</span
+        ><a href="lesson-12-vision.html">← The same knobs everywhere</a>
+      </div>
+      <div>
+        <span>Course complete</span><a href="./">Back to the course home →</a>
+      </div>
+    </footer>
+    <script type="module" src="/src/lessons/reward.ts"></script>
+  </body>
+</html>

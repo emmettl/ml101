@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Reinforcement learning on a cliff walk: an agent with no labels learns from rewards, and two ways of updating its guesses choose two different routes, one brave and one safe."
+    />
+    <title>ML 101 — Reward Lab</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="collapsible.css" />
+    <link rel="stylesheet" href="predict.css" />
+  </head>
+  <body class="lab">
+    <!-- include: lab-head lesson-href="lesson-13-reward.html" lesson-label="Read the lesson" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Lab 17 · Other machines</p>
+        <h1>Reward Lab</h1>
+        <p class="lede">
+          A grid, a start, a goal, and a cliff along the bottom. Every move
+          costs one point, reaching the goal pays twenty, and a step off the
+          cliff costs a hundred and sends the agent back to the start. Nobody
+          tells it which moves were good. It works that out from the rewards,
+          one trip at a time, and the shortest route runs along the edge.
+        </p>
+      </div>
+      <p class="scope-note">
+        <b>Scope:</b> the cliff walk from Sutton and Barto's textbook, eight
+        squares by five. The agent's knobs are a table of guesses, one per
+        square and direction, nudged after every move; a real agent playing a
+        game or driving a robot replaces the table with a network, and the nudge
+        is the same. Every number here comes from a run you can repeat, and the
+        “Which run” knob shows how much luck is in it.
+      </p>
+      <section class="variant-summary" aria-live="polite">
+        <strong id="rl-name">Q-learning, 10% exploration, 1,000 trips</strong>
+        <p id="rl-description"></p>
+      </section>
+      <div class="lab-grid">
+        <aside
+          class="controls"
+          data-collapsible="open"
+          aria-labelledby="controls-title"
+        >
+          <div class="controls-head" data-collapsible-keep>
+            <h2 id="controls-title">Settings</h2>
+            <div>
+              <button
+                type="button"
+                class="section-toggle"
+                aria-expanded="true"
+                data-show-label="Show settings"
+                data-hide-label="Hide settings"
+              >
+                Hide settings
+              </button>
+              <button type="button" class="reset-button" id="rl-reset">
+                Reset
+              </button>
+            </div>
+          </div>
+          <div id="rl-controls"></div>
+        </aside>
+        <div class="content">
+          <section class="panel" aria-labelledby="grid-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">What it learned</p>
+                <h2 id="grid-title">Which way does it go?</h2>
+                <p>
+                  Each square shows the agent's best move and its guess at the
+                  reward still to come from there; greener is more hopeful. The
+                  line is the route it takes if it follows its guesses without
+                  exploring.
+                </p>
+              </div>
+            </div>
+            <div class="stats" id="rl-stats"></div>
+            <div class="chart-wrap">
+              <svg
+                id="rl-grid"
+                class="reward-grid"
+                role="img"
+                aria-label="The cliff walk grid, with the agent's best move and expected reward in each square and its route drawn from start to goal"
+              ></svg>
+            </div>
+            <div class="outcome">
+              <strong>What happened</strong>
+              <p id="rl-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="rl-simulation-status">
+              Calculating…
+            </p>
+          </section>
+          <section class="panel" aria-labelledby="reward-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">While learning</p>
+                <h2 id="reward-title">What did each trip earn?</h2>
+                <p>
+                  Reward per episode, smoothed over 25. The route it will follow
+                  afterwards and the reward it earns while still exploring are
+                  two different things, and the second is what a learning robot
+                  actually lives through.
+                </p>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="rl-rewards"
+                  role="img"
+                  aria-label="Reward per episode while learning, smoothed"
+                ></svg>
+              </div>
+            </div>
+          </section>
+          <section
+            id="predict"
+            class="panel"
+            aria-label="Predict before you move it"
+          ></section>
+          <section class="panel" aria-labelledby="ledger-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Trip by trip</p>
+                <h2 id="ledger-title">How did the learning go?</h2>
+              </div>
+            </div>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Episodes</th>
+                    <th>Average reward</th>
+                    <th>Falls</th>
+                    <th>Worst trip</th>
+                    <th>Best trip</th>
+                  </tr>
+                </thead>
+                <tbody id="rl-ledger"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+      <section class="explain" aria-label="What to take from this lab">
+        <article>
+          <h3>Credit travels backwards, one square a visit</h3>
+          <p>
+            The goal's reward is nine moves from the start. Each visit to a
+            square copies a little of the next square's guess into its own, so
+            good news spreads back along the route a step at a time. That is why
+            early trips are dreadful and why the table needs many.
+          </p>
+        </article>
+        <article>
+          <h3>Two agents, two routes</h3>
+          <p>
+            Q-learning judges a move as if every later move will be perfect, so
+            it prizes the edge. SARSA judges it by what it will actually do
+            next, random moves included, so it keeps its distance. The first has
+            the better map; the second has the better life.
+          </p>
+        </article>
+        <article>
+          <h3>The reward is the specification</h3>
+          <p>
+            Change what pays and the agent changes what it does, with no regard
+            for what you meant. Every reward function is a contract read by a
+            very literal lawyer, which is the whole difficulty of lesson 08's
+            third stage.
+          </p>
+        </article>
+      </section>
+      <div id="code-peek"></div>
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The cliff walk and both algorithms are from Sutton and Barto,
+          <a href="http://incompleteideas.net/book/the-book.html"
+            ><em>Reinforcement Learning: An Introduction</em></a
+          >
+          (2nd ed., 2018), example 6.6. Q-learning is Watkins (1989); the
+          version with a network in place of the table that learned to play
+          Atari games is Mnih et al.,
+          <a href="https://www.nature.com/articles/nature14236"
+            >“Human-level control through deep reinforcement learning”</a
+          >
+          (2015). On rewards that were read too literally, see Krakovna et al.'s
+          <a
+            href="https://deepmind.google/discover/blog/specification-gaming-the-flip-side-of-ai-ingenuity/"
+            >catalogue of specification gaming</a
+          >.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/labs/reward-lab.ts"></script>
+    <script type="module" src="/src/shared/predict-mount.ts"></script>
+  </body>
+</html>

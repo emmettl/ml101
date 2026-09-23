@@ -333,6 +333,68 @@ const prompts: Record<string, PredictPrompt[]> = {
       settle: "#drift-simulation-status",
     },
   ],
+  "reward-lab": [
+    {
+      id: "sarsa-route",
+      question:
+        "Q-learning has learned the edge route, the shortest there is, and falls off the cliff every few trips while exploring. You switch to SARSA, which corrects each guess using the move it will actually make, random ones included. What happens to the reward its learned route earns, following its best guesses without exploring?",
+      readout: {
+        selector: "#rl-stats",
+        match: "Route reward, following its best guesses",
+        label: "the learned route's reward",
+      },
+      change: {
+        selector: "#rl-algorithm",
+        value: "sarsa",
+        describe: "The lab will train the agent with SARSA instead.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(1),
+      explain: (before, after) =>
+        `From ${before} to ${after}. SARSA moves away from the edge, and a longer route pays less on paper. Now look at the two tiles beside it: falls while learning, and reward per trip while learning. The agent that learned the worse map lived the better life, because its guesses were about the agent it actually is.`,
+      settle: "#rl-simulation-status",
+    },
+    {
+      id: "explore-more",
+      question:
+        "Still SARSA. You raise exploration from one move in ten to three in ten. What happens to the number of falls per hundred trips while learning?",
+      readout: {
+        selector: "#rl-stats",
+        match: "Falls per 100 trips, while learning",
+        label: "falls per 100 trips",
+      },
+      change: {
+        selector: "#rl-exploration",
+        value: "0.3",
+        describe: "The lab will make three moves in ten random.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(2),
+      explain: (before, after) =>
+        `From ${before} to ${after}. Beside a cliff, a random move is a fall waiting to happen, and three in ten is a great many. SARSA answers by walking even further from the edge, and still cannot escape the arithmetic. Exploration finds routes and it costs; there is no setting where it is free.`,
+      settle: "#rl-simulation-status",
+    },
+    {
+      id: "few-trips",
+      question:
+        "Back to Q-learning with a tenth of moves random, but only 100 trips instead of 1,000. What happens to the reward per trip over the last hundred?",
+      readout: {
+        selector: "#rl-stats",
+        match: "Reward per trip, last 100 while learning",
+        label: "reward per trip",
+      },
+      change: {
+        selector: "#rl-episodes",
+        value: "100",
+        describe: "The lab will train for 100 trips only.",
+      },
+      choices: upSameDown,
+      judge: judges.direction(3),
+      explain: (before, after) =>
+        `From ${before} to ${after}. Credit for the goal travels back one square per visit, so a hundred trips is barely enough for the start to hear the news; the early trips wander and fall. Learning from consequences takes many consequences, which is why real agents train for millions of them.`,
+      settle: "#rl-simulation-status",
+    },
+  ],
   "vision-lab": [
     {
       id: "conv-moves",

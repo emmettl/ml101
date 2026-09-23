@@ -68,6 +68,12 @@ export const COURSE_LESSONS: readonly CourseLesson[] = [
     href: "lesson-11-clusters.html",
   },
   { id: "vision", number: "12", title: "The same knobs everywhere", href: "lesson-12-vision.html" },
+  {
+    id: "reward",
+    number: "13",
+    title: "Learning from consequences",
+    href: "lesson-13-reward.html",
+  },
 ];
 
 const LESSON_COMPLETE_PREFIX = "ml101:progress:lesson:";
