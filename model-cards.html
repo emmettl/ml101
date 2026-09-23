@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- include: head -->
+    <meta
+      name="description"
+      content="Three specimen model cards, written for models built in this course with their measured figures: what each is for, what it was tested on, how it scored, for whom it scores worse, and what it must not be used for."
+    />
+    <title>ML 101 — Three specimen model cards</title>
+    <link rel="stylesheet" href="lab.css" />
+    <link rel="stylesheet" href="guide.css" />
+  </head>
+  <body class="lab guide">
+    <!-- include: lab-head lesson-href="capstone.html" lesson-label="Capstone" -->
+    <main id="content">
+      <div class="hero">
+        <p class="eyebrow">Reference · the paperwork a model deserves</p>
+        <h1>Three specimen<br />model cards</h1>
+        <p class="lede">
+          A model card is a page that travels with a model: what it is for, what
+          it was trained and tested on, how it scored, for whom it scores worse,
+          and what it must not be used for. Here are three, written for models
+          you can build in this course, with the figures the labs measure. Read
+          them for the shape, then write one for yours.
+        </p>
+      </div>
+
+      <section aria-labelledby="shape-title">
+        <p class="eyebrow">Start here</p>
+        <h2 id="shape-title">Eight headings, and why each one is there</h2>
+        <div class="decoder-card">
+          <article>
+            <span class="step-label">Purpose and users</span>
+            <h3>What it is for, and for whom</h3>
+            <p>
+              The task, the people who will act on its answer, and the uses it
+              was never designed for. Most harm comes from a model used for
+              something adjacent to its purpose.
+            </p>
+          </article>
+          <article>
+            <span class="step-label">Data and scores</span>
+            <h3>What it saw, and what it got</h3>
+            <p>
+              The training data, the held-out data, and the scores on each,
+              beside a do-nothing baseline. A score without its baseline is
+              lesson 03's trap.
+            </p>
+          </article>
+          <article>
+            <span class="step-label">Who it fails</span>
+            <h3>The audit, group by group</h3>
+            <p>
+              The Fairness Lab's table: the same scores for each group the model
+              might treat differently, computed before someone else computes
+              them.
+            </p>
+          </article>
+          <article>
+            <span class="step-label">Limits and upkeep</span>
+            <h3>What it cannot do, and when to retrain</h3>
+            <p>
+              Known failures, the conditions it was not tested in, and the Drift
+              Lab's question: how will anyone know when the world has moved?
+            </p>
+          </article>
+        </div>
+        <p class="memory-line">
+          A model card is the capstone's checklist, written down so the next
+          person does not have to rediscover it.
+        </p>
+      </section>
+
+      <section aria-labelledby="cards-title">
+        <p class="eyebrow">Specimens</p>
+        <h2 id="cards-title">Three cards for three models from this course</h2>
+
+        <article class="model-card" aria-labelledby="card-churn">
+          <h2 id="card-churn">Cancellation early-warning model</h2>
+          <p class="card-kicker">
+            The capstone's model, with its sensible settings. Every figure is
+            what the capstone reports for that setup.
+          </p>
+          <dl>
+            <div>
+              <dt>Purpose</dt>
+              <dd>
+                Flag customers likely to cancel in the coming period, so that
+                the retention team can call them first. Output: a probability
+                per customer, flagged at 30% confidence.
+              </dd>
+            </div>
+            <div>
+              <dt>Intended users and uses</dt>
+              <dd>
+                The retention team, as a prioritised call list. Not for pricing,
+                credit, or any decision that disadvantages the customer; not for
+                individual judgements without a person in the loop.
+              </dd>
+            </div>
+            <div>
+              <dt>Model</dt>
+              <dd>
+                One neuron (logistic regression) over three inputs: months as a
+                customer, support tickets, logins last month. Trained by
+                gradient descent, 300 steps. A leaked column, “win-back offer
+                sent”, was identified and excluded because it is filled in only
+                after a cancellation.
+              </dd>
+            </div>
+            <div>
+              <dt>Data</dt>
+              <dd>
+                600 archived customers, synthetic, 16% of whom cancelled. Split
+                three ways: 360 for training, 120 for tuning the cut-off, 120
+                scored once at the end. Deployment figures come from 4,000
+                further synthetic customers.
+              </dd>
+            </div>
+            <div>
+              <dt>Scores</dt>
+              <dd>
+                <ul>
+                  <li>
+                    Held-out (120 customers): accuracy 82%, cancellers caught
+                    50%, flags that were right 41%.
+                  </li>
+                  <li>
+                    Training (360 customers): accuracy 86%, cancellers caught
+                    63%, flags right 56%.
+                  </li>
+                  <li>
+                    On 4,000 new customers: accuracy 83%, cancellers caught 59%,
+                    flags right 47%.
+                  </li>
+                  <li>
+                    Do-nothing baseline: 84% accurate, catches 0%. Accuracy is
+                    therefore not the headline; cancellers caught is.
+                  </li>
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>Who it fails</dt>
+              <dd>
+                Not audited by customer group, because the synthetic data
+                carries no group. A real deployment must run the Fairness Lab's
+                table by region, tenure band and plan before use.
+              </dd>
+            </div>
+            <div>
+              <dt>Limits</dt>
+              <dd>
+                One snapshot in time. Nothing tests whether a flagged customer
+                can actually be retained, which is the decision the model exists
+                to serve. Half of cancellers are missed at this cut-off; a lower
+                cut-off catches more at the price of more calls.
+              </dd>
+            </div>
+            <div>
+              <dt>Upkeep</dt>
+              <dd>
+                Cancellations are known about three months after a prediction.
+                Score each month's flags once its labels arrive, and retrain on
+                a schedule; the Drift Lab shows why a monitor on the inputs is
+                not enough.
+              </dd>
+            </div>
+          </dl>
+          <p class="card-link">
+            <a href="capstone.html">Build this model in the capstone →</a>
+          </p>
+        </article>
+
+        <article class="model-card" aria-labelledby="card-lm">
+          <h2 id="card-lm">
+            Character language model, seven chapters of Alice
+          </h2>
+          <p class="card-kicker">
+            The neural network from Table vs Network at six characters of
+            context, after 400,000 training characters.
+          </p>
+          <dl>
+            <div>
+              <dt>Purpose</dt>
+              <dd>
+                Predict the next character of English text in the style of one
+                book, for teaching. It writes fluent-looking nonsense on
+                request.
+              </dd>
+            </div>
+            <div>
+              <dt>Intended users and uses</dt>
+              <dd>
+                Learners of this course, to see a language model's odds move as
+                it trains. Not for generating text anyone will read as
+                information; it has none.
+              </dd>
+            </div>
+            <div>
+              <dt>Model</dt>
+              <dd>
+                8-number embeddings for 33 characters, six of them laid side by
+                side, one hidden layer of 64 tanh neurons, softmax output: 5,545
+                knobs. Trained one character at a time by descent with a
+                decaying learning rate, in the browser.
+              </dd>
+            </div>
+            <div>
+              <dt>Data</dt>
+              <dd>
+                The first 90% of chapters 1–7 of
+                <em>Alice's Adventures in Wonderland</em>, about 73,000
+                characters, public domain. The last 10% is held out and never
+                trained on.
+              </dd>
+            </div>
+            <div>
+              <dt>Scores</dt>
+              <dd>
+                <ul>
+                  <li>
+                    Surprise per character (lower is better; 3.5 is blind
+                    guessing): 1.62 on studied text, about 1.79 on the held-out
+                    10%, a gap of 0.17.
+                  </li>
+                  <li>
+                    The smoothed count table at the same context scores 1.59
+                    held-out and beats the network; at its best context it
+                    scores 1.48. This model does not win on raw score, and the
+                    lab says so.
+                  </li>
+                  <li>
+                    Recitation: 0% of 600 freshly written characters appear word
+                    for word in the book, against 5–26% for the count table at
+                    six to eight characters of context.
+                  </li>
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>Who it fails</dt>
+              <dd>
+                Not applicable in the usual sense: no people are scored. Its
+                text mirrors one Victorian book, and only that.
+              </dd>
+            </div>
+            <div>
+              <dt>Limits</dt>
+              <dd>
+                No word-level meaning, no grammar beyond a few characters, no
+                knowledge. Anything it writes that looks like a fact is an
+                accident of spelling.
+              </dd>
+            </div>
+            <div>
+              <dt>Upkeep</dt>
+              <dd>
+                None: the book does not change. Retrain only to change the
+                teaching demonstration.
+              </dd>
+            </div>
+          </dl>
+          <p class="card-link">
+            <a href="table-vs-network.html"
+              >Train this model in Table vs Network →</a
+            >
+          </p>
+        </article>
+
+        <article class="model-card" aria-labelledby="card-lender">
+          <h2 id="card-lender">
+            Loan approval model, trained on past decisions
+          </h2>
+          <p class="card-kicker">
+            The Fairness Lab's model at its default settings: 60% prejudice in
+            the past decisions, and the group column visible. This is the card
+            that should stop a launch.
+          </p>
+          <dl>
+            <div>
+              <dt>Purpose</dt>
+              <dd>
+                Reproduce the lender's past approval decisions from three
+                columns: test score, neighbourhood, and group (Blue or Orange).
+                Output: approval confidence, approved at 50%.
+              </dd>
+            </div>
+            <div>
+              <dt>Intended users and uses</dt>
+              <dd>
+                As built, none. The model reproduces prejudice in its training
+                labels and must not be used to decide, rank or pre-screen
+                applicants. It is kept as a teaching specimen.
+              </dd>
+            </div>
+            <div>
+              <dt>Model</dt>
+              <dd>
+                One neuron, trained 400 steps by descent to agree with 3,000
+                past decisions. Learned weights: test score +1.50, neighbourhood
+                −0.05, group −0.90. The weight on group is the staff's
+                mark-down, learned.
+              </dd>
+            </div>
+            <div>
+              <dt>Data</dt>
+              <dd>
+                3,000 invented applicants with past decisions made by staff who
+                marked Orange applicants down; 6,000 fresh applicants for
+                scoring. The invented data records who would truly repay, which
+                real data never does.
+              </dd>
+            </div>
+            <div>
+              <dt>Scores</dt>
+              <dd>
+                <ul>
+                  <li>
+                    Agreement with the past decisions: 79%. This is the only
+                    score a real lender could compute, and it rises as the
+                    prejudice in the labels rises.
+                  </li>
+                  <li>
+                    Agreement with who would truly repay: 70%, against 76% for a
+                    model trained on even-handed decisions.
+                  </li>
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>Who it fails</dt>
+              <dd>
+                <ul>
+                  <li>Approved: Blue 53%, Orange 17%.</li>
+                  <li>
+                    Would repay, and approved: Blue 78%, Orange 31%. A 47-point
+                    gap.
+                  </li>
+                  <li>
+                    Approved, and would repay: Blue 77%, Orange 93%. Orange
+                    applicants are held to a higher bar.
+                  </li>
+                  <li>
+                    Deleting the group column leaves a 32-point gap, carried by
+                    neighbourhood, which predicts group.
+                  </li>
+                </ul>
+              </dd>
+            </div>
+            <div>
+              <dt>Limits</dt>
+              <dd>
+                The labels are the problem, not the model, and no held-out score
+                computed against those labels can show it. Two groups of equal
+                size; real cases have many overlapping groups and many proxies.
+              </dd>
+            </div>
+            <div>
+              <dt>Upkeep</dt>
+              <dd>
+                Not to be maintained: to be replaced by a model trained on
+                repayment outcomes rather than past approvals, with the audit
+                above run on every retrain.
+              </dd>
+            </div>
+          </dl>
+          <p class="card-link">
+            <a href="fairness-lab.html"
+              >Reproduce these figures in the Fairness Lab →</a
+            >
+          </p>
+        </article>
+      </section>
+
+      <section class="sources">
+        <h2>Going further</h2>
+        <p>
+          The headings follow Mitchell et al.,
+          <a href="https://arxiv.org/abs/1810.03993"
+            >“Model Cards for Model Reporting”</a
+          >
+          (2019). Their companion for data is Gebru et al.,
+          <a href="https://arxiv.org/abs/1803.09010"
+            >“Datasheets for Datasets”</a
+          >
+          (2018). Every figure above is reproduced by the lab it names, at the
+          settings it names.
+        </p>
+      </section>
+    </main>
+    <!-- include: lab-footer -->
+    <script type="module" src="/src/shared/theme-only.ts"></script>
+  </body>
+</html>

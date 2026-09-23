@@ -288,3 +288,65 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Specimen model cards. */
+.model-card {
+  margin: 0 0 28px;
+  padding: 22px 24px;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--amber);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.model-card h2 {
+  margin: 0 0 4px;
+}
+
+.model-card > p.card-kicker {
+  margin: 0 0 16px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.model-card dl {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 10px 20px;
+  margin: 0;
+}
+
+.model-card dt {
+  color: var(--amber-dark);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.model-card dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.model-card dd ul {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+
+.model-card .card-link {
+  margin: 16px 0 0;
+  font-size: 14px;
+}
+
+@media (width <= 640px) {
+  .model-card dl {
+    grid-template-columns: 1fr;
+    gap: 4px 0;
+  }
+
+  .model-card dd {
+    margin-bottom: 8px;
+  }
+}
