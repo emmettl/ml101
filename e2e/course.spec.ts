@@ -314,6 +314,33 @@ test("the ladder climbs from two knobs to hundreds of billions, and cost grows w
   expect(errors).toEqual([]);
 });
 
+test("the chip panel times this machine and turns its speed into a training time", async ({
+  page,
+}) => {
+  const errors = monitorRuntimeErrors(page);
+  await page.goto("/scale-ladder.html");
+  const status = page.locator("#chip-simulation-status");
+  await expect(status).toHaveText("Current · nothing measured yet");
+  await expect(page.locator("#chip-ledger tr")).toHaveCount(0);
+  await page.locator("#chip-run").click();
+  await expect(page.locator("#chip-run")).toHaveText("Measure again", { timeout: 120_000 });
+  await expect(status).toContainText("Current · CPU timed on 6 grid sizes");
+  // Wherever the GPU could not be timed, the CPU still is, and the lab says why.
+  const rows = await page.locator("#chip-ledger tr").count();
+  expect(rows).toBeGreaterThanOrEqual(6);
+  const outcome = page.locator("#chip-outcome");
+  await expect(outcome).toContainText("operations a second");
+  await expect(outcome).toContainText(/would take .*(years|days|hours)/);
+  await expect(outcome).not.toContainText(/NaN|Infinity|undefined/);
+
+  // The training time follows the model chosen above.
+  const before = await outcome.textContent();
+  await page.locator("#ladder-parameters").fill("6");
+  await expect(outcome).not.toHaveText(before ?? "");
+  await expect(outcome).toContainText("your 1 million-knob model");
+  expect(errors).toEqual([]);
+});
+
 test("the capstone starts unready, exposes the leak, and can be earned", async ({ page }) => {
   const errors = monitorRuntimeErrors(page);
   await page.goto("/capstone.html");

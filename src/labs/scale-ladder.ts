@@ -10,11 +10,13 @@ import {
   trainingOperations,
   weightBytes,
 } from "../scale/engine";
+import chipSource from "../scale/chip.ts?raw";
 import source from "../scale/engine.ts?raw";
 import { drawLadder } from "../scale/view";
 import { mountCodePeek } from "../shared/codepeek";
 import { byId, renderControls, renderStats, type ControlSpec } from "../shared/controls";
 import { initLabPage } from "../shared/lab";
+import { mountChipPanel } from "./chip-panel";
 import { createPlot, redrawOnResize } from "../shared/plot";
 
 interface Params extends Record<string, number | string> {
@@ -77,6 +79,8 @@ const controls: ControlSpec<Params>[] = [
 ];
 
 const ladderChart = byId<SVGSVGElement>("ladder-chart");
+const chipChart = byId<SVGSVGElement>("chip-chart");
+const chip = mountChipPanel(() => render());
 const costChart = byId<SVGSVGElement>("ladder-cost-chart");
 
 const power = (value: number): string => {
@@ -177,6 +181,7 @@ function render(): void {
     }),
   );
   byId("ladder-note").textContent = LADDER_NOTE;
+  chip.render(operations, params.parameters);
 }
 
 const panel = renderControls(byId("ladder-controls"), "ladder", controls, params, () => render());
@@ -202,6 +207,28 @@ print(f"{operations:.1e} operations, {days:.0f} days, {memory_gb:.0f} GB")
 # 5.9e+23 operations, 17 days, 140 GB`,
 });
 
+mountCodePeek(byId("chip-code-peek"), {
+  summary: "the job being timed, the CPU way and the GPU way",
+  source: chipSource,
+  marker: "chip",
+  python: `import time
+import numpy as np
+
+n = 1024
+a = np.random.rand(n, n).astype(np.float32)
+b = np.random.rand(n, n).astype(np.float32)
+
+start = time.perf_counter()
+a @ b                                   # NumPy hands this to a tuned CPU library
+seconds = time.perf_counter() - start
+print(f"{2 * n**3 / seconds:.1e} operations a second")
+
+# On a GPU, with PyTorch: the same multiply, then wait for the answer.
+# import torch
+# x, y = torch.rand(n, n, device="cuda"), torch.rand(n, n, device="cuda")
+# x @ y; torch.cuda.synchronize()`,
+});
+
 render();
-redrawOnResize([ladderChart, costChart], render);
+redrawOnResize([ladderChart, costChart, chipChart], render);
 initLabPage();
