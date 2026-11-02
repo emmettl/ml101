@@ -116,6 +116,76 @@
               Calculating…
             </p>
           </section>
+          <section class="panel" aria-labelledby="chip-title">
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Your chip</p>
+                <h2 id="chip-title">
+                  How fast is the machine in front of you?
+                </h2>
+                <p>
+                  Almost all of training is one job: multiplying two grids of
+                  numbers. The lab times that job here, on this device's
+                  processor (CPU) and, if the browser allows it, on its graphics
+                  chip (GPU), from a 16 × 16 grid up to 2,048 × 2,048. It takes
+                  a few seconds on most machines, and nothing leaves the page.
+                </p>
+              </div>
+              <div class="path-actions">
+                <button type="button" class="resample" id="chip-run">
+                  Measure this machine
+                </button>
+              </div>
+            </div>
+            <div class="stats" id="chip-stats"></div>
+            <div class="chart-wrap">
+              <div class="plot-host">
+                <svg
+                  id="chip-chart"
+                  role="img"
+                  aria-label="Operations per second against grid size on logarithmic axes, for this machine's CPU and GPU"
+                ></svg>
+              </div>
+            </div>
+            <div class="legend">
+              <span><i class="train"></i>CPU, one number at a time</span>
+              <span><i class="path"></i>GPU, thousands at once</span>
+              <span
+                ><i class="truth"></i>the data-centre chip assumed above</span
+              >
+            </div>
+            <div class="outcome">
+              <strong>In plain terms</strong>
+              <p id="chip-outcome" aria-live="polite"></p>
+            </div>
+            <p class="simulation-status" id="chip-simulation-status">
+              Current · nothing measured yet
+            </p>
+            <div class="ledger-wrap">
+              <table class="ledger">
+                <thead>
+                  <tr>
+                    <th>Grid</th>
+                    <th>Operations</th>
+                    <th>CPU time</th>
+                    <th>CPU operations a second</th>
+                    <th>GPU time</th>
+                    <th>GPU operations a second</th>
+                    <th>Faster</th>
+                  </tr>
+                </thead>
+                <tbody id="chip-ledger"></tbody>
+              </table>
+            </div>
+            <p class="simulation-status" id="chip-note">
+              Scope: the GPU runs a simple, honest kernel in full (4-byte)
+              precision. Data-centre training uses tuned kernels and 2-byte
+              numbers on chips built for this one job, so treat the GPU figure
+              as a floor for what this device could do, not a ceiling. Times
+              include handing each job to the GPU and waiting for the answer, as
+              a training step would.
+            </p>
+          </section>
           <section
             id="predict"
             class="panel"
@@ -180,6 +250,7 @@
         </article>
       </section>
       <div id="code-peek"></div>
+      <div id="chip-code-peek"></div>
       <section class="sources">
         <h2>Going further</h2>
         <p>
